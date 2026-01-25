@@ -467,4 +467,7 @@ set_global_assignment -name VHDL_FILE ../../rtl/cpu/CPU_6809.vhd
 set_global_assignment -name VHDL_FILE sdram.vhd
 set_global_assignment -name VHDL_FILE sdramctrl.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/rom/MON6809.vhd
+set_global_assignment -name VHDL_FILE ../../rtl/sdram/sdram_controller.vhd
+set_global_assignment -name VHDL_FILE ../../rtl/sdram/sram_sdram_bridge.vhd
+set_global_assignment -name VHDL_FILE ../../rtl/cpu/clock_stretcher.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

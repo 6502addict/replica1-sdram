@@ -1,0 +1,16 @@
+Analysis & Synthesis Status : Successful - Sun Jan 25 19:01:37 2026
+Quartus Prime Version : 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
+Revision Name : DE10_Replica1
+Top-level Entity Name : DE10_Replica1
+Family : MAX 10
+Total logic elements : 1,541
+    Total combinational functions : 1,443
+    Dedicated logic registers : 454
+Total registers : 454
+Total pins : 185
+Total virtual pins : 0
+Total memory bits : 393,216
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 1
+UFM blocks : 0
+ADC blocks : 0

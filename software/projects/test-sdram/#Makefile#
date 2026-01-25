@@ -1,0 +1,20 @@
+include ../common.mk
+
+TARGET = test-sdram
+
+all: $(TARGET).mon
+
+$(TARGET).mon: $(TARGET).bin
+	bintomon -1 -l 0x300 -r 0x300 $(TARGET).bin >$(TARGET).mon
+
+$(TARGET).bin: $(TARGET).c 
+	CC65_HOME=/usr/local/share/cc65 cl65 -O -vm -m $(TARGET).map $(INCLUDES) -o $(TARGET).bin -t $(TARGET) $(TARGET).c $(LIBS)
+
+clean:
+	$(RM) *.lst *.map *.mon *.bin *~
+
+install: hello.mon
+	cp hello.mon  $(TESTS)
+
+.PHONY: all clean install
+

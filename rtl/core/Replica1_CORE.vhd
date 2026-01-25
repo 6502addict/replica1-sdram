@@ -13,8 +13,6 @@ entity Replica1_CORE is
 		HAS_ACI         : boolean :=  false;         -- add the aci (incomplete)
 		HAS_MSPI        : boolean :=  false;         -- add master spi  C200
 		HAS_TIMER       : boolean :=  false          -- add basic timer
---  	   HAS_BASIC       : boolean :=  false;         -- true basic installed, false only wozmon		
---		HAS_MON6809     : boolean :=  false          -- alternative enhanced 6809 monitor
   );
   port (
 		main_clk        : in     std_logic;
@@ -25,8 +23,12 @@ entity Replica1_CORE is
 		bus_address     : out    std_logic_vector(15 downto 0);
 		bus_data        : out    std_logic_vector(7  downto 0);
 		bus_rw          : out    std_logic;
+--		bus_mrdy        : in     std_logic;
+--		bus_strch       : out    std_logic;
 		ext_ram_cs_n    : out    std_logic;		
 		ext_ram_data    : in     std_logic_vector(7  downto 0);
+		ext_tram_cs_n   : out    std_logic;		 
+		ext_tram_data   : in     std_logic_vector(7  downto 0);
 		uart_rx         : in     std_logic;
 		uart_tx         : out    std_logic;
 		spi_cs          : out    std_logic;
@@ -46,14 +48,14 @@ architecture rtl of Replica1_CORE is
 component CPU_65XX is
 	port (
 		-- Clock and Reset
-		main_clk : in  std_logic;       -- Main system clock
-		reset_n  : in  std_logic;       -- Active low reset
-		phi2     : out std_logic;       -- Phase 2 clock enable
+		main_clk : in  std_logic;        -- Main system clock
+		reset_n  : in  std_logic;        -- Active low reset
+		phi2     : out std_logic;        -- Phase 2 clock enable
 		
 		-- CPU Control Interface
-		rw       : out std_logic;       -- Read/Write (1=Read, 0=Write)
-		vma      : out std_logic;       -- Valid Memory Access
-		sync     : out std_logic;       -- Instruction fetch cycle
+		rw       : out std_logic;        -- Read/Write (1=Read, 0=Write)
+		vma      : out std_logic;        -- Valid Memory Access
+		sync     : out std_logic;        -- Instruction fetch cycle
 		
 		-- Address and Data Bus
 		addr     : out std_logic_vector(15 downto 0);  -- Address bus
@@ -61,9 +63,12 @@ component CPU_65XX is
 		data_out : out std_logic_vector(7 downto 0);   -- Data output
 		
 		-- Interrupt Interface  
-		nmi_n    : in  std_logic;       -- Non-maskable interrupt (active low)
-		irq_n    : in  std_logic;       -- Interrupt request (active low)
-		so_n     : in  std_logic := '1' -- Set overflow (active low)
+		nmi_n    : in  std_logic;        -- Non-maskable interrupt (active low)
+		irq_n    : in  std_logic;        -- Interrupt request (active low)
+		so_n     : in  std_logic := '1'  -- Set overflow (active low)
+		
+--		mrdy     : in  std_logic;
+--		strch    : out std_logic
 	);
 end component;
 
@@ -274,6 +279,7 @@ end component;
 	signal pia_data	  : std_logic_vector(7 downto 0);
 	signal rom_data	  : std_logic_vector(7 downto 0);
 	signal ram_data	  : std_logic_vector(7 downto 0);
+	signal tram_data	  : std_logic_vector(7 downto 0);
 	signal mspi_data	  : std_logic_vector(7 downto 0);
 	signal aci_data	  : std_logic_vector(7 downto 0);
 	signal timer_data	  : std_logic_vector(7 downto 0);
@@ -284,6 +290,7 @@ end component;
 	signal irq_n        : std_logic := '1';
 	signal so_n         : std_logic := '1';
 	signal ram_cs_n     : std_logic;
+	signal tram_cs_n    : std_logic;
 	signal rom_cs_n     : std_logic;
 	signal aci_cs_n     : std_logic;
 	signal mspi_cs_n    : std_logic;
@@ -295,7 +302,8 @@ end component;
 	signal sync         : std_logic;
 	signal aci_in       : std_logic;
 	signal aci_out      : std_logic;
-	
+	signal mrdy         : std_logic;
+	signal strch        : std_logic;
 	
 	signal spi_sck_ext  : std_logic;
    signal spi_cs_ext   : std_logic;
@@ -315,8 +323,12 @@ begin
 	bus_data       <= data_bus;
 	bus_phi2       <= phi2;
 	bus_rw         <= rw;
+--	mrdy           <= bus_mrdy;
+--	bus_strch      <= strch;
 	ext_ram_cs_n   <= ram_cs_n;
+	ext_tram_cs_n  <= tram_cs_n;
 	ram_data       <= ext_ram_data;
+	tram_data      <= ext_tram_data;
 						
 -- Apple 1 CPU can be either CPU65XX for the 6502 or  CPU68 for the 6800
 
@@ -335,6 +347,8 @@ gen_cpu0: if CPU_TYPE = "6502" generate
 											  nmi_n           => nmi_n,
 											  irq_n           => irq_n,
 											  so_n            => so_n);
+--											  mrdy            => mrdy,
+--											  strch           => strch);
 end generate gen_cpu0;
 											  
 gen_cpu1: if CPU_TYPE = "6800" generate
@@ -489,6 +503,8 @@ end generate gen_timer;
    mspi_cs_n    <= '0' when vma = '1' and address_bus(15 downto 4)   = x"C20"            else '1';   -- IF MASTER SPI CONTROLLER
    timer_cs_n   <= '0' when vma = '1' and address_bus(15 downto 4)   = x"C21"            else '1';   -- IF TIMER
 	pia_cs_n     <= '0' when vma = '1' and address_bus(15 downto 4)   = x"D01"            else '1';   -- REPLICA CONSOLE PIA
+   tram_cs_n    <= '0' when vma = '1' and address_bus(15 downto 12)  = x"E"              else '1';   -- SDRAM TEST
+	
 	
 	data_bus <= cpu_data      when rw          = '0' else
 		         rom_data      when rom_cs_n    = '0' else 
@@ -496,6 +512,7 @@ end generate gen_timer;
 		         mspi_data     when mspi_cs_n   = '0' else 
 		         timer_data    when timer_cs_n  = '0' else 
 		         ram_data      when ram_cs_n    = '0' else 
+		         tram_data     when tram_cs_n   = '0' else 
 					pia_data      when pia_cs_n    = '0' else
 		         address_bus(15 downto 8);                 
 					

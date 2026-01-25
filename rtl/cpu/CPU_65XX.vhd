@@ -15,24 +15,28 @@ use ieee.numeric_std.all;
 entity CPU_65XX is
 	port (
 		-- Clock and Reset
-		main_clk : in  std_logic;       -- Main system clock
-		reset_n  : in  std_logic;       -- Active low reset
-		phi2     : out std_logic;       -- Phase 2 clock enable
+		main_clk : in  std_logic;        -- Main system clock
+		reset_n  : in  std_logic;        -- Active low reset
+		phi2     : out std_logic;        -- Phase 2 clock enable
 		
 		-- CPU Control Interface
-		rw       : out std_logic;       -- Read/Write (1=Read, 0=Write)
-		vma      : out std_logic;       -- Valid Memory Access
-		sync     : out std_logic;       -- Instruction fetch cycle
+		rw       : out std_logic;        -- Read/Write (1=Read, 0=Write)
+		vma      : out std_logic;        -- Valid Memory Access
+		sync     : out std_logic;        -- Instruction fetch cycle
 		
 		-- Address and Data Bus
 		addr     : out std_logic_vector(15 downto 0);  -- Address bus
 		data_in  : in  std_logic_vector(7 downto 0);   -- Data input
 		data_out : out std_logic_vector(7 downto 0);   -- Data output
 		
-		-- Interrupt Interface  
-		nmi_n    : in  std_logic;       -- Non-maskable interrupt (active low)
-		irq_n    : in  std_logic;       -- Interrupt request (active low)
-		so_n     : in  std_logic := '1' -- Set overflow (active low)
+		-- Interrupt Interface   
+		nmi_n    : in  std_logic;        -- Non-maskable interrupt (active low)
+		irq_n    : in  std_logic;        -- Interrupt request (active low)
+		so_n     : in  std_logic := '1'  -- Set overflow (active low)
+		
+		-- wait states
+--		mrdy     : in  std_logic;
+--		strch    : out std_logic
 	);
 end CPU_65XX;
 
@@ -45,6 +49,19 @@ architecture CPU65XX_impl of CPU_65XX is
 			  clk_in   : in  std_logic;
 			  clk_out  : out std_logic
 		 );
+	end component;
+
+	component clock_stretcher is
+    generic (
+        DIVIDER : integer := 4  -- Clock divider (4 = input/4)
+    );
+    port (
+        clk_in         : in  std_logic;  -- Fast input clock (e.g., 8MHz)
+        reset_n        : in  std_logic;  -- Active high reset
+        mrdy           : in  std_logic;  -- Memory ready (1=ready, 0=stretch)
+		  stretch_active : out std_logic;
+        clk_out        : out std_logic   -- Stretched output clock (e.g., 2MHz)
+    );
 	end component;
 
 
@@ -95,10 +112,19 @@ begin
 	data_bus <= data_in;
 	phi2     <= phi2_internal;
 	
-	clk:  clock_divider generic map(divider         => 2)  
-								  port map(reset           => '1',
-									  	     clk_in          => main_clk,
-											  clk_out         => phi2_internal);
+--	clk:  clock_divider generic map(divider         => 2)  
+--								  port map(reset           => '1',
+--									  	     clk_in          => main_clk,
+--											  clk_out         => phi2_internal);
+
+
+
+   clk: clock_stretcher  generic map(DIVIDER        => 2)                -- Clock divider (4 = input/4)
+									 port map(clk_in         => main_clk,         -- Fast input clock (e.g., 8MHz)
+												 reset_n        => '1', --not reset_n,      -- Active high reset
+												 mrdy           => '1',             -- Memory ready (1=ready, 0=stretch)
+						                   stretch_active => open,
+							                clk_out        => phi2_internal);   -- Stretched output clock (e.g., 2MHz)
 
 	-- CPU65XX Instantiation
 	cpu65xx_inst: cpu65xx 
@@ -131,7 +157,7 @@ begin
 	address_bus   <= std_logic_vector(cpu65xx_addr);
 	rw_internal   <= not cpu65xx_we;              -- Convert WE to RW
 	sync_internal <= '0';                         -- CPU65XX doesn't have sync
-	vma_internal  <= '1'; --phi2_internal;               -- on a 6502 the addresses are valid when phi2 is high
+	vma_internal  <= '1';                         -- on a 6502 the addresses are valid when phi2 is high
 
 	-- Output assignments
 	addr     <= address_bus;

@@ -74,6 +74,7 @@ component main_clock is
 		inclk0		: in  std_logic  := '0';
 		c0	  	      : out std_logic;
 		c1	  	      : out std_logic;
+		c2	  	      : out std_logic;
 		locked		: out std_logic 
 	);
 end component;
@@ -84,6 +85,19 @@ component clock_divider is
         reset    : in  std_logic := '1';
         clk_in   : in  std_logic;
         clk_out  : out std_logic
+    );
+end component;
+
+component clock_stretcher is
+    generic (
+        DIVIDER : integer := 4  -- Clock divider (4 = input/4)
+    );
+    port (
+        clk_in         : in  std_logic;  -- Fast input clock (e.g., 8MHz)
+        reset_n        : in  std_logic;  -- Active high reset
+        mrdy           : in  std_logic;  -- Memory ready (1=ready, 0=stretch)
+		  stretch_active : out std_logic;
+        clk_out        : out std_logic   -- Stretched output clock (e.g., 2MHz)
     );
 end component;
 
@@ -134,8 +148,12 @@ component Replica1_CORE is
 		bus_address    : out    std_logic_vector(15 downto 0);
 		bus_data       : out    std_logic_vector(7  downto 0);
 		bus_rw         : out    std_logic;
+--		bus_mrdy       : in     std_logic;
+--		bus_strch      : out    std_logic;
 		ext_ram_cs_n   : out    std_logic;		
 		ext_ram_data   : in     std_logic_vector(7  downto 0);
+		ext_tram_cs_n  : out    std_logic;		 
+		ext_tram_data  : in     std_logic_vector(7  downto 0);
 		uart_rx        : in     std_logic;
 		uart_tx        : out    std_logic;
 		spi_cs         : out    std_logic;
@@ -175,24 +193,98 @@ component simple_clock_switch is
     );
 end component;
 
+component sdram_controller is
+    generic (
+	     FREQ_MHZ : integer := 100; -- Clock frequency in MHz
+        ROW_BITS : integer := 13;  -- 13 for DE10-Lite, 12 for DE1
+        COL_BITS : integer := 10   -- 10 for DE10-Lite, 8 for DE1
+    );
+    port(
+        clk         : in    std_logic;  -- 20MHz
+        reset       : in    std_logic;  -- Active high
+        
+        -- Simple CPU interface
+        req         : in    std_logic;
+        wr          : in    std_logic;  -- 1=write, 0=read
+		  addr        : in    std_logic_vector(ROW_BITS+COL_BITS+1 downto 0); 
+        din         : in    std_logic_vector(15 downto 0);
+        dout        : out   std_logic_vector(15 downto 0);
+        byte_en     : in    std_logic_vector(1 downto 0);  -- Active low (not used yet, always "00")
+        ready       : out   std_logic;
+        ack         : out   std_logic;
+        
+        -- Debug outputs for logic analyzer
+        debug_state    : out   std_logic_vector(3 downto 0);  -- Current FSM state
+        debug_cmd      : out   std_logic_vector(3 downto 0);  -- Current SDRAM command
+--      debug_seq      : out   std_logic_vector(15 downto 0);  -- Sequence counter (lower 8 bits)
+        refresh_active : out   std_logic;  -- High during refresh
+        
+        -- SDRAM pins
+        sdram_clk   : out   std_logic;
+        sdram_cke   : out   std_logic;
+        sdram_cs_n  : out   std_logic;
+        sdram_ras_n : out   std_logic;
+        sdram_cas_n : out   std_logic;
+        sdram_we_n  : out   std_logic;
+        sdram_ba    : out   std_logic_vector(1 downto 0);
+        sdram_addr  : out   std_logic_vector(12 downto 0);
+        sdram_dq    : inout std_logic_vector(15 downto 0);
+        sdram_dqm   : out   std_logic_vector(1 downto 0)
+    );
+end component;
+
+component sram_sdram_bridge is
+    generic (
+        ADDR_BITS : integer := 24
+    );
+    port (
+        clk      : in    std_logic;
+        reset    : in    std_logic;
+        
+        -- SRAM-like interface (CPU side)
+        sram_ce_n   : in    std_logic;  -- Chip enable (active low)
+        sram_we_n   : in    std_logic;  -- Write enable (active low)
+        sram_oe_n   : in    std_logic;  -- Output enable (active low)
+        sram_addr   : in    std_logic_vector(ADDR_BITS-1 downto 0);
+        sram_din    : in    std_logic_vector(7 downto 0);
+        sram_dout   : out   std_logic_vector(7 downto 0);
+        
+        -- Memory ready output (for clock stretching)
+        mrdy        : out   std_logic;  -- HIGH=ready, LOW=stretch clock
+        
+        -- SDRAM controller interface
+        sdram_req   : out   std_logic;
+        sdram_wr    : out   std_logic;
+        sdram_addr  : out   std_logic_vector(ADDR_BITS downto 0);  -- +1 for byte select
+        sdram_din   : out   std_logic_vector(15 downto 0);
+        sdram_dout  : in    std_logic_vector(15 downto 0);
+        sdram_byte_en : out std_logic_vector(1 downto 0);
+        sdram_ready : in    std_logic;
+        sdram_ack   : in    std_logic
+    );
+end component;
+
+
 --------------------------------------------------------------------------
 -- Board Configuration Parameters 
 --------------------------------------------------------------------------
 constant BOARD          : string   := "DE10_Lite";
-constant CPU_TYPE       : string   := "6809";
+constant CPU_TYPE       : string   := "6502";
 constant CPU_SPEED      : string   := "1mhz";
-constant ROM            : string   := "MON6809";
+constant ROM            : string   := "WOZMON65";
 constant RAM_SIZE_KB    : positive := 48;        -- DE10-Lite supports up to 48KB
 constant BAUD_RATE      : integer  := 115200;
 constant HAS_ACI        : boolean  := false;
-constant HAS_MSPI       : boolean  := true;
-constant HAS_TIMER      : boolean  := true;
+constant HAS_MSPI       : boolean  := false;
+constant HAS_TIMER      : boolean  := false;
 
 signal  address_bus    : std_logic_vector(15 downto 0);
 signal  data_bus       : std_logic_vector(7 downto 0);
 signal  sw_prev        : std_logic_vector(2 downto 0);
 signal  ram_data       : std_logic_vector(7 downto 0);
+signal  tram_data      : std_logic_vector(7 downto 0);
 signal  ram_cs_n       : std_logic;
+signal  tram_cs_n      : std_logic;
 signal  reset_n        : std_logic;
 signal  cpu_reset_n    : std_logic;
 signal  main_clk       : std_logic;
@@ -205,6 +297,7 @@ signal  clock_5mhz     : std_logic;
 signal  clock_10mhz    : std_logic;
 signal  clock_15mhz    : std_logic;
 signal  clock_30mhz    : std_logic;
+signal  clock_100mhz   : std_logic;
 signal  serial_clk     : std_logic;
 signal  main_locked    : std_logic;
 signal  phi2           : std_logic;
@@ -215,6 +308,29 @@ signal  spi_cs         : std_logic;
 signal  spi_sck        : std_logic;
 signal  spi_mosi       : std_logic;
 signal  spi_miso       : std_logic;
+
+-- SDRAM Controller Interface (bridge side)
+signal sdram_req       : std_logic;
+signal sdram_wr        : std_logic;
+signal sdram_addr      : std_logic_vector(12 downto 0);
+signal sdram_din       : std_logic_vector(15 downto 0);
+signal sdram_dout      : std_logic_vector(15 downto 0);
+signal sdram_byte_en   : std_logic_vector(1 downto 0);
+signal sdram_ready     : std_logic;
+signal sdram_ack       : std_logic;
+signal refresh_busy    : std_logic;
+
+signal mrdy            : std_logic;
+signal strch           : std_logic;
+	
+	
+-- remove after use
+signal strch_flag      : std_logic;
+signal phi2_old        : std_logic;
+signal phi2_new        : std_logic;
+signal pulse_trigger : std_logic;
+signal pulse_count : integer range 0 to 10 := 0;
+signal mrdy_test : std_logic;
 	
 begin
 	-- on the DE10 Lite the 7 seg display show the current address and data 
@@ -239,6 +355,7 @@ begin
 		                                      inclk0		     => MAX10_CLK1_50,
 		                                      c0	  	        => clock_30mhz,
 		                                      c1	  	        => open,
+														  c2             => clock_100mhz,
 		                                      locked	  	     => main_locked);
 														  
 
@@ -263,8 +380,8 @@ begin
 	 									  	       port map(reset          => '1',
 																 clk_in         => MAX10_CLK1_50,
 														       clk_out        => clock_2mhz);
-															
-	clk5mhz: clock_divider             generic map(divider       => 50_000_000/10_000_000)
+
+   clk5mhz: clock_divider             generic map(divider       => 50_000_000/10_000_000)
 													  port map(reset         => '1',
 													           clk_in        => MAX10_CLK1_50,
 														        clk_out       => clock_5mhz);
@@ -324,8 +441,12 @@ begin
 														      bus_address    =>  address_bus,
 														      bus_data       =>  data_bus,
 														      bus_rw         =>  rw,
+--																bus_mrdy       =>  mrdy,
+--																bus_strch      =>  strch,
 																ext_ram_cs_n   =>  ram_cs_n,
 																ext_ram_data   =>  ram_data,
+																ext_tram_cs_n  =>  tram_cs_n,
+																ext_tram_data  =>  tram_data,
 														      uart_rx        =>  ARDUINO_IO(0),
 														      uart_tx        =>  ARDUINO_IO(1),
 														      spi_cs         =>  ARDUINO_IO(4),   -- SD Card Data 3          CS
@@ -337,7 +458,7 @@ begin
 
 
 --de10_gen_ram: if BOARD = "DE10_Lite" generate
-	ram: RAM_DE10                    generic map(RAM_SIZE_KB   => RAM_SIZE_KB)
+	ram: RAM_DE10                    generic map(RAM_SIZE_KB     => RAM_SIZE_KB)
 								               port map(clock           => phi2,
 					   	                           cs_n            => ram_cs_n,
 											               we_n            => rw,
@@ -346,18 +467,123 @@ begin
 							                           data_out        => ram_data);
 --end generate de10_gen_ram;																
 
+    -- SRAM to SDRAM Bridge
+    bridge_inst : sram_sdram_bridge  generic map(ADDR_BITS     => 12)
+													 port map(clk           => clock_100mhz,
+																 reset         => not reset_n,
+																 -- SRAM interface (test side)
+																 sram_ce_n     => tram_cs_n,
+															  	 sram_we_n     => rw,
+															 	 sram_oe_n     => not rw,
+																 sram_addr     => address_bus(11 downto 0),
+																 sram_din      => data_bus,
+																 sram_dout     => tram_data,
+            
+																 -- Memory ready
+																 mrdy          => mrdy,
+            
+																 -- SDRAM controller interface
+															 	 sdram_req     => sdram_req,
+																 sdram_wr      => sdram_wr,
+																 sdram_addr    => sdram_addr,
+																 sdram_din     => sdram_din,
+																 sdram_dout    => sdram_dout,
+																 sdram_byte_en => sdram_byte_en,
+																 sdram_ready   => sdram_ready,
+																 sdram_ack     => sdram_ack);
+
+    -- SDRAM Controller Instance
+    sdram_inst : sdram_controller  generic map (FREQ_MHZ       => 100,
+																ROW_BITS       => 13, 
+																COL_BITS       => 10)
+												  port map (clk            => clock_100mhz,
+																reset          => not reset_n,
+																req            => sdram_req,
+																wr             => sdram_wr,
+																addr           => (24 downto 13 => '0') & sdram_addr,
+																din            => sdram_din,
+																dout           => sdram_dout,
+																byte_en        => sdram_byte_en,
+																ready          => sdram_ready,
+																ack            => sdram_ack,
+																debug_state    => GPIO(15 downto 12),
+																debug_cmd      => GPIO(11 downto 8),
+												--				debug_seq      => display(15 downto 0),
+																refresh_active => refresh_busy,
+																sdram_clk      => DRAM_CLK,
+																sdram_cke      => DRAM_CKE,
+																sdram_cs_n     => DRAM_CS_N,
+																sdram_ras_n    => DRAM_RAS_N,
+																sdram_cas_n    => DRAM_CAS_N,
+																sdram_we_n     => DRAM_WE_N,
+																sdram_ba       => DRAM_BA,
+																sdram_addr     => DRAM_ADDR,
+																sdram_dq       => DRAM_DQ,
+																sdram_dqm(1)   => DRAM_UDQM,
+																sdram_dqm(0)   => DRAM_LDQM);
 																
-	DRAM_ADDR      <= (others => 'Z');
-	DRAM_BA        <= (others => 'Z');
-	DRAM_CAS_N     <= 'Z';  
-	DRAM_CKE       <= 'Z';  
-	DRAM_CLK       <= 'Z';  
-	DRAM_CS_N      <= 'Z';  
-	DRAM_DQ        <= (others => 'Z');  
-	DRAM_LDQM      <= 'Z';  
-	DRAM_RAS_N     <= 'Z';  
-	DRAM_UDQM      <= 'Z';  
-	DRAM_WE_N      <= 'Z';  
+																
+	clk1:  clock_divider generic map(divider         => 2)  
+								  port map(reset           => '1',
+									  	     clk_in          => main_clk,
+											  clk_out         => phi2_old);
+
+   clk2: clock_stretcher  generic map(DIVIDER        => 2)            
+									 port map(clk_in         => main_clk,      
+												 reset_n        => '1', 
+												 mrdy           => mrdy_test,      
+						                   stretch_active => strch_flag,
+							                clk_out        => phi2_new); 
+												 
+												 
+process(main_clk)
+begin
+    if rising_edge(main_clk) then
+        pulse_trigger <= KEY(1);
+        
+        if pulse_trigger = '1' and KEY(1) = '0' then  -- Falling edge
+            pulse_count <= 5;  -- Start 5-cycle pulse
+        elsif pulse_count > 0 then
+            pulse_count <= pulse_count - 1;
+        end if;
+    end if;
+end process;	
+
+mrdy_test <= '0' when pulse_count > 0 else '1';										 
+												 
+GPIO(0) <= reset_n;
+GPIO(1) <= main_clk;
+GPIO(2) <= mrdy_test;
+GPIO(3) <= strch_flag;
+GPIO(4) <= phi2_old;
+GPIO(5) <= phi2_new;
+
+												 
+		  
+   -- GPIO debug signals
+--	GPIO(0) <= not reset_n;
+--	GPIO(1) <= mrdy;        
+--	GPIO(2) <= sdram_ready;     
+--	GPIO(3) <= sdram_req;
+--   GPIO(4) <= sdram_ack;       -- Controller ack	
+--   -- SDRAM controller handshake
+--	GPIO(5) <= sdram_wr;        -- Write direction
+-- 	GPIO(6) <= refresh_busy;    -- Refresh cycle indicator	 
+--	-- Test FSM state indicators
+--   GPIO(16) <= clock_100mhz;
+--	 
+	 
+--	DRAM_ADDR      <= (others => 'Z');
+--	DRAM_BA        <= (others => 'Z');
+--	DRAM_CAS_N     <= 'Z';  
+--	DRAM_CKE       <= 'Z';  
+--	DRAM_CLK       <= 'Z';  
+--	DRAM_CS_N      <= 'Z';  
+--	DRAM_DQ        <= (others => 'Z');  
+--	DRAM_LDQM      <= 'Z';  
+--	DRAM_RAS_N     <= 'Z';  
+--	DRAM_UDQM      <= 'Z';  
+--	DRAM_WE_N      <= 'Z';  
 	
 	VGA_B		   	<= (others => 'Z');
 	VGA_G	   		<= (others => 'Z'); 
