@@ -4,114 +4,125 @@ use IEEE.numeric_std.all;
 
 entity sram_sdram_bridge is
     generic (
-        ADDR_BITS : integer := 24
+        ADDR_BITS : integer := 24;
+        SDRAM_MHZ : integer := 100
     );
     port (
-        clk      : in    std_logic;
-        reset    : in    std_logic;
+        sdram_clk    : in   std_logic;
+        E            : in   std_logic;
+        reset_n      : in   std_logic;
         
         -- SRAM-like interface (CPU side)
-        sram_ce_n   : in    std_logic;  -- Chip enable (active low)
-        sram_we_n   : in    std_logic;  -- Write enable (active low)
-        sram_oe_n   : in    std_logic;  -- Output enable (active low)
-        sram_addr   : in    std_logic_vector(ADDR_BITS-1 downto 0);
-        sram_din    : in    std_logic_vector(7 downto 0);
-        sram_dout   : out   std_logic_vector(7 downto 0);
+        sram_ce_n     : in  std_logic;
+        sram_we_n     : in  std_logic;
+        sram_oe_n     : in  std_logic;
+        sram_addr     : in  std_logic_vector(ADDR_BITS-1 downto 0);
+        sram_din      : in  std_logic_vector(7 downto 0);
+        sram_dout     : out std_logic_vector(7 downto 0);
         
         -- Memory ready output (for clock stretching)
-        mrdy        : out   std_logic;  -- HIGH=ready, LOW=stretch clock
+        mrdy          : out std_logic;
         
         -- SDRAM controller interface
-        sdram_req   : out   std_logic;
-        sdram_wr    : out   std_logic;
-        sdram_addr  : out   std_logic_vector(ADDR_BITS downto 0);  -- +1 for byte select
-        sdram_din   : out   std_logic_vector(15 downto 0);
-        sdram_dout  : in    std_logic_vector(15 downto 0);
+        sdram_req     : out std_logic;
+        sdram_wr_n    : out std_logic;
+        sdram_addr    : out std_logic_vector(ADDR_BITS-2 downto 0);
+        sdram_din     : out std_logic_vector(15 downto 0);
+        sdram_dout    : in  std_logic_vector(15 downto 0);
         sdram_byte_en : out std_logic_vector(1 downto 0);
-        sdram_ready : in    std_logic;
-        sdram_ack   : in    std_logic
+        sdram_ready   : in  std_logic;
+        sdram_ack     : in  std_logic;
+        debug         : out std_logic_vector(2 downto 0)
     );
 end sram_sdram_bridge;
 
 architecture rtl of sram_sdram_bridge is
-
-    type state_type is (IDLE, WAIT_ACK);
-    signal state : state_type := IDLE;
-    
-    signal access_active : std_logic;
-    signal is_write : std_logic;
-    signal latched_addr : std_logic_vector(ADDR_BITS-1 downto 0);
-    signal latched_data : std_logic_vector(7 downto 0);
-    
+    type state_type is (IDLE, WAIT_SDRAM_ACK);
+    signal state             : state_type := IDLE;
+    signal E_prev            : std_logic;
+    signal sdram_ack_prev    : std_logic;
+	signal session_active    : std_logic := '0';
+	signal E_meta, E_sync    : std_logic;
+	signal E_sync_prev       : std_logic;
+	
 begin
 
-    -- Detect SRAM access
-    access_active <= not sram_ce_n;  -- Active when CE asserted
-    is_write <= not sram_we_n;
-    
-    -- SDRAM address is byte address (SRAM addr directly)
-    -- For 16-bit SDRAM: bit 0 selects byte, upper bits are word address
-    sdram_addr <= sram_addr & '0' when state = IDLE else
-                  latched_addr & '0';
-    
-    -- Byte enable based on address bit 0
-    -- Since we're doing 8-bit access, always access one byte
-    sdram_byte_en <= "01" when latched_addr(0) = '0' else "10"; 
+	debug <= "000" when state = IDLE           and session_active = '0' else -- IDLE NO SESSION ACTIVE 
+	         "001" when state = IDLE           and session_active = '0' else -- SDRAM NOT YET READY 
+             "010" when state = WAIT_SDRAM_ACK and sram_we_n = '1'      else -- READING 
+             "011" when state = WAIT_SDRAM_ACK and sram_we_n = '0'      else -- WRITING 
+             "111";
 
-    -- Write data - replicate byte to both positions
-    sdram_din <= sram_din & sram_din when state = IDLE else
-                 latched_data & latched_data;
-    
-    -- Read data - select correct byte based on address
-    sram_dout <= sdram_dout(7 downto 0) when latched_addr(0) = '0' else
-                 sdram_dout(15 downto 8);
-					  
-	process(clk)
-		begin
-			 if rising_edge(clk) then
-				  if reset = '1' then
-						state <= IDLE;
-						sdram_req <= '0';
-						sdram_wr <= '0';
-						mrdy <= '1';  -- Ready at reset
-						latched_addr <= (others => '0');
-						latched_data <= (others => '0');
+    process(sdram_clk)
+        begin
+        if rising_edge(sdram_clk) then
+            -- Two-stage synchronizer
+            E_meta <= E;           -- First FF (captures metastability)
+            E_sync <= E_meta;      -- Second FF (clean output)
+            E_sync_prev <= E_sync; -- Edge detection on synchronized signal
+		
+			sdram_ack_prev <= sdram_ack;
+			
+            if reset_n = '0' then
+                state          <= IDLE;
+                mrdy           <= '1';
+                sdram_req      <= '0';
+                sdram_wr_n     <= '0';
+				session_active <= '0';
+            else
+                case state is
+                    when IDLE =>
+                        mrdy <= '1';
+                        sdram_req <= '0';
+                        -- trigger on E rising while cs is low
+						if (session_active = '1') or (sram_ce_n = '0' and E_sync = '1' and E_sync_prev = '0') then
+                            -- we have detect the rising edge of E combined with CS low
+							session_active <= '1';
+							-- we immediately block the cpu cycle
+							mrdy <= '0';
+						    -- no we wait until the sdram is ready with the cpu cycle blocked by mrdy
+							if sdram_ready = '1' then 
+                                sdram_addr  <= sram_addr(ADDR_BITS - 1 downto 1);
+								--sdram_addr  <= std_logic_vector(unsigned(sram_addr(ADDR_BITS - 1 downto 1)) - 1);
+								if sram_addr(0) = '0' then
+									sdram_byte_en <= "01";
+								else
+									sdram_byte_en <= "10";
+								end if;
+								if sram_we_n = '1' then
+									sdram_wr_n  <= '1';
+								else
+									sdram_wr_n  <= '0';
+									-- loopback  <= sram_din; for debug
+									sdram_din <= sram_din & sram_din;
+								end if;
+								sdram_req   <= '1';
+								state <= WAIT_SDRAM_ACK;
+							end if;
+						end if;	
 						
-				  else
-						case state is
-							 when IDLE =>
-								  sdram_req <= '0';
-								  mrdy <= '1';  -- Ready when idle
-								  
-								  -- Start access when CE asserted and SDRAM ready
-								  if access_active = '1' and sdram_ready = '1' then
-										-- Latch signals
-										latched_addr <= sram_addr;
-										latched_data <= sram_din;
-										
-										-- Issue request to SDRAM
-										sdram_req <= '1';
-										sdram_wr <= is_write;
-										mrdy <= '0';  -- NOT READY - stretch clock!
-										
-										state <= WAIT_ACK;
-								  end if;
-							 
-							 when WAIT_ACK =>
-								  mrdy <= '0';  -- Keep clock stretched
-								  
-								  -- Wait for SDRAM to acknowledge
-								  if sdram_ack = '1' then
-										sdram_req <= '0';
-										mrdy <= '1';  -- Ready again
-										state <= IDLE;
-								  end if;
-								  
-						end case;
-				  end if;
-			 end if;
-		end process;		  
+					when WAIT_SDRAM_ACK =>
+						if sdram_ack = '1' and sdram_ack_prev = '0' then
+							sdram_req <= '0';
+							sdram_wr_n  <= '1';
+							if sram_we_n = '1' then
+								-- sram_dout <= loopback; for debug
+								-- neet to get the data from sdram								
+								if sram_addr(0) = '0' then
+									sram_dout <= sdram_dout(7 downto 0);
+								else
+									sram_dout <= sdram_dout(15 downto 8);
+								end if;
+							end if;
+							session_active <= '0';
+							mrdy <= '1';
+							state <= IDLE;
+						end if;
 
-
+            end case;
+			end if;
+		end if;
+	end process;
 
 end rtl;
+

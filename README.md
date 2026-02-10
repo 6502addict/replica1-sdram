@@ -1,34 +1,40 @@
-# Replica1-SDRAM - Apple 1 Clone in VHDL using SDRAM
+# Replica1-SDRAM: Apple 1 Clone in VHDL
 
-This is an experimental project to test:
-- A SDRAM controller
-- A SRAM to SDRAM bridge
-- A clock stretcher to permit wait states on the 6502 core
-- The maximum speed that can be reached with the CPU core
+This experimental project is designed to test the implementation of an SDRAM controller and its integration with classic CPU cores.
+
+## Core Objectives
+
+- **SDRAM Controller**: Developing and refining a custom controller.
+- **SRAM to SDRAM Bridge**: Implementing a bridge for seamless memory access.
+- **Clock Stretcher**: Permitting wait states on the 6502 core.
+- **Performance Benchmarking**: Testing the maximum stable clock speed of the CPU core.
 
 ## Architecture
 
-The first version of the SDRAM controller is very simple and will be enhanced over time to improve performance.
+The initial SDRAM controller is intentionally simple, with planned iterative improvements for performance. CPU cores (6502, 6800, 6809) utilize an added RDY/MRDY signal managed via a clock stretcher.
 
-The cores (6502/6800/6809) will have a RDY/MRDY signal added via a clock stretcher.
+## Development Roadmap
 
-## Development Steps
+**Phase 1**: Maintain the majority of the Replica1 in EBR, implementing a specific SDRAM window at $E000-$EFFF for memory testing.
 
-**Step 1:** Keep most of Replica1 in EBR and add a SDRAM window at $E000-$EFFF for memory testing
-
-**Step 2:** Once Step 1 is successful, implement all RAM in SDRAM, keeping only ROM blocks in EBR
+**Phase 2**: Transition all RAM to SDRAM, utilizing EBR exclusively for ROM blocks.
 
 ## Performance Goals
 
-Expected maximum CPU speed: 10-14 MHz
-- Potentially higher if SDRAM clock can be pushed above 100 MHz (120-133 MHz)
+- **Target CPU Speed**: 10-14 MHz.
+- **Potential Upside**: Higher speeds may be achieved if the SDRAM clock is pushed beyond 100 MHz (aiming for 120-133 MHz).
 
-2026/01/24:   replica 1 sdram configured with wozmon / 48k ram ebr / standard console 115200bauds and nothing else... works !
-				  the sdram window is implemented  between $E000 and $EFFF	a test-ram program test this ram area in an infinite loop
-				  works at cpu speed 1, 2, 5 Mhz
-				  once the sdram clock is pushed to 120Mhz it also pass at 10Mhz
-				  now I'm trying to push the limit of the sdram clock strange behavior above 120 Mhz 
-				  apparently the sdram need a power down to recover, I have to check the rest)
-2026/01/25:   clock stretcher added,  
-              fixed a strange bug with sdram connections
-				  replaced sdram connection by registered connection
+## Development Log
+
+| Date | Milestone / Update |
+|------|-------------------|
+| 2026/01/24 | Initial Success: Configured with Wozmon and 48k EBR RAM. SDRAM window ($E000-$EFFF) passed infinite loop tests at 1, 2, and 5 MHz. At 10 MHz, it requires a 120 MHz SDRAM clock. |
+| 2026/01/25 | Stability Issues: Added clock stretcher and fixed connection bugs. Memory tests show inconsistent pass/fail results at different speeds. |
+| 2026/02/01 | Bus Analysis: Created a bus tester config. Discovered that phi1 and phi2 were inverted due to lack of documentation on the CPU core. |
+| 2026/02/02 | Clock Generation: Replaced the old clock stretcher with cpu_clock_gen for standardized clocking and mrdy handling across all CPUs. |
+| 2026/02/03 | CPU Expansion: Added T65, MX65, and R65C02 cores. Updated all CPU wrappers to use the new clock generator to abstract core differences. |
+| 2026/02/04 | Bridge Testing: Created a "fake" SDRAM controller using EBR to isolate bugs. Confirmed the SRAM-to-SDRAM bridge works correctly. |
+| 2026/02/05 | SDRAM Controller: Initialization, refresh, and read functions are working. Identified a bug where writes occur at addr + 1. |
+| 2026/02/07 | Refactoring: Completed a total rewrite of the SDRAM controller using a two-signal state machine (current_state and next_state). |
+| 2026/02/09 | Architecture Split: Split treatment into two processes (one clocked, one combinatorial). Still troubleshooting the addr + 1 write bug. |
+| 2026/02/10 | Breakthrough: Fixed the write address bug. Successfully passed 10 million R/W cycles at 10 MHz CPU speed and 75 MHz SDRAM speed. |

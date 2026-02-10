@@ -1,14 +1,14 @@
-Fitter Status : Successful - Sun Jan 25 19:01:47 2026
+Fitter Status : Successful - Tue Feb 10 10:11:24 2026
 Quartus Prime Version : 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
 Revision Name : DE10_Replica1
 Top-level Entity Name : DE10_Replica1
 Family : MAX 10
 Device : 10M50DAF484C6GES
 Timing Models : Preliminary
-Total logic elements : 1,500 / 49,760 ( 3 % )
-    Total combinational functions : 1,445 / 49,760 ( 3 % )
-    Dedicated logic registers : 454 / 49,760 ( < 1 % )
-Total registers : 454
+Total logic elements : 1,339 / 49,760 ( 3 % )
+    Total combinational functions : 1,256 / 49,760 ( 3 % )
+    Dedicated logic registers : 416 / 49,760 ( < 1 % )
+Total registers : 416
 Total pins : 185 / 360 ( 51 % )
 Total virtual pins : 0
 Total memory bits : 393,216 / 1,677,312 ( 23 % )

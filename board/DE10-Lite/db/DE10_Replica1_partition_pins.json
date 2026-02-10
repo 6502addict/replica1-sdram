@@ -52,6 +52,10 @@
 					"strict" : false
 				},
 				{
+					"name" : "DRAM_CKE",
+					"strict" : false
+				},
+				{
 					"name" : "DRAM_LDQM",
 					"strict" : false
 				},
@@ -332,15 +336,23 @@
 					"strict" : false
 				},
 				{
+					"name" : "GPIO[6]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[7]",
+					"strict" : false
+				},
+				{
 					"name" : "GPIO[8]",
 					"strict" : false
 				},
 				{
-					"name" : "GPIO[9]",
+					"name" : "GPIO[10]",
 					"strict" : false
 				},
 				{
-					"name" : "GPIO[10]",
+					"name" : "GPIO[11]",
 					"strict" : false
 				},
 				{
@@ -353,6 +365,10 @@
 				},
 				{
 					"name" : "GPIO[14]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[15]",
 					"strict" : false
 				},
 				{
@@ -369,10 +385,6 @@
 				},
 				{
 					"name" : "SW[0]",
-					"strict" : false
-				},
-				{
-					"name" : "KEY[1]",
 					"strict" : false
 				},
 				{

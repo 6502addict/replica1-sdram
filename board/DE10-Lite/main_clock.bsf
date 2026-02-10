@@ -71,7 +71,7 @@ on the Quartus Prime software download page.
 		(text "Ph (dg)" (rect 106 89 240 187)(font "Arial" ))
 		(text "DC (%)" (rect 140 89 309 187)(font "Arial" ))
 		(text "c0" (rect 62 101 132 211)(font "Arial" ))
-		(text "6/5" (rect 85 101 181 211)(font "Arial" ))
+		(text "12/5" (rect 82 101 179 211)(font "Arial" ))
 		(text "0.00" (rect 112 101 240 211)(font "Arial" ))
 		(text "50.00" (rect 144 101 309 211)(font "Arial" ))
 		(text "c1" (rect 62 113 131 235)(font "Arial" ))

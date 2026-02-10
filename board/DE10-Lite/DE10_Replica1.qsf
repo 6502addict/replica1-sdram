@@ -432,6 +432,16 @@ set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_symbol
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_signal_integrity
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_boundary_scan
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/mx65.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_Pack.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_MCode.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_ALU.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65.vhd"
+set_global_assignment -name QIP_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65.qip"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/CPU_T65.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/cpu65xx.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/CPU_65XX.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/CPU_MX65.vhd"
 set_global_assignment -name VHDL_FILE hexto7seg.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/cpu/cpu68.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/cpu/cpu65xx.vhd
@@ -439,7 +449,6 @@ set_global_assignment -name VHDL_FILE ../../rtl/peripherals/pia/pia_uart.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/peripherals/aci/aci.vhd
 set_global_assignment -name QIP_FILE ram_8k.qip
 set_global_assignment -name VHDL_FILE ../../rtl/cpu/CPU_6800.vhd
-set_global_assignment -name VHDL_FILE ../../rtl/cpu/CPU_65XX.vhd
 set_global_assignment -name VHDL_FILE RAM_DE10.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/rom/WOZMON68.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/rom/WOZMON65.vhd
@@ -451,7 +460,6 @@ set_global_assignment -name VHDL_FILE ../../rtl/utils/clock_divider.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/utils/prog_clock_divider.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/utils/nor_gate.vhd
 set_global_assignment -name VHDL_FILE "../../rtl/utils/spi-master.vhd"
-set_global_assignment -name VHDL_FILE ../../rtl/utils/nand3_gate.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/utils/debug_clock_button.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/utils/simple_clock_switch.vhd
 set_global_assignment -name VHDL_FILE "../../rtl/peripherals/mspi/mspi-iface.vhd"
@@ -464,10 +472,14 @@ set_global_assignment -name SDC_FILE DE10_Replica1.sdc
 set_global_assignment -name VHDL_FILE ../../rtl/rom/WOZMON69.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/cpu/cpu09.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/cpu/CPU_6809.vhd
-set_global_assignment -name VHDL_FILE sdram.vhd
-set_global_assignment -name VHDL_FILE sdramctrl.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/rom/MON6809.vhd
-set_global_assignment -name VHDL_FILE ../../rtl/sdram/sdram_controller.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/sdram/sram_sdram_bridge.vhd
-set_global_assignment -name VHDL_FILE ../../rtl/cpu/clock_stretcher.vhd
+set_global_assignment -name VHDL_FILE ../../rtl/utils/clock6809e.vhd
+set_global_assignment -name VHDL_FILE "//wsl.localhost/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/sdram/sram_sdram_bridge.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/M6809_Clock_Gen.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/R65C02.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/CPU_R65C02.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/cpu_clock_gen.vhd"
+set_global_assignment -name QIP_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE10-Lite/zz.qip"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/sdram/sdram_controller-20260210-1300.vhd"
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

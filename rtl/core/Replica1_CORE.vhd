@@ -5,8 +5,8 @@ library IEEE;
 entity Replica1_CORE is
   generic (
 		BOARD           : string  :=  "DE10_Lite";   -- DE10_Lite or DE1
-		CPU_TYPE        : string  :=  "6502";        -- 6502 or 6800
- 	   CPU_SPEED       : string  :=  "1mhz";        -- "debug", "1hz", "1Mhz", "2Mhz" "5Mhz", "10Mhz", "30Mhz"
+		CPU_TYPE        : string  :=  "6502";        -- 6502, 65C02, 6800 or 6809
+ 	   CPU_CORE        : string  :=  "65XX";        -- 65XX, T65, MX65 
 		ROM             : string  :=  "WOZMON65";    -- default wozmon65
 		RAM_SIZE_KB     : integer :=  8;             -- 8 to 48kb
 	   BAUD_RATE       : integer :=  115200;        -- uart speed 1200 to 115200
@@ -15,16 +15,19 @@ entity Replica1_CORE is
 		HAS_TIMER       : boolean :=  false          -- add basic timer
   );
   port (
+		sdram_clk       : in     std_logic;
 		main_clk        : in     std_logic;
 		serial_clk      : in     std_logic;
 		reset_n         : in     std_logic;
 		cpu_reset_n     : in     std_logic;
 		bus_phi2        : out    std_logic;
+		bus_phi1        : out    std_logic;
 		bus_address     : out    std_logic_vector(15 downto 0);
 		bus_data        : out    std_logic_vector(7  downto 0);
 		bus_rw          : out    std_logic;
---		bus_mrdy        : in     std_logic;
---		bus_strch       : out    std_logic;
+		bus_mrdy        : in     std_logic;
+		bus_strch       : out    std_logic;
+		bus_bshit       : out    std_logic;
 		ext_ram_cs_n    : out    std_logic;		
 		ext_ram_data    : in     std_logic_vector(7  downto 0);
 		ext_tram_cs_n   : out    std_logic;		 
@@ -36,7 +39,8 @@ entity Replica1_CORE is
 		spi_mosi        : out    std_logic;
 		spi_miso        : in     std_logic;
 		tape_out        : out    std_logic;
-		tape_in         : in     std_logic
+		tape_in         : in     std_logic;
+		la_state        : out    std_logic_vector(1 downto 0)
   );
 end entity;	
 
@@ -48,51 +52,142 @@ architecture rtl of Replica1_CORE is
 component CPU_65XX is
 	port (
 		-- Clock and Reset
-		main_clk : in  std_logic;        -- Main system clock
-		reset_n  : in  std_logic;        -- Active low reset
-		phi2     : out std_logic;        -- Phase 2 clock enable
+		main_clk     : in  std_logic;        -- Main system clock
+		reset_n      : in  std_logic;        -- Active low reset
+		cpu_reset_n  : in  std_logic;        -- Active low reset
+		phi2         : out std_logic;        -- Phase 2 clock enable
 		
 		-- CPU Control Interface
-		rw       : out std_logic;        -- Read/Write (1=Read, 0=Write)
-		vma      : out std_logic;        -- Valid Memory Access
-		sync     : out std_logic;        -- Instruction fetch cycle
+		rw           : out std_logic;        -- Read/Write (1=Read, 0=Write)
+		vma          : out std_logic;        -- Valid Memory Access
+		sync         : out std_logic;        -- Instruction fetch cycle
 		
 		-- Address and Data Bus
-		addr     : out std_logic_vector(15 downto 0);  -- Address bus
-		data_in  : in  std_logic_vector(7 downto 0);   -- Data input
-		data_out : out std_logic_vector(7 downto 0);   -- Data output
+		addr         : out std_logic_vector(15 downto 0);  -- Address bus
+		data_in      : in  std_logic_vector(7 downto 0);   -- Data input
+		data_out     : out std_logic_vector(7 downto 0);   -- Data output
 		
 		-- Interrupt Interface  
-		nmi_n    : in  std_logic;        -- Non-maskable interrupt (active low)
-		irq_n    : in  std_logic;        -- Interrupt request (active low)
-		so_n     : in  std_logic := '1'  -- Set overflow (active low)
+		nmi_n        : in  std_logic;        -- Non-maskable interrupt (active low)
+		irq_n        : in  std_logic;        -- Interrupt request (active low)
+		so_n         : in  std_logic := '1';  -- Set overflow (active low)
 		
---		mrdy     : in  std_logic;
---		strch    : out std_logic
+		mrdy         : in  std_logic;
+		strch        : out std_logic
 	);
 end component;
+
+component CPU_R65C02 is
+	port (
+		-- Clock and Reset
+		main_clk     : in  std_logic;        -- Main system clock
+		reset_n      : in  std_logic;        -- Active low reset
+		cpu_reset_n  : in  std_logic;        -- Active low reset
+		phi2         : out std_logic;        -- Phase 2 clock enable
+		
+		-- CPU Control Interface
+		rw           : out std_logic;        -- Read/Write (1=Read, 0=Write)
+		vma          : out std_logic;        -- Valid Memory Access
+		sync         : out std_logic;        -- Instruction fetch cycle
+		
+		-- Address and Data Bus
+		addr         : out std_logic_vector(15 downto 0);  -- Address bus
+		data_in      : in  std_logic_vector(7 downto 0);   -- Data input
+		data_out     : out std_logic_vector(7 downto 0);   -- Data output
+		
+		-- Interrupt Interface  
+		nmi_n        : in  std_logic;        -- Non-maskable interrupt (active low)
+		irq_n        : in  std_logic;        -- Interrupt request (active low)
+		so_n         : in  std_logic := '1';  -- Set overflow (active low)
+		
+		mrdy         : in  std_logic;
+		strch        : out std_logic
+	);
+end component;
+
+component CPU_T65 is
+	port (
+		-- Clock and Reset
+		main_clk     : in  std_logic;        -- Main system clock
+		reset_n      : in  std_logic;        -- Active low reset
+		cpu_reset_n  : in  std_logic;        -- Active low reset
+		phi2         : out std_logic;        -- Phase 2 clock enable
+		
+		-- CPU Control Interface
+		rw           : out std_logic;        -- Read/Write (1=Read, 0=Write)
+		vma          : out std_logic;        -- Valid Memory Access
+		sync         : out std_logic;        -- Instruction fetch cycle
+		
+		-- Address and Data Bus
+		addr         : out std_logic_vector(15 downto 0);  -- Address bus
+		data_in      : in  std_logic_vector(7 downto 0);   -- Data input
+		data_out     : out std_logic_vector(7 downto 0);   -- Data output
+		
+		-- Interrupt Interface  
+		nmi_n        : in  std_logic;        -- Non-maskable interrupt (active low)
+		irq_n        : in  std_logic;        -- Interrupt request (active low)
+		so_n         : in  std_logic := '1';  -- Set overflow (active low)
+		
+		mrdy         : in  std_logic;
+		strch        : out std_logic
+	);
+end component;
+
+component CPU_MX65 is
+	port (
+		-- Clock and Reset
+		main_clk     : in  std_logic;        -- Main system clock
+		reset_n      : in  std_logic;        -- Active low reset
+		cpu_reset_n  : in  std_logic;        -- Active low reset
+		phi2         : out std_logic;        -- Phase 2 clock enable
+		
+		-- CPU Control Interface
+		rw           : out std_logic;        -- Read/Write (1=Read, 0=Write)
+		vma          : out std_logic;        -- Valid Memory Access
+		sync         : out std_logic;        -- Instruction fetch cycle
+		
+		-- Address and Data Bus
+		addr         : out std_logic_vector(15 downto 0);  -- Address bus
+		data_in      : in  std_logic_vector(7 downto 0);   -- Data input
+		data_out     : out std_logic_vector(7 downto 0);   -- Data output
+		
+		-- Interrupt Interface  
+		nmi_n        : in  std_logic;        -- Non-maskable interrupt (active low)
+		irq_n        : in  std_logic;        -- Interrupt request (active low)
+		so_n         : in  std_logic := '1';  -- Set overflow (active low)
+		
+		mrdy         : in  std_logic;
+		strch        : out std_logic
+	);
+end component;
+
 
 component CPU_6800 is
 	port (
 		-- Clock and Reset
-		main_clk : in  std_logic;       -- Main system clock
-		reset_n  : in  std_logic;       -- Active low reset
-		phi2     : out std_logic;       -- Phase 2 clock output (divided from main_clk)
+		main_clk    : in  std_logic;        -- Main system clock
+		reset_n     : in  std_logic;        -- Active low reset
+		cpu_reset_n : in  std_logic;        -- Active low reset
+		E           : out std_logic;        -- Phase 2 clock output (divided from main_clk)
 		
 		-- CPU Control Interface
-		rw       : out std_logic;       -- Read/Write (1=Read, 0=Write)
-		vma      : out std_logic;       -- Valid Memory Access
-		sync     : out std_logic;       -- Instruction fetch cycle
+		rw          : out std_logic;        -- Read/Write (1=Read, 0=Write)
+		vma         : out std_logic;        -- Valid Memory Access
+		sync        : out std_logic;        -- Instruction fetch cycle
 		
 		-- Address and Data Bus
-		addr     : out std_logic_vector(15 downto 0);  -- Address bus
-		data_in  : in  std_logic_vector(7 downto 0);   -- Data input
-		data_out : out std_logic_vector(7 downto 0);   -- Data output
+		addr        : out std_logic_vector(15 downto 0);  -- Address bus
+		data_in     : in  std_logic_vector(7 downto 0);   -- Data input
+		data_out    : out std_logic_vector(7 downto 0);   -- Data output
 		
 		-- Interrupt Interface  
-		nmi_n    : in  std_logic;       -- Non-maskable interrupt (active low)
-		irq_n    : in  std_logic;       -- Interrupt request (active low)
-		so_n     : in  std_logic := '1' -- Set overflow (not used by 6800)
+		nmi_n       : in  std_logic;        -- Non-maskable interrupt (active low)
+		irq_n       : in  std_logic;        -- Interrupt request (active low)
+		so_n        : in  std_logic := '1'; -- Set overflow (not used by 6800)
+
+		-- wait states
+		mrdy        : in  std_logic;
+		strch       : out std_logic
 	);
 end component;
 
@@ -100,24 +195,29 @@ end component;
 component CPU_6809 is
 	port (
 		-- Clock and Reset
-		main_clk : in  std_logic;       -- Main system clock
-		reset_n  : in  std_logic;       -- Active low reset
-		phi2     : out std_logic;       -- Phase 2 clock output (divided from main_clk)
+		main_clk    : in  std_logic;        -- Main system clock
+		reset_n     : in  std_logic;        -- Active low reset
+		cpu_reset_n : in  std_logic;        -- Active low cpu reset
+		E           : out std_logic;        -- Phase 2 clock output (divided from main_clk)
 		
 		-- CPU Control Interface
-		rw       : out std_logic;       -- Read/Write (1=Read, 0=Write)
-		vma      : out std_logic;       -- Valid Memory Access
-		sync     : out std_logic;       -- Instruction fetch cycle
+		rw          : out std_logic;        -- Read/Write (1=Read, 0=Write)
+		vma         : out std_logic;        -- Valid Memory Access
+		sync        : out std_logic;        -- Instruction fetch cycle
 		
 		-- Address and Data Bus
-		addr     : out std_logic_vector(15 downto 0);  -- Address bus
-		data_in  : in  std_logic_vector(7 downto 0);   -- Data input
-		data_out : out std_logic_vector(7 downto 0);   -- Data output
+		addr        : out std_logic_vector(15 downto 0);  -- Address bus
+		data_in     : in  std_logic_vector(7 downto 0);   -- Data input
+		data_out    : out std_logic_vector(7 downto 0);   -- Data output
 		
 		-- Interrupt Interface  
-		nmi_n    : in  std_logic;       -- Non-maskable interrupt (active low)
-		irq_n    : in  std_logic;       -- Interrupt request (active low)
-		so_n     : in  std_logic := '1' -- Set overflow (not used by 6800)
+		nmi_n       : in  std_logic;        -- Non-maskable interrupt (active low)
+		irq_n       : in  std_logic;        -- Interrupt request (active low)
+		so_n        : in  std_logic := '1'; -- Set overflow (not used by 6800)
+
+		-- wait states
+		mrdy        : in  std_logic;
+		strch       : out std_logic
 	);
 end component;
 
@@ -297,13 +397,16 @@ end component;
 	signal sspi_cs_n    : std_logic;
 	signal timer_cs_n   : std_logic;
 	signal pia_cs_n     : std_logic;
+	signal la_cs_n      : std_logic;
 	signal fast_clk     : std_logic;
 	signal phi2         : std_logic;
+	signal phi1         : std_logic;
 	signal sync         : std_logic;
 	signal aci_in       : std_logic;
 	signal aci_out      : std_logic;
 	signal mrdy         : std_logic;
 	signal strch        : std_logic;
+	signal bshit        : std_logic;
 	
 	signal spi_sck_ext  : std_logic;
    signal spi_cs_ext   : std_logic;
@@ -322,9 +425,11 @@ begin
 	bus_address    <= address_bus;
 	bus_data       <= data_bus;
 	bus_phi2       <= phi2;
+	bus_phi1       <= phi1;
 	bus_rw         <= rw;
---	mrdy           <= bus_mrdy;
---	bus_strch      <= strch;
+	mrdy           <= bus_mrdy;
+	bus_strch      <= strch;
+	bus_bshit      <= bshit;
 	ext_ram_cs_n   <= ram_cs_n;
 	ext_tram_cs_n  <= tram_cs_n;
 	ram_data       <= ext_ram_data;
@@ -333,42 +438,12 @@ begin
 -- Apple 1 CPU can be either CPU65XX for the 6502 or  CPU68 for the 6800
 
 -- CPU PORT MAP
-
 gen_cpu0: if CPU_TYPE = "6502" generate
-	cpu: CPU_65XX          port map(main_clk        => main_clk,
-	                                reset_n         => cpu_reset_n,
-											  phi2            => phi2,
-											  rw              => rw,
-											  vma             => vma,
-											  sync            => sync,
-											  addr            => address_bus,
-											  data_in         => data_bus,
-											  data_out        => cpu_data,
-											  nmi_n           => nmi_n,
-											  irq_n           => irq_n,
-											  so_n            => so_n);
---											  mrdy            => mrdy,
---											  strch           => strch);
-end generate gen_cpu0;
-											  
-gen_cpu1: if CPU_TYPE = "6800" generate
-	cpu: CPU_6800          port map(main_clk        => main_clk,
-	                                reset_n         => cpu_reset_n,
-											  phi2            => phi2,
-											  rw              => rw,
-											  vma             => vma,
-											  sync            => sync,
-											  addr            => address_bus,
-											  data_in         => data_bus,
-											  data_out        => cpu_data,
-											  nmi_n           => nmi_n,
-											  irq_n           => irq_n,
-											  so_n            => so_n);
-end generate gen_cpu1;
 
-gen_cpu2: if CPU_TYPE = "6809" generate
-	cpu: CPU_6809          port map(main_clk        => main_clk,
-	                                reset_n         => cpu_reset_n,
+c0: if CPU_CORE = "65XX" generate
+	cpu: CPU_65XX          port map(main_clk        => main_clk,
+	                                reset_n         => reset_n,
+	                                cpu_reset_n     => cpu_reset_n,
 											  phi2            => phi2,
 											  rw              => rw,
 											  vma             => vma,
@@ -378,8 +453,102 @@ gen_cpu2: if CPU_TYPE = "6809" generate
 											  data_out        => cpu_data,
 											  nmi_n           => nmi_n,
 											  irq_n           => irq_n,
-											  so_n            => so_n);
+											  so_n            => so_n,
+											  mrdy            => mrdy,
+											  strch           => strch);
+end generate c0;
+
+c1: if CPU_CORE = "T65" generate
+	cpu: CPU_T65           port map(main_clk        => main_clk,
+	                                reset_n         => reset_n,
+	                                cpu_reset_n     => cpu_reset_n,
+											  phi2            => phi2,
+											  rw              => rw,
+											  vma             => vma,
+											  sync            => sync,
+											  addr            => address_bus,
+											  data_in         => data_bus,
+											  data_out        => cpu_data,
+											  nmi_n           => nmi_n,
+											  irq_n           => irq_n,
+											  so_n            => so_n,
+											  mrdy            => mrdy,
+											  strch           => strch);
+end generate c1;
+
+c2: if CPU_CORE = "MX65" generate
+	cpu: CPU_MX65           port map(main_clk        => main_clk,
+	                                 reset_n         => reset_n,
+	                                 cpu_reset_n     => cpu_reset_n,
+											   phi2            => phi2,
+											   rw              => rw,
+											   vma             => vma,
+											   sync            => sync,
+											   addr            => address_bus,
+											   data_in         => data_bus,
+											   data_out        => cpu_data,
+											   nmi_n           => nmi_n,
+											   irq_n           => irq_n,
+											   so_n            => so_n,
+											   mrdy            => mrdy,
+											   strch           => strch);
+end generate c2;
+											  
+end generate gen_cpu0;
+
+gen_cpu1: if CPU_TYPE = "65C02" generate
+	cpu: CPU_R65C02        port map(main_clk        => main_clk,
+	                                reset_n         => reset_n,
+	                                cpu_reset_n     => cpu_reset_n,
+											  phi2            => phi2,
+											  rw              => rw,
+											  vma             => vma,
+											  sync            => sync,
+											  addr            => address_bus,
+											  data_in         => data_bus,
+											  data_out        => cpu_data,
+											  nmi_n           => nmi_n,
+											  irq_n           => irq_n,
+											  so_n            => so_n,
+											  mrdy            => mrdy,
+											  strch           => strch);
+end generate gen_cpu1;
+											  
+gen_cpu2: if CPU_TYPE = "6800" generate
+	cpu: CPU_6800          port map(main_clk        => main_clk,
+	                                reset_n         => reset_n,
+	                                cpu_reset_n     => cpu_reset_n,
+											  E               => phi2,
+											  rw              => rw,
+											  vma             => vma,
+											  sync            => sync,
+											  addr            => address_bus,
+											  data_in         => data_bus,
+											  data_out        => cpu_data,
+											  nmi_n           => nmi_n,
+											  irq_n           => irq_n,
+											  so_n            => so_n,
+  											  mrdy            => mrdy,
+											  strch           => strch);
 end generate gen_cpu2;
+
+gen_cpu3: if CPU_TYPE = "6809" generate
+	cpu: CPU_6809          port map(main_clk        => main_clk,
+	                                reset_n         => reset_n,
+	                                cpu_reset_n     => cpu_reset_n,
+											  E               => phi2,
+											  rw              => rw,
+											  vma             => vma,
+											  sync            => sync,
+											  addr            => address_bus,
+											  data_in         => data_bus,
+											  data_out        => cpu_data,
+											  nmi_n           => nmi_n,
+											  irq_n           => irq_n,
+											  so_n            => so_n,
+  											  mrdy            => mrdy,
+											  strch           => strch);
+end generate gen_cpu3;
 
 
 -- END OF CPU PORT MAP
@@ -499,11 +668,12 @@ gen_timer: if HAS_TIMER = true generate
 end generate gen_timer;
 
 											
-   aci_cs_n     <= '0' when vma = '1' and address_bus(15 downto 9)   = x"C" & "000"      else '1';   -- IF WOZACI
-   mspi_cs_n    <= '0' when vma = '1' and address_bus(15 downto 4)   = x"C20"            else '1';   -- IF MASTER SPI CONTROLLER
-   timer_cs_n   <= '0' when vma = '1' and address_bus(15 downto 4)   = x"C21"            else '1';   -- IF TIMER
-	pia_cs_n     <= '0' when vma = '1' and address_bus(15 downto 4)   = x"D01"            else '1';   -- REPLICA CONSOLE PIA
-   tram_cs_n    <= '0' when vma = '1' and address_bus(15 downto 12)  = x"E"              else '1';   -- SDRAM TEST
+   aci_cs_n     <= '0' when vma = '1' and address_bus(15 downto 9)   = x"C" & "000"  else '1';   -- IF WOZACI
+   mspi_cs_n    <= '0' when vma = '1' and address_bus(15 downto 4)   = x"C20"        else '1';   -- IF MASTER SPI CONTROLLER
+   timer_cs_n   <= '0' when vma = '1' and address_bus(15 downto 4)   = x"C21"        else '1';   -- IF TIMER
+	pia_cs_n     <= '0' when vma = '1' and address_bus(15 downto 4)   = x"D01"        else '1';   -- REPLICA CONSOLE PIA
+   tram_cs_n    <= '0' when vma = '1' and address_bus(15 downto 12)  = x"E"          else '1';   -- SDRAM TEST
+   la_cs_n      <= '0' when vma = '1' and address_bus(15 downto 0)   = x"C300"       else '1';   -- LOGIC ANALYSER TRIGGER
 	
 	
 	data_bus <= cpu_data      when rw          = '0' else
@@ -514,7 +684,16 @@ end generate gen_timer;
 		         ram_data      when ram_cs_n    = '0' else 
 		         tram_data     when tram_cs_n   = '0' else 
 					pia_data      when pia_cs_n    = '0' else
-		         address_bus(15 downto 8);                 
+		         address_bus(15 downto 8);     
+
+	process(phi2) 
+	begin
+		if rising_edge(phi2) then
+			if la_cs_n = '0' and rw = '0' then
+				la_state <= data_bus(1 downto 0);
+			end if;
+		end if;
+	end process;
 					
 	
 	process(vma, address_bus)
