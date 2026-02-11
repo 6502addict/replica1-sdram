@@ -129,15 +129,15 @@ end component;
 
 component Replica1_CORE is
   generic (
-		 BOARD           : string   := "DE1_Lite";
-		 CPU_TYPE        : string  :=  "6502";        -- 6502, 65C02, 6800 or 6809
+		BOARD           : string   := "DE1_Lite";
+		CPU_TYPE        : string  :=  "6502";        -- 6502, 65C02, 6800 or 6809
  	    CPU_CORE        : string  :=  "65XX";        -- 65XX, T65, MX65 
   	    ROM             : string   := "WOZMON65"; -- default monitor
-		 RAM_SIZE_KB     : positive := 8;          -- 8kb to 48kb
+		RAM_SIZE_KB     : positive := 8;          -- 8kb to 48kb
   	    BAUD_RATE       : integer  := 9600;       -- uart speed 1200 to 115200
-		 HAS_ACI         : boolean  := false;      -- add the aci (incomplete)
-		 HAS_MSPI        : boolean  := false;      -- add master spi  C200
-		 HAS_TIMER       : boolean  := false       -- add basic timer
+		HAS_ACI         : boolean  := false;      -- add the aci (incomplete)
+		HAS_MSPI        : boolean  := false;      -- add master spi  C200
+		HAS_TIMER       : boolean  := false       -- add basic timer
 	);
   port (
       sdram_clk      : in     std_logic;
@@ -197,12 +197,14 @@ component simple_clock_switch is
     );
 end component;
 
+
 component sdram_controller is
     generic (
-        FREQ_MHZ           : integer := 100; -- Clock frequency in MHz
-        ROW_BITS           : integer := 13;  -- 13 for DE10-Lite, 12 for DE1
-        COL_BITS           : integer := 10;  -- 10 for DE10-Lite, 8 for DE1
-        USE_AUTO_PRECHARGE : boolean := true  -- true = READA/WRITEA false = READ/WRITE
+        FREQ_MHZ           : integer := 100;   -- Clock frequency in MHz
+        ROW_BITS           : integer := 13;    -- 13 for DE10-Lite, 12 for DE1
+        COL_BITS           : integer := 10;    -- 10 for DE10-Lite, 8 for DE1
+        USE_AUTO_PRECHARGE : boolean := true;  -- true = READA/WRITEA false = READ/WRITE
+        USE_AUTO_REFRESH   : boolean := true   -- true = autorefresh, false = triggered refresh
     );
     port(
         clk         : in    std_logic;  -- 20MHz
@@ -246,8 +248,13 @@ end component;
 
 component sram_sdram_bridge is
     generic (
-        ADDR_BITS : integer := 24;
-		  SDRAM_MHZ : integer := 75
+        ADDR_BITS        : integer := 24;
+		SDRAM_MHZ        : integer := 75;
+        GENERATE_REFRESH : boolean := true;  -- generate refresh_req  false = don't refresh
+        USE_CACHE        : boolean := true;  -- enable/disable cache
+        -- Cache parameters
+        CACHE_SIZE_BYTES : integer := 4096;  -- 4KB cache
+        LINE_SIZE_BYTES  : integer := 16     -- 16-byte cache lines
     );
     port (
         sdram_clk     : in  std_logic;
@@ -274,8 +281,8 @@ component sram_sdram_bridge is
         sdram_byte_en : out std_logic_vector(1 downto 0);
         sdram_ready   : in  std_logic;
         sdram_ack     : in  std_logic;
- 	  	  debug         : out std_logic_vector(2 downto 0)
-
+        cache_hitp    : out unsigned(6 downto 0);  -- 0 to 100%
+     	debug         : out std_logic_vector(2 downto 0)
     );
 end component;
 
@@ -370,11 +377,23 @@ signal debug_addr_0  : std_logic;
 signal debug_dqm     : std_logic_vector(1 downto 0);
 signal debug_dq_0    : std_logic;
 
-	
+signal cache_hit      : unsigned(6 downto 0);  -- 0 to 100%
+signal cache_hit_tens : unsigned(3 downto 0);  -- 0 à 10
+signal cache_hit_ones : unsigned(3 downto 0);  -- 0 à 9	
+
 begin
 	-- on the DE10 Lite the 7 seg display show the current address and data 
-	h0 : hexto7seg port map  (hex => data_bus(3  downto 0),     seg => HEX0); 
-	h1 : hexto7seg port map  (hex => data_bus(7  downto 4),     seg => HEX1); 
+    
+    -- Conversion binaire → BCD
+    cache_hit_tens <= resize(cache_hit / 10, 4);
+    cache_hit_ones <= resize(cache_hit mod 10, 4);    
+    
+    h0 : hexto7seg port map (hex => std_logic_vector(cache_hit_ones), seg => HEX0); 
+    h1 : hexto7seg port map (hex => std_logic_vector(cache_hit_tens), seg => HEX1);    
+    
+--	h0 : hexto7seg port map  (hex => data_bus(3  downto 0),     seg => HEX0); 
+--	h1 : hexto7seg port map  (hex => data_bus(7  downto 4),     seg => HEX1); 
+
 	h2 : hexto7seg port map  (hex => address_bus(3 downto 0),   seg => HEX2); 
 	h3 : hexto7seg port map  (hex => address_bus(7 downto 4),   seg => HEX3); 
 	h4 : hexto7seg port map  (hex => address_bus(11 downto 8),  seg => HEX4); 
@@ -415,10 +434,10 @@ begin
 																 clk_in         => clock_30mhz,
 														       clk_out        => clock_1mhz);
 
-	clk2mhz: clock_divider            generic map(divider        => 15)
-	 								    port map(reset          => '1',
-																 clk_in         => clock_30mhz,
-														       clk_out        => clock_2mhz);
+	clk2mhz: clock_divider             generic map(divider       => 15)
+	 								      port map(reset         => '1',
+												   clk_in        => clock_30mhz,
+												   clk_out       => clock_2mhz);
 
    clk5mhz: clock_divider              generic map(divider       => 6)
 									      port map(reset         => '1',
@@ -500,7 +519,7 @@ begin
 												 la_state       =>  la_state);
 
 
---de10_gen_ram: if BOARD = "DE10_Lite" generate
+de10_gen_ram: if BOARD = "DE10_Lite" generate
 	ram: RAM_DE10                    generic map(RAM_SIZE_KB     => RAM_SIZE_KB)
 								        port map(clock           => phi2,
 					   	                         cs_n            => ram_cs_n,
@@ -508,71 +527,79 @@ begin
 										         address         => address_bus,
 										         data_in         => data_bus,
 							                     data_out        => ram_data);
---end generate de10_gen_ram;																
+end generate de10_gen_ram;																
 
-    -- SRAM to SDRAM Bridge
-    bridge_inst : sram_sdram_bridge  generic map(ADDR_BITS     => 12,
-	                                             SDRAM_MHZ     => 75)
-									    port map(sdram_clk     => clock_sdram,
-										      	 E             => phi2,
-												 reset_n       => reset_n,
+
+
+    bridge_inst : sram_sdram_bridge  generic map(ADDR_BITS        => 12,
+	                                             SDRAM_MHZ        => 75,
+                                                 GENERATE_REFRESH => true,
+                                                 USE_CACHE        => true,
+                                                 -- Cache parameters
+                                                 CACHE_SIZE_BYTES => 1024,  -- 1KB cache
+                                                 LINE_SIZE_BYTES  => 16)    -- 16-byte cache lines
+									    port map(sdram_clk        => clock_sdram,
+										      	 E                => phi2,
+												 reset_n          => reset_n,
 												 -- SRAM interface (test side)
-												 sram_ce_n     => tram_cs_n,
-												 sram_we_n     => rw,
-												 sram_oe_n     => not rw,
-												 sram_addr     => address_bus(11 downto 0),
-												 sram_din      => data_bus,
-												 sram_dout     => tram_data,
+												 sram_ce_n        => tram_cs_n,
+												 sram_we_n        => rw,
+												 sram_oe_n        => not rw,
+												 sram_addr        => address_bus(11 downto 0),
+												 sram_din         => data_bus,
+												 sram_dout        => tram_data,
             
 												 -- Memory ready
-												 mrdy          => mrdy,
-            
+												 mrdy             => mrdy,
+             
                                                  -- SDRAM controller interface
-												 sdram_req     => sdram_req,
-												 sdram_wr_n    => sdram_wr_n,
-												 sdram_addr    => sdram_addr,
-												 sdram_din     => sdram_din,
-												 sdram_dout    => sdram_dout,
-												 sdram_byte_en => sdram_byte_en,
-												 sdram_ready   => sdram_ready,
-												 sdram_ack     => sdram_ack,
-												 debug         => debug);
+												 sdram_req        => sdram_req,
+												 sdram_wr_n       => sdram_wr_n,
+												 sdram_addr       => sdram_addr,
+												 sdram_din        => sdram_din,
+												 sdram_dout       => sdram_dout,
+												 sdram_byte_en    => sdram_byte_en,
+												 sdram_ready      => sdram_ready,
+												 sdram_ack        => sdram_ack,
+                                                 cache_hitp       => cache_hit,
+												 debug            => debug);
 
     -- SDRAM Controller Instance
     sdram_inst : sdram_controller   generic map (FREQ_MHZ           => 75,
 									 			 ROW_BITS           => 13, 
 												 COL_BITS           => 10,
-                                                 USE_AUTO_PRECHARGE => true)
-									   port map (clk            => clock_sdram,
-												 reset_n        => reset_n,
-												 req            => sdram_req,
-												 wr_n           => sdram_wr_n,
-												 addr           => (24 downto 11 => '0') & sdram_addr,
-												 din            => sdram_din,
-												 dout           => sdram_dout,
-												 byte_en        => sdram_byte_en,
-												 ready          => sdram_ready,
-												 ack            => sdram_ack,
-												 debug_state    => debug_state,
-												 debug_cmd      => debug_cmd,
-				 				 --		  		 debug_seq      => display(15 downto 0),
-                                                 debug_addr_10  => debug_addr_10,
-                                                 debug_addr_9   => debug_addr_9,
-                                                 debug_addr_0   => debug_addr_0,
-                                                 debug_dqm      => debug_dqm,
-                                                 debug_dq_0     => debug_dq_0,
-												 refresh_active => refresh_busy,
-												 sdram_clk      => DRAM_CLK,
-												 sdram_cke      => DRAM_CKE,
-												 sdram_cs_n     => DRAM_CS_N,
-												 sdram_ras_n    => DRAM_RAS_N,
-												 sdram_cas_n    => DRAM_CAS_N,
-												 sdram_we_n     => DRAM_WE_N,
-												 sdram_ba       => DRAM_BA,
-												 sdram_addr     => DRAM_ADDR,
-												 sdram_dq       => DRAM_DQ,
-												 sdram_dqm(1)   => DRAM_UDQM,
-												 sdram_dqm(0)   => DRAM_LDQM);
+                                                 USE_AUTO_PRECHARGE => false,
+                                                 USE_AUTO_REFRESH   => false)
+									   port map (clk                => clock_sdram,
+												 reset_n            => reset_n,
+												 req                => sdram_req,
+												 wr_n               => sdram_wr_n,
+												 addr               => (24 downto 11 => '0') & sdram_addr,
+												 din                => sdram_din,
+												 dout               => sdram_dout,
+												 byte_en            => sdram_byte_en,
+												 ready              => sdram_ready,
+												 ack                => sdram_ack,
+												 debug_state        => debug_state,
+												 debug_cmd          => debug_cmd,
+				 				 --		  		 debug_seq          => display(15 downto 0),
+                                                 debug_addr_10      => debug_addr_10,
+                                                 debug_addr_9       => debug_addr_9,
+                                                 debug_addr_0       => debug_addr_0,
+                                                 debug_dqm          => debug_dqm,
+                                                 debug_dq_0         => debug_dq_0,
+												 refresh_active     => refresh_busy,
+												 sdram_clk          => DRAM_CLK,
+												 sdram_cke          => DRAM_CKE,
+												 sdram_cs_n         => DRAM_CS_N,
+												 sdram_ras_n        => DRAM_RAS_N,
+												 sdram_cas_n        => DRAM_CAS_N,
+												 sdram_we_n         => DRAM_WE_N,
+												 sdram_ba           => DRAM_BA,
+												 sdram_addr         => DRAM_ADDR,
+												 sdram_dq           => DRAM_DQ,
+												 sdram_dqm(1)       => DRAM_UDQM,
+												 sdram_dqm(0)       => DRAM_LDQM);
 																
 
 																

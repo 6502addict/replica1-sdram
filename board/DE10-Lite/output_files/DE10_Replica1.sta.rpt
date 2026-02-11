@@ -1,5 +1,5 @@
 Timing Analyzer report for DE10_Replica1
-Tue Feb 10 10:11:31 2026
+Wed Feb 11 17:45:15 2026
 Quartus Prime Version 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
 
 
@@ -93,15 +93,15 @@ on the Quartus Prime software download page.
 ; Number detected on machine ; 32          ;
 ; Maximum allowed            ; 16          ;
 ;                            ;             ;
-; Average used               ; 1.65        ;
+; Average used               ; 1.64        ;
 ; Maximum used               ; 16          ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;   4.5%      ;
+;     Processor 2            ;   4.4%      ;
 ;     Processor 3            ;   4.3%      ;
-;     Processor 4            ;   4.3%      ;
-;     Processors 5-16        ;   4.3%      ;
+;     Processor 4            ;   4.2%      ;
+;     Processors 5-16        ;   4.2%      ;
 +----------------------------+-------------+
 
 
@@ -110,7 +110,7 @@ on the Quartus Prime software download page.
 +---------------------------------------------------------------------------------------------------------+--------+--------------------------+
 ; SDC File Path                                                                                           ; Status ; Read at                  ;
 +---------------------------------------------------------------------------------------------------------+--------+--------------------------+
-; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE10-Lite/DE10_Replica1.sdc ; OK     ; Tue Feb 10 10:11:30 2026 ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE10-Lite/DE10_Replica1.sdc ; OK     ; Wed Feb 11 17:45:14 2026 ;
 +---------------------------------------------------------------------------------------------------------+--------+--------------------------+
 
 
@@ -123,23 +123,23 @@ on the Quartus Prime software download page.
 +------------+------+--------+-----------+-------+--------+------------+-----------+-------------+-------+--------+-----------+------------+----------+--------+--------+-------------------+
 
 
-+--------------------------------------------------+
-; Slow 1200mV 85C Model Fmax Summary               ;
-+------------+-----------------+------------+------+
-; Fmax       ; Restricted Fmax ; Clock Name ; Note ;
-+------------+-----------------+------------+------+
-; 145.22 MHz ; 145.22 MHz      ; clk_50     ;      ;
-+------------+-----------------+------------+------+
++-------------------------------------------------+
+; Slow 1200mV 85C Model Fmax Summary              ;
++-----------+-----------------+------------+------+
+; Fmax      ; Restricted Fmax ; Clock Name ; Note ;
++-----------+-----------------+------------+------+
+; 91.12 MHz ; 91.12 MHz       ; clk_50     ;      ;
++-----------+-----------------+------------+------+
 This panel reports FMAX for every clock in the design, regardless of the user-specified clock periods.  FMAX is only computed for paths where the source and destination registers or ports are driven by the same clock.  Paths of different clocks, including generated clocks, are ignored.  For paths between a clock and its inversion, FMAX is computed as if the rising and falling edges are scaled along with FMAX, such that the duty cycle (in terms of a percentage) is maintained. Altera recommends that you always use clock constraints and other slack reports for sign-off analysis.
 
 
 +-------------------------------------+
 ; Slow 1200mV 85C Model Setup Summary ;
-+--------+--------+-------------------+
-; Clock  ; Slack  ; End Point TNS     ;
-+--------+--------+-------------------+
-; clk_50 ; 13.114 ; 0.000             ;
-+--------+--------+-------------------+
++--------+-------+--------------------+
+; Clock  ; Slack ; End Point TNS      ;
++--------+-------+--------------------+
+; clk_50 ; 9.025 ; 0.000              ;
++--------+-------+--------------------+
 
 
 +------------------------------------+
@@ -147,7 +147,7 @@ This panel reports FMAX for every clock in the design, regardless of the user-sp
 +--------+-------+-------------------+
 ; Clock  ; Slack ; End Point TNS     ;
 +--------+-------+-------------------+
-; clk_50 ; 0.336 ; 0.000             ;
+; clk_50 ; 0.337 ; 0.000             ;
 +--------+-------+-------------------+
 
 
@@ -168,7 +168,7 @@ No paths to report.
 +--------+-------+----------------------------------+
 ; Clock  ; Slack ; End Point TNS                    ;
 +--------+-------+----------------------------------+
-; clk_50 ; 9.508 ; 0.000                            ;
+; clk_50 ; 9.509 ; 0.000                            ;
 +--------+-------+----------------------------------+
 
 
@@ -183,7 +183,7 @@ No synchronizer chains to report.
 +------------+-----------------+------------+------+
 ; Fmax       ; Restricted Fmax ; Clock Name ; Note ;
 +------------+-----------------+------------+------+
-; 158.05 MHz ; 158.05 MHz      ; clk_50     ;      ;
+; 100.28 MHz ; 100.28 MHz      ; clk_50     ;      ;
 +------------+-----------------+------------+------+
 This panel reports FMAX for every clock in the design, regardless of the user-specified clock periods.  FMAX is only computed for paths where the source and destination registers or ports are driven by the same clock.  Paths of different clocks, including generated clocks, are ignored.  For paths between a clock and its inversion, FMAX is computed as if the rising and falling edges are scaled along with FMAX, such that the duty cycle (in terms of a percentage) is maintained. Altera recommends that you always use clock constraints and other slack reports for sign-off analysis.
 
@@ -193,7 +193,7 @@ This panel reports FMAX for every clock in the design, regardless of the user-sp
 +--------+--------+------------------+
 ; Clock  ; Slack  ; End Point TNS    ;
 +--------+--------+------------------+
-; clk_50 ; 13.673 ; 0.000            ;
+; clk_50 ; 10.028 ; 0.000            ;
 +--------+--------+------------------+
 
 
@@ -202,7 +202,7 @@ This panel reports FMAX for every clock in the design, regardless of the user-sp
 +--------+-------+------------------+
 ; Clock  ; Slack ; End Point TNS    ;
 +--------+-------+------------------+
-; clk_50 ; 0.306 ; 0.000            ;
+; clk_50 ; 0.307 ; 0.000            ;
 +--------+-------+------------------+
 
 
@@ -223,7 +223,7 @@ No paths to report.
 +--------+-------+---------------------------------+
 ; Clock  ; Slack ; End Point TNS                   ;
 +--------+-------+---------------------------------+
-; clk_50 ; 9.545 ; 0.000                           ;
+; clk_50 ; 9.554 ; 0.000                           ;
 +--------+-------+---------------------------------+
 
 
@@ -238,7 +238,7 @@ No synchronizer chains to report.
 +--------+--------+------------------+
 ; Clock  ; Slack  ; End Point TNS    ;
 +--------+--------+------------------+
-; clk_50 ; 16.711 ; 0.000            ;
+; clk_50 ; 14.361 ; 0.000            ;
 +--------+--------+------------------+
 
 
@@ -247,7 +247,7 @@ No synchronizer chains to report.
 +--------+-------+------------------+
 ; Clock  ; Slack ; End Point TNS    ;
 +--------+-------+------------------+
-; clk_50 ; 0.151 ; 0.000            ;
+; clk_50 ; 0.152 ; 0.000            ;
 +--------+-------+------------------+
 
 
@@ -268,7 +268,7 @@ No paths to report.
 +--------+-------+---------------------------------+
 ; Clock  ; Slack ; End Point TNS                   ;
 +--------+-------+---------------------------------+
-; clk_50 ; 9.279 ; 0.000                           ;
+; clk_50 ; 9.235 ; 0.000                           ;
 +--------+-------+---------------------------------+
 
 
@@ -278,16 +278,16 @@ No paths to report.
 No synchronizer chains to report.
 
 
-+------------------------------------------------------------------------------+
-; Multicorner Timing Analysis Summary                                          ;
-+------------------+--------+-------+----------+---------+---------------------+
-; Clock            ; Setup  ; Hold  ; Recovery ; Removal ; Minimum Pulse Width ;
-+------------------+--------+-------+----------+---------+---------------------+
-; Worst-case Slack ; 13.114 ; 0.151 ; N/A      ; N/A     ; 9.279               ;
-;  clk_50          ; 13.114 ; 0.151 ; N/A      ; N/A     ; 9.279               ;
-; Design-wide TNS  ; 0.0    ; 0.0   ; 0.0      ; 0.0     ; 0.0                 ;
-;  clk_50          ; 0.000  ; 0.000 ; N/A      ; N/A     ; 0.000               ;
-+------------------+--------+-------+----------+---------+---------------------+
++-----------------------------------------------------------------------------+
+; Multicorner Timing Analysis Summary                                         ;
++------------------+-------+-------+----------+---------+---------------------+
+; Clock            ; Setup ; Hold  ; Recovery ; Removal ; Minimum Pulse Width ;
++------------------+-------+-------+----------+---------+---------------------+
+; Worst-case Slack ; 9.025 ; 0.152 ; N/A      ; N/A     ; 9.235               ;
+;  clk_50          ; 9.025 ; 0.152 ; N/A      ; N/A     ; 9.235               ;
+; Design-wide TNS  ; 0.0   ; 0.0   ; 0.0      ; 0.0     ; 0.0                 ;
+;  clk_50          ; 0.000 ; 0.000 ; N/A      ; N/A     ; 0.000               ;
++------------------+-------+-------+----------+---------+---------------------+
 
 
 +--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -1106,7 +1106,7 @@ No synchronizer chains to report.
 +------------+----------+----------+----------+----------+----------+
 ; From Clock ; To Clock ; RR Paths ; FR Paths ; RF Paths ; FF Paths ;
 +------------+----------+----------+----------+----------+----------+
-; clk_50     ; clk_50   ; 5902     ; 0        ; 0        ; 0        ;
+; clk_50     ; clk_50   ; 9140     ; 0        ; 0        ; 0        ;
 +------------+----------+----------+----------+----------+----------+
 Entries labeled "false path" only account for clock-to-clock false paths and not path-based false paths. As a result, actual path counts may be lower than reported.
 
@@ -1116,7 +1116,7 @@ Entries labeled "false path" only account for clock-to-clock false paths and not
 +------------+----------+----------+----------+----------+----------+
 ; From Clock ; To Clock ; RR Paths ; FR Paths ; RF Paths ; FF Paths ;
 +------------+----------+----------+----------+----------+----------+
-; clk_50     ; clk_50   ; 5902     ; 0        ; 0        ; 0        ;
+; clk_50     ; clk_50   ; 9140     ; 0        ; 0        ; 0        ;
 +------------+----------+----------+----------+----------+----------+
 Entries labeled "false path" only account for clock-to-clock false paths and not path-based false paths. As a result, actual path counts may be lower than reported.
 
@@ -1142,8 +1142,8 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; Unconstrained Clocks            ; 4     ; 4    ;
 ; Unconstrained Input Ports       ; 21    ; 21   ;
 ; Unconstrained Input Port Paths  ; 22    ; 22   ;
-; Unconstrained Output Ports      ; 93    ; 93   ;
-; Unconstrained Output Port Paths ; 3083  ; 3083 ;
+; Unconstrained Output Ports      ; 79    ; 79   ;
+; Unconstrained Output Port Paths ; 1333  ; 1333 ;
 +---------------------------------+-------+------+
 
 
@@ -1245,20 +1245,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; GPIO[14]      ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; GPIO[15]      ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; GPIO[16]      ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
@@ -1375,20 +1361,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; GPIO[14]      ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; GPIO[15]      ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; GPIO[16]      ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX0[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX1[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
@@ -1426,7 +1398,7 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 Info: *******************************************************************
 Info: Running Quartus Prime Timing Analyzer
     Info: Version 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
-    Info: Processing started: Tue Feb 10 10:11:28 2026
+    Info: Processing started: Wed Feb 11 17:45:12 2026
 Info: Command: quartus_sta DE10_Replica1 -c DE10_Replica1
 Info: qsta_default_script.tcl version: #1
 Info (20032): Parallel compilation is enabled and will use up to 16 processors
@@ -1435,11 +1407,11 @@ Info (21077): High junction temperature is 85 degrees C
 Warning (335093): The Timing Analyzer is analyzing 30 combinational loops as latches. For more details, run the Check Timing command in the Timing Analyzer or view the "User-Specified and Inferred Latches" table in the Analysis & Synthesis report.
 Info (332104): Reading SDC File: '//wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE10-Lite/DE10_Replica1.sdc'
 Warning (332060): Node: sdram_controller:sdram_inst|state[0] was determined to be a clock but was found without an associated clock assignment.
-    Info (13166): Latch sdram_controller:sdram_inst|addr_col_latched[6] is being clocked by sdram_controller:sdram_inst|state[0]
+    Info (13166): Latch sdram_controller:sdram_inst|addr_col_latched[1] is being clocked by sdram_controller:sdram_inst|state[0]
 Warning (332060): Node: Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[0] was determined to be a clock but was found without an associated clock assignment.
-    Info (13166): Register Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|mx65:mx65_inst|state.BRK2_JSR3 is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[0]
+    Info (13166): Register Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|mx65:mx65_inst|state.BRK6 is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[0]
 Warning (332060): Node: Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[1] was determined to be a clock but was found without an associated clock assignment.
-    Info (13166): Register Replica1_CORE:ap1|WOZMON65:\woz65:rom|data_out[5] is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[1]
+    Info (13166): Register Replica1_CORE:ap1|pia_uart:pia|data_out[4] is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[1]
 Warning (332060): Node: fractional_clock_divider:uclk|clk_i was determined to be a clock but was found without an associated clock assignment.
     Info (13166): Register Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv|strobe_n is being clocked by fractional_clock_divider:uclk|clk_i
 Warning (332056): PLL cross checking found inconsistent PLL clock settings:
@@ -1450,30 +1422,30 @@ Critical Warning (332168): The following clock transfers have no clock uncertain
 Info: Found TIMING_ANALYZER_REPORT_SCRIPT_INCLUDE_DEFAULT_ANALYSIS = ON
 Info: Analyzing Slow 1200mV 85C Model
 Info: Can't run Report Timing Closure Recommendations. The current device family is not supported.
-Info (332146): Worst-case setup slack is 13.114
+Info (332146): Worst-case setup slack is 9.025
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):    13.114               0.000 clk_50 
-Info (332146): Worst-case hold slack is 0.336
+    Info (332119):     9.025               0.000 clk_50 
+Info (332146): Worst-case hold slack is 0.337
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     0.336               0.000 clk_50 
+    Info (332119):     0.337               0.000 clk_50 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
-Info (332146): Worst-case minimum pulse width slack is 9.508
+Info (332146): Worst-case minimum pulse width slack is 9.509
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     9.508               0.000 clk_50 
+    Info (332119):     9.509               0.000 clk_50 
 Info: Analyzing Slow 1200mV 0C Model
 Info (334003): Started post-fitting delay annotation
 Warning (334000): Timing characteristics of device 10M50DAF484C6GES are preliminary
 Info (334004): Delay annotation completed successfully
 Warning (332060): Node: sdram_controller:sdram_inst|state[0] was determined to be a clock but was found without an associated clock assignment.
-    Info (13166): Latch sdram_controller:sdram_inst|addr_col_latched[6] is being clocked by sdram_controller:sdram_inst|state[0]
+    Info (13166): Latch sdram_controller:sdram_inst|addr_col_latched[1] is being clocked by sdram_controller:sdram_inst|state[0]
 Warning (332060): Node: Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[0] was determined to be a clock but was found without an associated clock assignment.
-    Info (13166): Register Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|mx65:mx65_inst|state.BRK2_JSR3 is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[0]
+    Info (13166): Register Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|mx65:mx65_inst|state.BRK6 is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[0]
 Warning (332060): Node: Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[1] was determined to be a clock but was found without an associated clock assignment.
-    Info (13166): Register Replica1_CORE:ap1|WOZMON65:\woz65:rom|data_out[5] is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[1]
+    Info (13166): Register Replica1_CORE:ap1|pia_uart:pia|data_out[4] is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[1]
 Warning (332060): Node: fractional_clock_divider:uclk|clk_i was determined to be a clock but was found without an associated clock assignment.
     Info (13166): Register Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv|strobe_n is being clocked by fractional_clock_divider:uclk|clk_i
 Warning (332056): PLL cross checking found inconsistent PLL clock settings:
@@ -1481,27 +1453,27 @@ Warning (332056): PLL cross checking found inconsistent PLL clock settings:
     Warning (332056): Node: mclk|altpll_component|auto_generated|pll1|clk[2] was found missing 1 generated clock that corresponds to a base clock with a period of: 20.000
 Critical Warning (332168): The following clock transfers have no clock uncertainty assignment. For more accurate results, apply clock uncertainty assignments or use the derive_clock_uncertainty command.
     Critical Warning (332169): From clk_50 (Rise) to clk_50 (Rise) (setup and hold)
-Info (332146): Worst-case setup slack is 13.673
+Info (332146): Worst-case setup slack is 10.028
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):    13.673               0.000 clk_50 
-Info (332146): Worst-case hold slack is 0.306
+    Info (332119):    10.028               0.000 clk_50 
+Info (332146): Worst-case hold slack is 0.307
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     0.306               0.000 clk_50 
+    Info (332119):     0.307               0.000 clk_50 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
-Info (332146): Worst-case minimum pulse width slack is 9.545
+Info (332146): Worst-case minimum pulse width slack is 9.554
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     9.545               0.000 clk_50 
+    Info (332119):     9.554               0.000 clk_50 
 Info: Analyzing Fast 1200mV 0C Model
 Warning (332060): Node: sdram_controller:sdram_inst|state[0] was determined to be a clock but was found without an associated clock assignment.
-    Info (13166): Latch sdram_controller:sdram_inst|addr_col_latched[6] is being clocked by sdram_controller:sdram_inst|state[0]
+    Info (13166): Latch sdram_controller:sdram_inst|addr_col_latched[1] is being clocked by sdram_controller:sdram_inst|state[0]
 Warning (332060): Node: Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[0] was determined to be a clock but was found without an associated clock assignment.
-    Info (13166): Register Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|mx65:mx65_inst|state.BRK2_JSR3 is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[0]
+    Info (13166): Register Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|mx65:mx65_inst|state.BRK6 is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[0]
 Warning (332060): Node: Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[1] was determined to be a clock but was found without an associated clock assignment.
-    Info (13166): Register Replica1_CORE:ap1|WOZMON65:\woz65:rom|data_out[5] is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[1]
+    Info (13166): Register Replica1_CORE:ap1|pia_uart:pia|data_out[4] is being clocked by Replica1_CORE:ap1|CPU_MX65:\gen_cpu0:c2:cpu|cpu_clock_gen:clk|count[1]
 Warning (332060): Node: fractional_clock_divider:uclk|clk_i was determined to be a clock but was found without an associated clock assignment.
     Info (13166): Register Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv|strobe_n is being clocked by fractional_clock_divider:uclk|clk_i
 Warning (332056): PLL cross checking found inconsistent PLL clock settings:
@@ -1509,25 +1481,25 @@ Warning (332056): PLL cross checking found inconsistent PLL clock settings:
     Warning (332056): Node: mclk|altpll_component|auto_generated|pll1|clk[2] was found missing 1 generated clock that corresponds to a base clock with a period of: 20.000
 Critical Warning (332168): The following clock transfers have no clock uncertainty assignment. For more accurate results, apply clock uncertainty assignments or use the derive_clock_uncertainty command.
     Critical Warning (332169): From clk_50 (Rise) to clk_50 (Rise) (setup and hold)
-Info (332146): Worst-case setup slack is 16.711
+Info (332146): Worst-case setup slack is 14.361
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):    16.711               0.000 clk_50 
-Info (332146): Worst-case hold slack is 0.151
+    Info (332119):    14.361               0.000 clk_50 
+Info (332146): Worst-case hold slack is 0.152
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     0.151               0.000 clk_50 
+    Info (332119):     0.152               0.000 clk_50 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
-Info (332146): Worst-case minimum pulse width slack is 9.279
+Info (332146): Worst-case minimum pulse width slack is 9.235
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     9.279               0.000 clk_50 
+    Info (332119):     9.235               0.000 clk_50 
 Info (332102): Design is not fully constrained for setup requirements
 Info (332102): Design is not fully constrained for hold requirements
 Info: Quartus Prime Timing Analyzer was successful. 0 errors, 29 warnings
     Info: Peak virtual memory: 5029 megabytes
-    Info: Processing ended: Tue Feb 10 10:11:31 2026
+    Info: Processing ended: Wed Feb 11 17:45:15 2026
     Info: Elapsed time: 00:00:03
     Info: Total CPU time (on all processors): 00:00:03
 

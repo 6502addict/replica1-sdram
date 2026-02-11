@@ -1,0 +1,281 @@
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity sram_sdram_bridge_cached is
+    generic (
+        ADDR_BITS        : integer := 24;
+        SDRAM_MHZ        : integer := 100;
+        GENERATE_REFRESH : boolean := true;
+        -- Cache parameters
+        CACHE_SIZE_BYTES : integer := 4096;  -- 4KB cache
+        LINE_SIZE_BYTES  : integer := 16     -- 16-byte cache lines
+    );
+    port (
+        sdram_clk    : in   std_logic;
+        E            : in   std_logic;
+        reset_n      : in   std_logic;
+        
+        -- SRAM-like interface (CPU side)
+        sram_ce_n     : in  std_logic;
+        sram_we_n     : in  std_logic;
+        sram_oe_n     : in  std_logic;
+        sram_addr     : in  std_logic_vector(ADDR_BITS-1 downto 0);
+        sram_din      : in  std_logic_vector(7 downto 0);
+        sram_dout     : out std_logic_vector(7 downto 0);
+        
+        -- Memory ready output (for clock stretching)
+        mrdy          : out std_logic;
+        
+        -- SDRAM controller interface
+        sdram_req     : out std_logic;
+        sdram_wr_n    : out std_logic;
+        sdram_addr    : out std_logic_vector(ADDR_BITS-2 downto 0);
+        sdram_din     : out std_logic_vector(15 downto 0);
+        sdram_dout    : in  std_logic_vector(15 downto 0);
+        sdram_byte_en : out std_logic_vector(1 downto 0);
+        sdram_ready   : in  std_logic;
+        sdram_ack     : in  std_logic;
+        refresh_req   : out std_logic;
+        
+        -- Cache statistics
+        cache_hits    : out unsigned(31 downto 0);
+        cache_misses  : out unsigned(31 downto 0);
+        
+        debug         : out std_logic_vector(2 downto 0)
+    );
+end sram_sdram_bridge_cached;
+
+architecture rtl of sram_sdram_bridge_cached is
+
+    -- Refresh timing
+    constant REFRESH_INTERVAL : integer := (SDRAM_MHZ * 78) / 10;
+    
+    -- Cache geometry
+    constant NUM_LINES    : integer := CACHE_SIZE_BYTES / LINE_SIZE_BYTES;  -- 256 lines
+    constant INDEX_BITS   : integer := 8;   -- log2(256)
+    constant OFFSET_BITS  : integer := 4;   -- log2(16)
+    constant TAG_BITS     : integer := ADDR_BITS - INDEX_BITS - OFFSET_BITS;
+    
+    type state_type is (IDLE, CACHE_CHECK, CACHE_HIT, WAIT_SDRAM_ACK);
+    signal state             : state_type := IDLE;
+    
+    -- Synchronizers
+    signal E_meta, E_sync    : std_logic;
+    signal E_sync_prev       : std_logic;
+    signal E_prev            : std_logic;
+    signal sdram_ack_prev    : std_logic;
+    signal session_active    : std_logic := '0';
+    
+    -- Refresh
+    signal refresh_counter   : integer range 0 to REFRESH_INTERVAL := 0;
+    signal refresh_pending   : std_logic := '0';
+    
+    -- Cache storage (4KB in BRAM)
+    type cache_line_type is array (0 to LINE_SIZE_BYTES-1) of std_logic_vector(7 downto 0);
+    type cache_data_type is array (0 to NUM_LINES-1) of cache_line_type;
+    signal cache_data : cache_data_type;
+    
+    -- Tag storage
+    type tag_array_type is array (0 to NUM_LINES-1) of std_logic_vector(TAG_BITS-1 downto 0);
+    signal tag_array : tag_array_type := (others => (others => '0'));
+    
+    -- Valid bits (no dirty bits needed for write-through!)
+    signal valid_bits : std_logic_vector(NUM_LINES-1 downto 0) := (others => '0');
+    
+    -- Address parsing
+    signal current_tag    : std_logic_vector(TAG_BITS-1 downto 0);
+    signal current_index  : unsigned(INDEX_BITS-1 downto 0);
+    signal current_offset : unsigned(OFFSET_BITS-1 downto 0);
+    
+    -- Cache hit detection
+    signal cache_hit      : std_logic;
+    signal is_valid       : std_logic;
+    
+    -- Statistics
+    signal hits_count     : unsigned(31 downto 0) := (others => '0');
+    signal misses_count   : unsigned(31 downto 0) := (others => '0');
+    
+    -- Saved request
+    signal saved_we_n     : std_logic;
+    signal saved_addr     : std_logic_vector(ADDR_BITS-1 downto 0);
+    signal saved_din      : std_logic_vector(7 downto 0);
+	
+begin
+
+    -- Output statistics
+    cache_hits   <= hits_count;
+    cache_misses <= misses_count;
+
+    -- Address parsing
+    current_tag    <= sram_addr(ADDR_BITS-1 downto INDEX_BITS+OFFSET_BITS);
+    current_index  <= unsigned(sram_addr(INDEX_BITS+OFFSET_BITS-1 downto OFFSET_BITS));
+    current_offset <= unsigned(sram_addr(OFFSET_BITS-1 downto 0));
+    
+    -- Hit detection
+    is_valid   <= valid_bits(to_integer(current_index));
+    cache_hit  <= '1' when (is_valid = '1' and 
+                           tag_array(to_integer(current_index)) = current_tag)
+                      else '0';
+
+    debug <= "000" when state = IDLE            and session_active = '0' else
+             "001" when state = CACHE_CHECK     else
+             "010" when state = CACHE_HIT       else
+             "011" when state = WAIT_SDRAM_ACK  and saved_we_n = '1' else
+             "100" when state = WAIT_SDRAM_ACK  and saved_we_n = '0' else
+             "111";
+
+    process(sdram_clk)
+    begin
+        if rising_edge(sdram_clk) then
+            -- Two-stage synchronizer
+            E_meta <= E;
+            E_sync <= E_meta;
+            E_sync_prev <= E_sync;
+            sdram_ack_prev <= sdram_ack;
+            
+            if reset_n = '0' then
+                state           <= IDLE;
+                mrdy            <= '1';
+                sdram_req       <= '0';
+                sdram_wr_n      <= '0';
+                session_active  <= '0';
+                valid_bits      <= (others => '0');
+                hits_count      <= (others => '0');
+                misses_count    <= (others => '0');
+                if GENERATE_REFRESH = true then
+                    refresh_req     <= '0';
+                    refresh_counter <= 0;
+                    refresh_pending <= '0';
+                end if;
+            else
+                -- Refresh counter logic (unchanged)
+                if GENERATE_REFRESH = true then
+                    if refresh_counter >= REFRESH_INTERVAL then
+                        refresh_counter <= 0;
+                        refresh_pending <= '1';
+                    else
+                        refresh_counter <= refresh_counter + 1;
+                    end if;
+                    
+                    if E_sync = '0' and refresh_pending = '1' and state = IDLE and session_active = '0' then
+                        refresh_req <= '1';
+                        refresh_pending <= '0';
+                    else
+                        refresh_req <= '0';
+                    end if;            
+                else 
+                    refresh_req <= '0';
+                end if;
+                
+                case state is
+                    -- ==========================================
+                    -- IDLE - Wait for CPU request
+                    -- ==========================================
+                    when IDLE =>
+                        mrdy <= '1';
+                        sdram_req <= '0';
+                        
+                        if (session_active = '1') or (sram_ce_n = '0' and E_sync = '1' and E_sync_prev = '0') then
+                            session_active <= '1';
+                            mrdy <= '0';  -- Block CPU immediately
+                            
+                            -- Save request
+                            saved_we_n <= sram_we_n;
+                            saved_addr <= sram_addr;
+                            saved_din  <= sram_din;
+                            
+                            state <= CACHE_CHECK;
+                        end if;
+                    
+                    -- ==========================================
+                    -- CACHE_CHECK - Check for cache hit
+                    -- ==========================================
+                    when CACHE_CHECK =>
+                        if saved_we_n = '1' then
+                            -- READ operation
+                            if cache_hit = '1' then
+                                -- Cache hit on read!
+                                hits_count <= hits_count + 1;
+                                state <= CACHE_HIT;
+                            else
+                                -- Cache miss on read
+                                misses_count <= misses_count + 1;
+                                -- Must fetch from SDRAM
+                                if sdram_ready = '1' then
+                                    sdram_addr    <= saved_addr(ADDR_BITS-1 downto 1);
+                                    sdram_byte_en <= "01" when saved_addr(0) = '0' else "10";
+                                    sdram_wr_n    <= '1';  -- Read
+                                    sdram_req     <= '1';
+                                    state         <= WAIT_SDRAM_ACK;
+                                end if;
+                            end if;
+                        else
+                            -- WRITE operation - write-through: always go to SDRAM
+                            -- But also update cache if line is present
+                            if cache_hit = '1' then
+                                hits_count <= hits_count + 1;
+                                -- Update cache
+                                cache_data(to_integer(current_index))(to_integer(current_offset)) <= saved_din;
+                            else
+                                misses_count <= misses_count + 1;
+                                -- Write-allocate: create cache line
+                                cache_data(to_integer(current_index))(to_integer(current_offset)) <= saved_din;
+                                tag_array(to_integer(current_index)) <= current_tag;
+                                valid_bits(to_integer(current_index)) <= '1';
+                            end if;
+                            
+                            -- Always write through to SDRAM
+                            if sdram_ready = '1' then
+                                sdram_addr    <= saved_addr(ADDR_BITS-1 downto 1);
+                                sdram_byte_en <= "01" when saved_addr(0) = '0' else "10";
+                                sdram_din     <= saved_din & saved_din;
+                                sdram_wr_n    <= '0';  -- Write
+                                sdram_req     <= '1';
+                                state         <= WAIT_SDRAM_ACK;
+                            end if;
+                        end if;
+                    
+                    -- ==========================================
+                    -- CACHE_HIT - Return data from cache (read only)
+                    -- ==========================================
+                    when CACHE_HIT =>
+                        sram_dout <= cache_data(to_integer(current_index))(to_integer(current_offset));
+                        session_active <= '0';
+                        mrdy <= '1';
+                        state <= IDLE;
+                    
+                    -- ==========================================
+                    -- WAIT_SDRAM_ACK - Wait for SDRAM operation
+                    -- ==========================================
+                    when WAIT_SDRAM_ACK =>
+                        if sdram_ack = '1' and sdram_ack_prev = '0' then
+                            sdram_req  <= '0';
+                            sdram_wr_n <= '1';
+                            
+                            if saved_we_n = '1' then
+                                -- READ completed - store in cache and return
+                                if saved_addr(0) = '0' then
+                                    sram_dout <= sdram_dout(7 downto 0);
+                                    cache_data(to_integer(current_index))(to_integer(current_offset)) <= sdram_dout(7 downto 0);
+                                else
+                                    sram_dout <= sdram_dout(15 downto 8);
+                                    cache_data(to_integer(current_index))(to_integer(current_offset)) <= sdram_dout(15 downto 8);
+                                end if;
+                                -- Update tag and valid
+                                tag_array(to_integer(current_index)) <= current_tag;
+                                valid_bits(to_integer(current_index)) <= '1';
+                            end if;
+                            -- WRITE already updated cache in CACHE_CHECK state
+                            
+                            session_active <= '0';
+                            mrdy <= '1';
+                            state <= IDLE;
+                        end if;
+                        
+                end case;
+            end if;
+        end if;
+    end process;
+
+end rtl;

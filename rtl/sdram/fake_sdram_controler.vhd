@@ -10,11 +10,11 @@ entity sdram_controller is
     );
     port(
         clk            : in    std_logic;
-        reset          : in    std_logic;
+        reset_n        : in    std_logic;
         
         -- Simple CPU interface
         req            : in    std_logic;
-        wr             : in    std_logic;  -- 1=write, 0=read
+        wr_n           : in    std_logic;  -- 1=write, 0=read
         addr           : in    std_logic_vector(ROW_BITS+COL_BITS+1 downto 0); 
         din            : in    std_logic_vector(15 downto 0);
         dout           : out   std_logic_vector(15 downto 0);
@@ -78,7 +78,7 @@ begin
     -- Simple FSM to mimic SDRAM handshaking
     process(clk, reset)
     begin
-        if reset = '1' then
+        if reset_n = '0' then
             state <= IDLE;
             ready <= '1';
             ack <= '0';
@@ -92,7 +92,7 @@ begin
                     ram_we <= '0';
                     if req = '1' and req_reg = '0' then -- Edge detect
                         ready <= '0';
-                        ram_we <= wr; -- Trigger write if wr=1
+                        ram_we <= not wr_n; -- Trigger write if wr=1
                         state <= BUSY;
                     else
                         ready <= '1';
