@@ -2,6 +2,15 @@
 
 This experimental project is designed to test the implementation of an SDRAM controller and its integration with classic CPU cores.
 
+## ⚖️ License & Commercial Use
+
+This project is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+- **Individual/Non-Commercial:** Free to use, share, and adapt!
+- **Commercial Use:** Forbidden under this license. 
+
+**Want to use this code commercially?** Please contact **Didier Derny** at didier@aida.org to discuss a commercial license.
+
 ## Core Objectives
 
 - **SDRAM Controller**: Developing and refining a custom controller.
