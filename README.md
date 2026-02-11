@@ -22,13 +22,6 @@ For Hobbyists: If you are building a Replica 1 or similar 6502/6800 system, this
 
 Note on the License: This project uses the CC BY-NC-SA 4.0 license. This means it will always remain free for the community. If you improve the cache or the controller, you must share those improvements so others can learn from them too!
 
-A quick tip on "Timing Closure" for your users:
-Since you’ve written this for Quartus, students might try to compile it for different FPGAs (like a Cyclone II vs a Cyclone IV). Because SDRAM is so sensitive to the Phase-Locked Loop (PLL) settings:
-
-Does your code include the .sdc (Synopsys Design Constraints) file?
-
-If not, you might want to add a small note about the clock phase shift (usually -3ns or -90 degrees) needed to talk to the SDRAM chip reliably. That is usually the "final boss" that stops students from getting their hardware to work!
-
 ## Core Objectives
 
 - **SDRAM Controller**: Developing and refining a custom controller.
