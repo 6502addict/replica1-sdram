@@ -198,6 +198,10 @@ architecture rtl of sram_sdram_bridge is
     attribute ramstyle of cache_data : signal is RAM_BLOCK_TYPE; -- was M9K
     attribute ramstyle of tag_array  : signal is RAM_BLOCK_TYPE; -- was M9K 
 
+--	attribute ram_init_file : string;
+--	attribute ramstyle : string;
+--	attribute ramstyle of cache_data : signal is "M4K, no_rw_check";
+    
     -- Valid bits
     signal valid_bits : std_logic_vector(NUM_LINES-1 downto 0) := (others => '0');
     
@@ -224,6 +228,11 @@ architecture rtl of sram_sdram_bridge is
     signal access_counter   : unsigned(7 downto 0) := (others => '0');
     signal hit_counter      : unsigned(7 downto 0) := (others => '0');
     signal hit_percent      : unsigned(6 downto 0) := (others => '0');
+    
+    signal cache_wr_en   : std_logic := '0';
+    signal cache_wr_addr : integer range 0 to CACHE_SIZE_BYTES-1;
+    signal cache_wr_data : std_logic_vector(7 downto 0);
+    signal read_addr_reg : integer range 0 to CACHE_SIZE_BYTES-1;
 	
 begin
 
@@ -386,7 +395,10 @@ begin
                             if is_hit = '1' then
                                 hit_counter <= hit_counter + 1;
                                 -- Update cache
-                                cache_data(saved_cache_addr) <= saved_din;
+--                                cache_data(saved_cache_addr) <= saved_din;
+                                cache_wr_en     <= '1';
+                                cache_wr_addr   <= saved_cache_addr;
+                                cache_wr_data   <= saved_din;
                             end if;
                             -- NO-ALLOCATE on write miss - just write through to SDRAM
                             
@@ -420,8 +432,16 @@ begin
                     -- - Returns to IDLE
                     -- This is the fast path - no SDRAM access needed!   
                     
+--                    when CACHE_HIT =>
+--                        sram_dout <= cache_data(saved_cache_addr);
+--                        session_active <= '0';
+--                        mrdy <= '1';
+--                        state <= IDLE;
+
                     when CACHE_HIT =>
-                        sram_dout <= cache_data(saved_cache_addr);
+                   --     read_addr_reg <= saved_cache_addr;   -- register it one cycle early if needed
+                        read_addr_reg <= saved_cache_addr;
+                        sram_dout     <= cache_data(read_addr_reg);
                         session_active <= '0';
                         mrdy <= '1';
                         state <= IDLE;
@@ -488,12 +508,14 @@ begin
                         if sdram_ack = '1' and sdram_ack_prev = '0' then
                             sdram_req <= '0';
                             
+                            cache_wr_en   <= '1';
+                            cache_wr_addr <= fetch_cache_addr;                            
                             -- Store byte in cache - use saved current_fetch_addr!
-                            if current_fetch_addr(0) = '0' then
-                                cache_data(fetch_cache_addr) <= sdram_dout(7 downto 0);
-                            else
-                                cache_data(fetch_cache_addr) <= sdram_dout(15 downto 8);
-                            end if;
+--                            if current_fetch_addr(0) = '0' then
+--                                cache_data(fetch_cache_addr) <= sdram_dout(7 downto 0);
+--                            else
+--                                cache_data(fetch_cache_addr) <= sdram_dout(15 downto 8);
+--                            end if;
                             
                             if byte_counter = LINE_SIZE_BYTES - 1 then
                                 -- Entire line fetched!
@@ -549,6 +571,11 @@ begin
                         end if;
                         
                 end case;
+                
+                if cache_wr_en = '1' then
+                    cache_data(cache_wr_addr) <= cache_wr_data;
+                    cache_wr_en <= '0';           -- self-clear (optional but clean)
+                end if;
             end if;
         end if;
     end process;

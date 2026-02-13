@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(EP2C20F484) Path("C:/Users/Utilisateur/Documents/Developments/altera/Projects/Replica1/board/DE1/") File("DE1_Replica1.sof") MfrSpec(OpMask(1));
+		Device PartName(EP2C20F484) Path("//wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/") File("DE1_Replica1.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 

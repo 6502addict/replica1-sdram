@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- SDRAM Controller for IS42S16320F (and compatible)
--- Copyright (c) 2025 Didier Derny
+-- Copyright (c) 2026 Didier Derny
 --
 -- This work is licensed under the Creative Commons 
 -- Attribution-NonCommercial-ShareAlike 4.0 International License.
@@ -194,7 +194,7 @@ entity sdram_controller is
         sdram_cas_n : out   std_logic;
         sdram_we_n  : out   std_logic;
         sdram_ba    : out   std_logic_vector(1 downto 0);
-        sdram_addr  : out   std_logic_vector(12 downto 0);
+		sdram_addr  : out   std_logic_vector(ROW_BITS-1 downto 0);  		
         sdram_dq    : inout std_logic_vector(15 downto 0);
         sdram_dqm   : out   std_logic_vector(1 downto 0)
     );
@@ -280,14 +280,13 @@ architecture rtl of sdram_controller is
  
     -- Build complete Mode Register from individual fields
     -- Format: [12:10] Reserved | [9] WBM | [8:7] Mode | [6:4] CAS | [3] BT | [2:0] BL
-    constant MODE_REG : std_logic_vector(12 downto 0) := 
-        MR_RESERVED &           -- [12:10] Reserved (must be 000)
-        MR_WRITE_BURST_MODE &   -- [9] Write burst mode
-        MR_OPERATING_MODE &     -- [8:7] Operating mode  
-        cas_latency_bits &      -- [6:4] CAS Latency (auto from constant)
-        MR_BURST_TYPE &         -- [3] Burst type
-        MR_BURST_LENGTH;        -- [2:0] Burst length   
---	constant MODE_REG             : std_logic_vector(12 downto 0) := "000" & "1" & "00" & "010" & "0" & "000";
+    constant MODE_REG             : std_logic_vector(12 downto 0) := 
+			 MR_RESERVED          &  -- [12:10] Reserved (must be 000)
+			 MR_WRITE_BURST_MODE  &  -- [9] Write burst mode
+			 MR_OPERATING_MODE    &  -- [8:7] Operating mode  
+			 cas_latency_bits     &  -- [6:4] CAS Latency (auto from constant)
+			 MR_BURST_TYPE        &  -- [3] Burst type
+			 MR_BURST_LENGTH;        -- [2:0] Burst length   
 
 	 -- ISSI datatasheet at least 100µs delay 
 	 -- before issing a command other than NOP or INHIBIT
@@ -332,7 +331,7 @@ architecture rtl of sdram_controller is
     -- next values
 	signal sdram_cke_next         : std_logic;
     signal sdram_ba_next          : std_logic_vector(1 downto 0);
-    signal sdram_addr_next        : std_logic_vector(12 downto 0);
+    signal sdram_addr_next        : std_logic_vector(ROW_BITS-1 downto 0);
     signal sdram_dqm_next         : std_logic_vector(1 downto 0);
     signal sdram_dq_next          : std_logic_vector(15 downto 0) := (others => 'Z');  -- ADD THIS! Default tri-state;1
 	 
@@ -590,7 +589,7 @@ begin
                     state_next         <= ST_INIT_MODE;
                     cmd_next           <= CMD_MRS;  -- Issue MODE command
                     sdram_ba_next      <= "00";
-                    sdram_addr_next    <= MODE_REG;
+                    sdram_addr_next    <= MODE_REG(ROW_BITS - 1 downto 0);
                     seq_count_next     <= TMRD_CYCLES;
                 else
                     cmd_next           <= CMD_REF;  -- Issue next refresh
@@ -904,7 +903,7 @@ begin
             if seq_count = 0 then
                 cmd_next         <= CMD_ACT;
                 sdram_ba_next    <= addr_bank_latched;
-                sdram_addr_next  <= std_logic_vector(resize(unsigned(addr_row_latched), 13));
+                sdram_addr_next  <= std_logic_vector(resize(unsigned(addr_row_latched), ROW_BITS));
                 active_row_next  <= addr_row_latched;
                 active_bank_next <= addr_bank_latched;
                 row_active_next  <= '1';

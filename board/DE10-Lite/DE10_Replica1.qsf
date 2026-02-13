@@ -432,7 +432,8 @@ set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_symbol
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_signal_integrity
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_boundary_scan
-set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/sdram/sram_sdram_bridge.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE10-Lite/EBR_RAM.vhd"
+set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/sdram/sram_sdram_cached_bridge.vhd"
 set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/mx65.vhd"
 set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_Pack.vhd"
 set_global_assignment -name VHDL_FILE "//wsl\$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_MCode.vhd"
@@ -450,7 +451,6 @@ set_global_assignment -name VHDL_FILE ../../rtl/peripherals/pia/pia_uart.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/peripherals/aci/aci.vhd
 set_global_assignment -name QIP_FILE ram_8k.qip
 set_global_assignment -name VHDL_FILE ../../rtl/cpu/CPU_6800.vhd
-set_global_assignment -name VHDL_FILE RAM_DE10.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/rom/WOZMON68.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/rom/WOZMON65.vhd
 set_global_assignment -name VHDL_FILE ../../rtl/rom/WOZACI.vhd

@@ -6,10 +6,10 @@ entity Replica1_CORE is
   generic (
 		BOARD           : string  :=  "DE10_Lite";   -- DE10_Lite or DE1
 		CPU_TYPE        : string  :=  "6502";        -- 6502, 65C02, 6800 or 6809
- 	   CPU_CORE        : string  :=  "65XX";        -- 65XX, T65, MX65 
+ 	    CPU_CORE        : string  :=  "65XX";        -- 65XX, T65, MX65 
 		ROM             : string  :=  "WOZMON65";    -- default wozmon65
 		RAM_SIZE_KB     : integer :=  8;             -- 8 to 48kb
-	   BAUD_RATE       : integer :=  115200;        -- uart speed 1200 to 115200
+	    BAUD_RATE       : integer :=  115200;        -- uart speed 1200 to 115200
 		HAS_ACI         : boolean :=  false;         -- add the aci (incomplete)
 		HAS_MSPI        : boolean :=  false;         -- add master spi  C200
 		HAS_TIMER       : boolean :=  false          -- add basic timer
@@ -309,8 +309,8 @@ component ACI is
         cs_n      : in  std_logic;                           -- CXXX chip select²
         address   : in  std_logic_vector(15 downto 0);       -- addresses
         data_out  : out std_logic_vector(7 downto 0);        -- data output
-		  tape_in   : in  std_logic;                           -- tape input
-		  tape_out  : out std_logic                            -- tape output
+		tape_in   : in  std_logic;                           -- tape input
+		tape_out  : out std_logic                            -- tape output
     );
 end component;
 
@@ -439,59 +439,58 @@ begin
 
 -- CPU PORT MAP
 gen_cpu0: if CPU_TYPE = "6502" generate
-
 c0: if CPU_CORE = "65XX" generate
 	cpu: CPU_65XX          port map(main_clk        => main_clk,
 	                                reset_n         => reset_n,
 	                                cpu_reset_n     => cpu_reset_n,
-											  phi2            => phi2,
-											  rw              => rw,
-											  vma             => vma,
-											  sync            => sync,
-											  addr            => address_bus,
-											  data_in         => data_bus,
-											  data_out        => cpu_data,
-											  nmi_n           => nmi_n,
-											  irq_n           => irq_n,
-											  so_n            => so_n,
-											  mrdy            => mrdy,
-											  strch           => strch);
+									phi2            => phi2,
+									rw              => rw,
+									vma             => vma,
+									sync            => sync,
+									addr            => address_bus,
+									data_in         => data_bus,
+									data_out        => cpu_data,
+									nmi_n           => nmi_n,
+									irq_n           => irq_n,
+									so_n            => so_n,
+									mrdy            => mrdy,
+									strch           => strch);
 end generate c0;
 
 c1: if CPU_CORE = "T65" generate
 	cpu: CPU_T65           port map(main_clk        => main_clk,
 	                                reset_n         => reset_n,
 	                                cpu_reset_n     => cpu_reset_n,
-											  phi2            => phi2,
-											  rw              => rw,
-											  vma             => vma,
-											  sync            => sync,
-											  addr            => address_bus,
-											  data_in         => data_bus,
-											  data_out        => cpu_data,
-											  nmi_n           => nmi_n,
-											  irq_n           => irq_n,
-											  so_n            => so_n,
-											  mrdy            => mrdy,
-											  strch           => strch);
+									phi2            => phi2,
+									rw              => rw,
+									vma             => vma,
+									sync            => sync,
+									addr            => address_bus,
+									data_in         => data_bus,
+									data_out        => cpu_data,
+									nmi_n           => nmi_n,
+									irq_n           => irq_n,
+									so_n            => so_n,
+									mrdy            => mrdy,
+									strch           => strch);
 end generate c1;
 
 c2: if CPU_CORE = "MX65" generate
 	cpu: CPU_MX65           port map(main_clk        => main_clk,
 	                                 reset_n         => reset_n,
 	                                 cpu_reset_n     => cpu_reset_n,
-											   phi2            => phi2,
-											   rw              => rw,
-											   vma             => vma,
-											   sync            => sync,
-											   addr            => address_bus,
-											   data_in         => data_bus,
-											   data_out        => cpu_data,
-											   nmi_n           => nmi_n,
-											   irq_n           => irq_n,
-											   so_n            => so_n,
-											   mrdy            => mrdy,
-											   strch           => strch);
+									 phi2            => phi2,
+									 rw              => rw,
+									 vma             => vma,
+									 sync            => sync,
+									 addr            => address_bus,
+									 data_in         => data_bus,
+									 data_out        => cpu_data,
+									 nmi_n           => nmi_n,
+									 irq_n           => irq_n,
+									 so_n            => so_n,
+									 mrdy            => mrdy,
+									 strch           => strch);
 end generate c2;
 											  
 end generate gen_cpu0;
@@ -500,54 +499,54 @@ gen_cpu1: if CPU_TYPE = "65C02" generate
 	cpu: CPU_R65C02        port map(main_clk        => main_clk,
 	                                reset_n         => reset_n,
 	                                cpu_reset_n     => cpu_reset_n,
-											  phi2            => phi2,
-											  rw              => rw,
-											  vma             => vma,
-											  sync            => sync,
-											  addr            => address_bus,
-											  data_in         => data_bus,
-											  data_out        => cpu_data,
-											  nmi_n           => nmi_n,
-											  irq_n           => irq_n,
-											  so_n            => so_n,
-											  mrdy            => mrdy,
-											  strch           => strch);
+									phi2            => phi2,
+									rw              => rw,
+									vma             => vma,
+									sync            => sync,
+									addr            => address_bus,
+									data_in         => data_bus,
+									data_out        => cpu_data,
+									nmi_n           => nmi_n,
+									irq_n           => irq_n,
+									so_n            => so_n,
+									mrdy            => mrdy,
+									strch           => strch);
 end generate gen_cpu1;
 											  
 gen_cpu2: if CPU_TYPE = "6800" generate
 	cpu: CPU_6800          port map(main_clk        => main_clk,
 	                                reset_n         => reset_n,
 	                                cpu_reset_n     => cpu_reset_n,
-											  E               => phi2,
-											  rw              => rw,
-											  vma             => vma,
-											  sync            => sync,
-											  addr            => address_bus,
-											  data_in         => data_bus,
-											  data_out        => cpu_data,
-											  nmi_n           => nmi_n,
-											  irq_n           => irq_n,
-											  so_n            => so_n,
-  											  mrdy            => mrdy,
-											  strch           => strch);
+									E               => phi2,
+									rw              => rw,
+									vma             => vma,
+									sync            => sync,
+									addr            => address_bus,
+									data_in         => data_bus,
+									data_out        => cpu_data,
+									nmi_n           => nmi_n,
+									irq_n           => irq_n,
+									so_n            => so_n,
+  									mrdy            => mrdy,
+									strch           => strch);
 end generate gen_cpu2;
 
 gen_cpu3: if CPU_TYPE = "6809" generate
 	cpu: CPU_6809          port map(main_clk        => main_clk,
 	                                reset_n         => reset_n,
 	                                cpu_reset_n     => cpu_reset_n,
-											  E               => phi2,
-											  rw              => rw,
-											  vma             => vma,
-											  sync            => sync,
-											  addr            => address_bus,
-											  data_in         => data_bus,
-											  data_out        => cpu_data,
-											  nmi_n           => nmi_n,
-											  irq_n           => irq_n,
-											  so_n            => so_n,
-  											  mrdy            => mrdy,
-											  strch           => strch);
+									E               => phi2,
+									rw              => rw,
+									vma             => vma,
+									sync            => sync,
+									addr            => address_bus,
+									data_in         => data_bus,
+									data_out        => cpu_data,
+									nmi_n           => nmi_n,
+									irq_n           => irq_n,
+									so_n            => so_n,
+  									mrdy            => mrdy,
+									strch           => strch);
 end generate gen_cpu3;
 
 
@@ -578,37 +577,37 @@ end generate gen_cpu3;
 
 woz65: if ROM = "WOZMON65"  generate
 	rom: WOZMON65          port map(clock           => phi2,
-							              cs_n            => rom_cs_n,
+							        cs_n            => rom_cs_n,
 	                                address         => address_bus(7 downto 0),
-							              data_out        => rom_data);
+							        data_out        => rom_data);
 end generate woz65;
 
 basic65: if ROM = "BASIC65"  generate
 	rom: BASIC             port map(clock           => phi2,
-							              cs_n            => rom_cs_n,
+							        cs_n            => rom_cs_n,
 	                                address         => address_bus(13 downto 0),
-							              data_out        => rom_data);
+							        data_out        => rom_data);
 end generate basic65;
 
 woz68: if ROM = "WOZMON68"  generate
 	rom: WOZMON68          port map(clock           => phi2,
-							              cs_n            => rom_cs_n,
+							        cs_n            => rom_cs_n,
 	                                address         => address_bus(7 downto 0),
-							              data_out        => rom_data);
+							        data_out        => rom_data);
 end generate woz68;
 
 woz69: if ROM = "WOZMON69"  generate
 	rom: WOZMON69          port map(clock           => phi2,
-							              cs_n            => rom_cs_n,
+							        cs_n            => rom_cs_n,
 	                                address         => address_bus(7 downto 0),
-							              data_out        => rom_data);
+							        data_out        => rom_data);
 end generate woz69;
 
 mon69: if ROM = "MON6809" generate
 	rom: MON6809           port map(clock           => phi2,
-							              cs_n            => rom_cs_n,
+							        cs_n            => rom_cs_n,
 	                                address         => address_bus(11 downto 0),
-							              data_out        => rom_data);
+							        data_out        => rom_data);
 end generate mon69;
 
 -- END ROM PORT MAP
@@ -618,73 +617,73 @@ gen_aci:  if HAS_ACI and CPU_TYPE = "6502" generate
 	tape: ACI              port map(reset_n         => cpu_reset_n,
 	                                phi2            => phi2,
 	                                cs_n            => aci_cs_n,
-											  address         => address_bus,
-											  data_out        => aci_data,
-											  tape_in         => aci_in,
-											  tape_out        => aci_out);
+									address         => address_bus,
+									data_out        => aci_data,
+									tape_in         => aci_in,
+									tape_out        => aci_out);
 end generate gen_aci;											  
 
 										 
 	pia: PIA_UART       generic map(CLK_FREQ_HZ     => 1843200, 
-								 		     BAUD_RATE       => BAUD_RATE,
-											  BITS            => 8)
-								  port map(clock           => phi2,
- 								           serial_clk      => serial_clk,
-									   	  reset_n         => cpu_reset_n,
-									  	     cs_n            => pia_cs_n,
-									        rw              => rw,
-									        address         => address_bus(1 downto 0),
-										     data_in         => data_bus,
-									        data_out        => pia_data,
-								           rx              => uart_rx,
-								           tx              => uart_tx);
+								 	BAUD_RATE       => BAUD_RATE,
+									BITS            => 8)
+				   	       port map(clock           => phi2,
+ 								    serial_clk      => serial_clk,
+								 	reset_n         => cpu_reset_n,
+									cs_n            => pia_cs_n,
+									rw              => rw,
+									address         => address_bus(1 downto 0),
+									data_in         => data_bus,
+									data_out        => pia_data,
+								    rx              => uart_rx,
+								    tx              => uart_tx);
 	
 							
 gen_mspi: if HAS_MSPI = true generate
 	mspi: mspi_iface       port map(phi2            => phi2, 
-											  reset_n         => cpu_reset_n,
-											  cs_n            => mspi_cs_n,
-											  rw              => rw,
-											  address         => address_bus(1 downto 0),
-											  data_in         => data_bus,
-											  data_out        => mspi_data,
-											  spi_clk         => phi2,
-											  spi_sck         => spi_sck,   
-											  spi_cs_n        => spi_cs,    
-											  spi_mosi        => spi_mosi,  
-  											  spi_miso        => spi_miso); 
+									reset_n         => cpu_reset_n,
+									cs_n            => mspi_cs_n,
+									rw              => rw,
+									address         => address_bus(1 downto 0),
+									data_in         => data_bus,
+									data_out        => mspi_data,
+									spi_clk         => phi2,
+									spi_sck         => spi_sck,   
+									spi_cs_n        => spi_cs,    
+									spi_mosi        => spi_mosi,  
+  									spi_miso        => spi_miso); 
 end generate gen_mspi;
 
 
 gen_timer: if HAS_TIMER = true generate
 	timer: simple_timer     port map(phi2          => phi2,
-									  		   reset_n       => cpu_reset_n,
-											   cs_n          => timer_cs_n,
-											   rw            => rw,
-											   address       => address_bus(1 downto 0),
-											   data_in       => data_bus,
-											   data_out      => timer_data,
-											   timer_clk     => phi2);
+									 reset_n       => cpu_reset_n,
+									 cs_n          => timer_cs_n,
+									 rw            => rw,
+									 address       => address_bus(1 downto 0),
+									 data_in       => data_bus,
+									 data_out      => timer_data,
+									 timer_clk     => phi2);
 end generate gen_timer;
 
 											
    aci_cs_n     <= '0' when vma = '1' and address_bus(15 downto 9)   = x"C" & "000"  else '1';   -- IF WOZACI
    mspi_cs_n    <= '0' when vma = '1' and address_bus(15 downto 4)   = x"C20"        else '1';   -- IF MASTER SPI CONTROLLER
    timer_cs_n   <= '0' when vma = '1' and address_bus(15 downto 4)   = x"C21"        else '1';   -- IF TIMER
-	pia_cs_n     <= '0' when vma = '1' and address_bus(15 downto 4)   = x"D01"        else '1';   -- REPLICA CONSOLE PIA
+   pia_cs_n     <= '0' when vma = '1' and address_bus(15 downto 4)   = x"D01"        else '1';   -- REPLICA CONSOLE PIA
    tram_cs_n    <= '0' when vma = '1' and address_bus(15 downto 12)  = x"E"          else '1';   -- SDRAM TEST
    la_cs_n      <= '0' when vma = '1' and address_bus(15 downto 0)   = x"C300"       else '1';   -- LOGIC ANALYSER TRIGGER
 	
 	
 	data_bus <= cpu_data      when rw          = '0' else
-		         rom_data      when rom_cs_n    = '0' else 
-		         aci_data      when aci_cs_n    = '0' else 
-		         mspi_data     when mspi_cs_n   = '0' else 
-		         timer_data    when timer_cs_n  = '0' else 
-		         ram_data      when ram_cs_n    = '0' else 
-		         tram_data     when tram_cs_n   = '0' else 
-					pia_data      when pia_cs_n    = '0' else
-		         address_bus(15 downto 8);     
+		        rom_data      when rom_cs_n    = '0' else 
+		        aci_data      when aci_cs_n    = '0' else 
+		        mspi_data     when mspi_cs_n   = '0' else 
+		        timer_data    when timer_cs_n  = '0' else 
+		        ram_data      when ram_cs_n    = '0' else 
+		        tram_data     when tram_cs_n   = '0' else 
+			    pia_data      when pia_cs_n    = '0' else
+		        address_bus(15 downto 8);     
 
 	process(phi2) 
 	begin

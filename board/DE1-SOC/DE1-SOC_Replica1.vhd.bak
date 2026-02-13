@@ -113,7 +113,7 @@ component fractional_clock_divider is
     );
 end component;
 	
-component EBR_RAM is
+component RAM_DE10 is
     generic (
         RAM_SIZE_KB : integer := 32  -- 8, 16, 24, 32, 40, or 48
     );
@@ -240,7 +240,7 @@ component sdram_controller is
         sdram_cas_n : out   std_logic;
         sdram_we_n  : out   std_logic;
         sdram_ba    : out   std_logic_vector(1 downto 0);
-        sdram_addr  : out   std_logic_vector(ROW_BITS - 1 downto 0);
+        sdram_addr  : out   std_logic_vector(12 downto 0);
         sdram_dq    : inout std_logic_vector(15 downto 0);
         sdram_dqm   : out   std_logic_vector(1 downto 0)
     );
@@ -250,12 +250,11 @@ component sram_sdram_bridge is
     generic (
         ADDR_BITS        : integer := 24;
 		SDRAM_MHZ        : integer := 75;
-        GENERATE_REFRESH : boolean := true;               -- generate refresh_req  false = don't refresh
-        USE_CACHE        : boolean := true;               -- enable/disable cache
+        GENERATE_REFRESH : boolean := true;  -- generate refresh_req  false = don't refresh
+        USE_CACHE        : boolean := true;  -- enable/disable cache
         -- Cache parameters
-        CACHE_SIZE_BYTES : integer := 4096;               -- 4KB cache
-        LINE_SIZE_BYTES  : integer := 16;                 -- 16-byte cache lines
-        RAM_BLOCK_TYPE   : string  := "M9K, no_rw_check"  -- "M9K", "M4K", "M10K", "AUTO"
+        CACHE_SIZE_BYTES : integer := 4096;  -- 4KB cache
+        LINE_SIZE_BYTES  : integer := 16     -- 16-byte cache lines
     );
     port (
         sdram_clk     : in  std_logic;
@@ -291,27 +290,15 @@ end component;
 --------------------------------------------------------------------------
 -- Board Configuration Parameters 
 --------------------------------------------------------------------------
-constant BOARD            : string   := "DE10_Lite";
-constant CPU_TYPE         : string   := "6502";                   -- 6502, 65C02, 6800, 6809
-constant CPU_CORE         : string   := "MX65";                   -- 65XX or T65 or MX65
-constant ROM              : string   := "WOZMON65";
-constant RAM_SIZE_KB      : positive := 48;                       -- DE10-Lite supports up to 48KB
-constant BAUD_RATE        : integer  := 115200;
-constant HAS_ACI          : boolean  := false;
-constant HAS_MSPI         : boolean  := false;
-constant HAS_TIMER        : boolean  := false;
-constant USE_EBR_RAM      : boolean  := true;                     -- true for DE10-Lite/DE1-SOC, false for DE1
-constant SDRAM_MHZ        : integer  := 120;
-constant ROW_BITS         : integer  := 13;
-constant COL_BITS         : integer  := 10;
-constant ADDR_BITS        : integer  := 12; 
-constant AUTO_PRECHARGE   : boolean  := false;
-constant AUTO_REFRESH     : boolean  := false;
-constant CACHE_DATA       : boolean  := true;                     -- actually only works fine on DE10-Lite
-constant CACHE_SIZE_BYTES : integer  := 1024;                     -- 1KB cache
-constant LINE_SIZE_BYTES  : integer  := 16;                       -- 16-byte cache lines
-constant SDRAM_ADDR_WIDTH : integer  := ROW_BITS + COL_BITS + 2;  -- +2 pour BA(1:0)
-constant RAM_BLOCK_TYPE   : string   := "M9K, no_rw_check";       -- "M9K", "M4K", "M10K", "AUTO"
+constant BOARD          : string   := "DE10_Lite";
+constant CPU_TYPE       : string   := "6502";   -- 6502, 65C02, 6800, 6809
+constant CPU_CORE       : string   := "MX65";   -- 65XX or T65 or MX65
+constant ROM            : string   := "WOZMON65";
+constant RAM_SIZE_KB    : positive := 48;       -- DE10-Lite supports up to 48KB
+constant BAUD_RATE      : integer  := 115200;
+constant HAS_ACI        : boolean  := false;
+constant HAS_MSPI       : boolean  := false;
+constant HAS_TIMER      : boolean  := false;
 
 signal  address_bus    : std_logic_vector(15 downto 0);
 signal  data_bus       : std_logic_vector(7 downto 0);
@@ -358,37 +345,37 @@ signal sdram_ack       : std_logic;
 signal refresh_busy    : std_logic;
 
 signal mrdy            : std_logic;
---signal strch           : std_logic;
---signal bshit           : std_logic;
---
---signal refresh_reg     : std_logic;
---signal ready_reg       : std_logic;
---signal ack_reg         : std_logic;
---signal req_reg         : std_logic;
---signal wr_reg          : std_logic;
---signal la_state        : std_logic_vector(1 downto 0);
---	
-	
----- remove after use
---signal strch_flag      : std_logic;
---signal phi2_old        : std_logic;
---signal phi2_new        : std_logic;
---signal pulse_trigger : std_logic;
---signal pulse_count : integer range 0 to 10 := 0;
---signal mrdy_test : std_logic;
---signal e    : std_logic;
---signal q    : std_logic;
---signal xx   : std_logic;
---signal debug : std_logic_vector(2 downto 0);
+signal strch           : std_logic;
+signal bshit           : std_logic;
 
---signal clk_ticks     : std_logic := '0';
---signal debug_state   : std_logic_vector(3 downto 0);
---signal debug_cmd     : std_logic_vector(3 downto 0);
---signal debug_addr_10 : std_logic;
---signal debug_addr_9  : std_logic;
---signal debug_addr_0  : std_logic;
---signal debug_dqm     : std_logic_vector(1 downto 0);
---signal debug_dq_0    : std_logic;
+signal refresh_reg     : std_logic;
+signal ready_reg       : std_logic;
+signal ack_reg         : std_logic;
+signal req_reg         : std_logic;
+signal wr_reg          : std_logic;
+signal la_state        : std_logic_vector(1 downto 0);
+	
+	
+-- remove after use
+signal strch_flag      : std_logic;
+signal phi2_old        : std_logic;
+signal phi2_new        : std_logic;
+signal pulse_trigger : std_logic;
+signal pulse_count : integer range 0 to 10 := 0;
+signal mrdy_test : std_logic;
+signal e    : std_logic;
+signal q    : std_logic;
+signal xx   : std_logic;
+signal debug : std_logic_vector(2 downto 0);
+
+signal clk_ticks     : std_logic := '0';
+signal debug_state   : std_logic_vector(3 downto 0);
+signal debug_cmd     : std_logic_vector(3 downto 0);
+signal debug_addr_10 : std_logic;
+signal debug_addr_9  : std_logic;
+signal debug_addr_0  : std_logic;
+signal debug_dqm     : std_logic_vector(1 downto 0);
+signal debug_dq_0    : std_logic;
 
 signal cache_hit      : unsigned(6 downto 0);  -- 0 to 100%
 signal cache_hit_tens : unsigned(3 downto 0);  -- 0 à 10
@@ -433,19 +420,19 @@ begin
 	-- not these clock are the main clock used by the core
 	-- this clock is internaly divided by 2 so the main clock is twice the cpu clock
 
---	dbg: debug_clock_button           port map(clk_1hz_in        => clock_1hz,
---											   debug_btn         => KEY(1),
---											   debug_clk         => clock_debug);		
-													 
+--	dbg: debug_clock_button              port map(clk_1hz_in      => clock_1hz,
+--														       debug_btn       => KEY(1),
+--														       debug_clk       => clock_debug);
+																 
 --	clk1hz: clock_divider             generic map(divider        => 120_000_000/1*4)
---	 								     port map(reset          => '1',
---												  clk_in         => MAX10_CLK1_50,
---												  clk_out        => clock_1hz);
+--	 									  	       port map(reset          => '1',
+--																 clk_in         => MAX10_CLK1_50,
+--														       clk_out        => clock_1hz);
 
 	clk1mhz: clock_divider            generic map(divider        => 30)
-	 								     port map(reset          => '1',
-											      clk_in         => clock_30mhz,
-												  clk_out        => clock_1mhz);
+	 									  	       port map(reset          => '1',
+																 clk_in         => clock_30mhz,
+														       clk_out        => clock_1mhz);
 
 	clk2mhz: clock_divider             generic map(divider       => 15)
 	 								      port map(reset         => '1',
@@ -486,6 +473,8 @@ begin
 
 	main_clk <= raw_clk when SW(2 downto 0) = sw_prev else '0';
 			
+   --main_clk <= clock_30mhz;															
+	
 	-- UART baud rate clock  1.8432Mhz base serial clock
 	uclk: fractional_clock_divider   generic map(CLK_FREQ_HZ    => 50_000_000,
 										 	     FREQUENCY_HZ   => 1_843_200)
@@ -513,8 +502,8 @@ begin
 												 bus_data       =>  data_bus,
 												 bus_rw         =>  rw,
 												 bus_mrdy       =>  mrdy,
-												 bus_strch      =>  open,
-												 bus_bshit      =>  open,
+												 bus_strch      =>  strch,
+												 bus_bshit      =>  bshit,
 												 ext_ram_cs_n   =>  ram_cs_n,
 												 ext_ram_data   =>  ram_data,
 												 ext_tram_cs_n  =>  tram_cs_n,
@@ -527,28 +516,28 @@ begin
 												 spi_miso       =>  ARDUINO_IO(12),  -- SD Card Data            MISO
 												 tape_out       =>  ARDUINO_IO(3),
 												 tape_in        =>  ARDUINO_IO(2),
-												 la_state       =>  open);
+												 la_state       =>  la_state);
 
 
-gen_ebr_ram: if USE_EBR_RAM = true generate
-	ram: EBR_RAM                     generic map(RAM_SIZE_KB     => RAM_SIZE_KB)
+de10_gen_ram: if BOARD = "DE10_Lite" generate
+	ram: RAM_DE10                    generic map(RAM_SIZE_KB     => RAM_SIZE_KB)
 								        port map(clock           => phi2,
 					   	                         cs_n            => ram_cs_n,
 										         we_n            => rw,
 										         address         => address_bus,
 										         data_in         => data_bus,
 							                     data_out        => ram_data);
-end generate gen_ebr_ram;																
+end generate de10_gen_ram;																
 
 
-    bridge_inst : sram_sdram_bridge  generic map(ADDR_BITS        => ADDR_BITS,
-	                                             SDRAM_MHZ        => SDRAM_MHZ,
-                                                 GENERATE_REFRESH => not AUTO_REFRESH,
-                                                 USE_CACHE        => CACHE_DATA,
+
+    bridge_inst : sram_sdram_bridge  generic map(ADDR_BITS        => 12,
+	                                             SDRAM_MHZ        => 75,
+                                                 GENERATE_REFRESH => true,
+                                                 USE_CACHE        => true,
                                                  -- Cache parameters
-                                                 CACHE_SIZE_BYTES => CACHE_SIZE_BYTES,  -- 1KB cache
-                                                 LINE_SIZE_BYTES  => LINE_SIZE_BYTES,   -- 16-byte cache lines
-                                                 RAM_BLOCK_TYPE   => RAM_BLOCK_TYPE)  
+                                                 CACHE_SIZE_BYTES => 1024,  -- 1KB cache
+                                                 LINE_SIZE_BYTES  => 16)    -- 16-byte cache lines
 									    port map(sdram_clk        => clock_sdram,
 										      	 E                => phi2,
 												 reset_n          => reset_n,
@@ -556,7 +545,7 @@ end generate gen_ebr_ram;
 												 sram_ce_n        => tram_cs_n,
 												 sram_we_n        => rw,
 												 sram_oe_n        => not rw,
-												 sram_addr        => address_bus(ADDR_BITS - 1 downto 0),
+												 sram_addr        => address_bus(11 downto 0),
 												 sram_din         => data_bus,
 												 sram_dout        => tram_data,
             
@@ -573,32 +562,32 @@ end generate gen_ebr_ram;
 												 sdram_ready      => sdram_ready,
 												 sdram_ack        => sdram_ack,
                                                  cache_hitp       => cache_hit,
-												 debug            => open);
+												 debug            => debug);
 
     -- SDRAM Controller Instance
-    sdram_inst : sdram_controller   generic map (FREQ_MHZ           => SDRAM_MHZ,
-									 			 ROW_BITS           => ROW_BITS, 
-												 COL_BITS           => COL_BITS,
-                                                 USE_AUTO_PRECHARGE => AUTO_PRECHARGE,
-                                                 USE_AUTO_REFRESH   => AUTO_REFRESH)
+    sdram_inst : sdram_controller   generic map (FREQ_MHZ           => 75,
+									 			 ROW_BITS           => 13, 
+												 COL_BITS           => 10,
+                                                 USE_AUTO_PRECHARGE => false,
+                                                 USE_AUTO_REFRESH   => false)
 									   port map (clk                => clock_sdram,
 												 reset_n            => reset_n,
 												 req                => sdram_req,
 												 wr_n               => sdram_wr_n,
-												 addr               => std_logic_vector(resize(unsigned(sdram_addr), SDRAM_ADDR_WIDTH)),
+												 addr               => (24 downto 11 => '0') & sdram_addr,
 												 din                => sdram_din,
 												 dout               => sdram_dout,
 												 byte_en            => sdram_byte_en,
 												 ready              => sdram_ready,
 												 ack                => sdram_ack,
-												 debug_state        => open,
-												 debug_cmd          => open,
+												 debug_state        => debug_state,
+												 debug_cmd          => debug_cmd,
 				 				 --		  		 debug_seq          => display(15 downto 0),
-                                                 debug_addr_10      => open,
-                                                 debug_addr_9       => open,
-                                                 debug_addr_0       => open,
-                                                 debug_dqm          => open,
-                                                 debug_dq_0         => open,
+                                                 debug_addr_10      => debug_addr_10,
+                                                 debug_addr_9       => debug_addr_9,
+                                                 debug_addr_0       => debug_addr_0,
+                                                 debug_dqm          => debug_dqm,
+                                                 debug_dq_0         => debug_dq_0,
 												 refresh_active     => refresh_busy,
 												 sdram_clk          => DRAM_CLK,
 												 sdram_cke          => DRAM_CKE,
@@ -614,8 +603,62 @@ end generate gen_ebr_ram;
 																
 
 																
+process(clock_sdram, reset_n) 
+begin
+    if reset_n = '0' then
+        clk_ticks <= '0';
+	elsif rising_edge(clock_sdram) then
+		req_reg     <= sdram_req;
+		ack_reg     <= sdram_ack;
+		ready_reg   <= sdram_ready;
+		wr_reg      <= sdram_wr_n;
+		refresh_reg <= refresh_busy;
+        clk_ticks     <= not clk_ticks;
+	end if;
+end process;
 
---  uncomment if sdram controller is not connected
+
+-- trigger 																
+GPIO(0)            <= sdram_wr_n;
+GPIO(1)            <= clk_ticks;   -- 1 edge by clock tick
+-- CMD 
+GPIO(5 downto 2)   <= debug_state;
+GPIO(9 downto 6)   <= debug_cmd;
+-- A9 for MODE LOAD
+GPIO(10)           <= debug_addr_9;
+-- A10
+GPIO(11)           <= debug_addr_10;
+GPIO(13 downto 12) <= debug_dqm;
+-- specific
+GPIO(14)           <= debug_addr_0;  
+GPIO(15)           <= debug_dq_0;  
+-- external clock
+GPIO(16)           <= clock_sdram;
+
+
+--=== SRAM TO SDRAM BRIDGE DEBUG ====
+---- test state												 
+--GPIO(0)          <= sdram_addr(0); ---   main_clk; 
+--GPIO(1)          <= ram_addr(0); --strch; 
+---- 6502 signals
+--GPIO(2)          <= mrdy;     
+--GPIO(3)          <= phi2; 
+---- sram signals
+--GPIO(4)          <= tram_cs_n;   
+--GPIO(5)          <= rw when tram_cs_n = '0' else '1';
+--GPIO(6)          <= address_bus(1);-- when tram_cs_n = '0' else '0';
+---- bridge state
+----GPIO(9 downto 7) <= debug;
+---- sdram signals
+--GPIO(10)         <= req_reg;
+--GPIO(11)         <= ack_reg;
+--GPIO(12)         <= wr_reg;     
+--GPIO(13)         <= ready_reg;  
+--GPIO(14)         <= refresh_reg;
+--GPIO(15)         <= '0' when (address_bus(0) = '0' and sdram_byte_en = "01" and tram_cs_n = '0') or (address_bus(0) = '1' and sdram_byte_en = "10" and tram_cs_n = '0') else '1';
+
+
+	 
 --	DRAM_ADDR      <= (others => 'Z');
 --	DRAM_BA        <= (others => 'Z');
 --	DRAM_CAS_N     <= 'Z';  

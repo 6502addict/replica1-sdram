@@ -83,7 +83,8 @@ entity sram_sdram_bridge is
         USE_CACHE        : boolean := true;    
         -- Cache parameters
         CACHE_SIZE_BYTES : integer := 1024;  -- 1KB cache
-        LINE_SIZE_BYTES  : integer := 16     -- 16-byte cache lines
+        LINE_SIZE_BYTES  : integer := 16;    -- 16-byte cache lines
+        RAM_BLOCK_TYPE   : string  := "M9K" 
     );
     port (
         sdram_clk    : in   std_logic;
