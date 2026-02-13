@@ -2,6 +2,26 @@
 
 This experimental project is designed to test the implementation of an SDRAM controller and its integration with classic CPU cores.
 
+## ⚖️ License & Commercial Use
+
+This project is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+- **Individual/Non-Commercial:** Free to use, share, and adapt!
+- **Commercial Use:** Forbidden under this license. 
+
+**Want to use this code commercially?** Please contact **Didier Derny** at didier@aida.org to discuss a commercial license.
+
+## 🎓 Educational Use & "Theory of Operation"
+This project was born out of frustration with the lack of documented, readable SDRAM controllers available online. Most existing solutions are either "black boxes" or lack clear explanations.
+
+Heavily Documented: The bridge and controller include a "Theory of Operation" within the comments to explain why specific timings and state transitions are used.
+
+For Students: You are encouraged to use this code for learning, university projects, and experimentation.
+
+For Hobbyists: If you are building a Replica 1 or similar 6502/6800 system, this is designed to be readable so you can adapt it to your specific hardware.
+
+Note on the License: This project uses the CC BY-NC-SA 4.0 license. This means it will always remain free for the community. If you improve the cache or the controller, you must share those improvements so others can learn from them too!
+
 ## Core Objectives
 
 - **SDRAM Controller**: Developing and refining a custom controller.
@@ -40,3 +60,4 @@ The initial SDRAM controller is intentionally simple, with planned iterative imp
 | 2026/02/10 | Breakthrough: Fixed the write address bug. Successfully passed 10 million R/W cycles at 10 MHz CPU speed and 75 MHz SDRAM speed. |
 | 2026/02/11 | Completed write-through cache implementation (1KB) with 47-52% hit rate. Unified bridge architecture allows runtime cache enable/disable. Full documentation added: theory of operation, state-by-state comments, CC BY-NC-SA 4.0 license. SDRAM controller validated in both auto-precharge and manual modes. All components production-ready at 10 MHz. |
 | 2026/02/13 | Multi-board support: Ported SDRAM controller and cache to DE1 and DE1-SoC platforms. Refactored top-level architecture with parameterized constants for board-specific configurations (ROW_BITS, COL_BITS, ADDR_BITS). Improvements back-ported to DE10-Lite for consistency. |
+

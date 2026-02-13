@@ -62,9 +62,10 @@ end entity;
 architecture top of DE10_Replica1 is
 
 component hexto7seg is
+  generic (SEGMENTS  : integer := 7);
   port (
 	   hex           : in   std_logic_vector(3 downto 0);
-		seg           : out  std_logic_vector(7 downto 0)
+	   seg           : out  std_logic_vector(7 downto 0)
 	);
 end component;	
 
@@ -358,37 +359,6 @@ signal sdram_ack       : std_logic;
 signal refresh_busy    : std_logic;
 
 signal mrdy            : std_logic;
---signal strch           : std_logic;
---signal bshit           : std_logic;
---
---signal refresh_reg     : std_logic;
---signal ready_reg       : std_logic;
---signal ack_reg         : std_logic;
---signal req_reg         : std_logic;
---signal wr_reg          : std_logic;
---signal la_state        : std_logic_vector(1 downto 0);
---	
-	
----- remove after use
---signal strch_flag      : std_logic;
---signal phi2_old        : std_logic;
---signal phi2_new        : std_logic;
---signal pulse_trigger : std_logic;
---signal pulse_count : integer range 0 to 10 := 0;
---signal mrdy_test : std_logic;
---signal e    : std_logic;
---signal q    : std_logic;
---signal xx   : std_logic;
---signal debug : std_logic_vector(2 downto 0);
-
---signal clk_ticks     : std_logic := '0';
---signal debug_state   : std_logic_vector(3 downto 0);
---signal debug_cmd     : std_logic_vector(3 downto 0);
---signal debug_addr_10 : std_logic;
---signal debug_addr_9  : std_logic;
---signal debug_addr_0  : std_logic;
---signal debug_dqm     : std_logic_vector(1 downto 0);
---signal debug_dq_0    : std_logic;
 
 signal cache_hit      : unsigned(6 downto 0);  -- 0 to 100%
 signal cache_hit_tens : unsigned(3 downto 0);  -- 0 à 10
@@ -401,16 +371,16 @@ begin
     cache_hit_tens <= resize(cache_hit / 10, 4);
     cache_hit_ones <= resize(cache_hit mod 10, 4);    
     
-    h0 : hexto7seg port map (hex => std_logic_vector(cache_hit_ones), seg => HEX0); 
-    h1 : hexto7seg port map (hex => std_logic_vector(cache_hit_tens), seg => HEX1);    
+    h0 : hexto7seg generic map (SEGMENTS => 8) port map (hex => std_logic_vector(cache_hit_ones), seg => HEX0); 
+    h1 : hexto7seg generic map (SEGMENTS => 8) port map (hex => std_logic_vector(cache_hit_tens), seg => HEX1);    
     
---	h0 : hexto7seg port map  (hex => data_bus(3  downto 0),     seg => HEX0); 
---	h1 : hexto7seg port map  (hex => data_bus(7  downto 4),     seg => HEX1); 
+--	h0 : hexto7seg generic map (SEGMENTS => 8) port map  (hex => data_bus(3  downto 0),     seg => HEX0); 
+--	h1 : hexto7seg generic map (SEGMENTS => 8) port map  (hex => data_bus(7  downto 4),     seg => HEX1); 
 
-	h2 : hexto7seg port map  (hex => address_bus(3 downto 0),   seg => HEX2); 
-	h3 : hexto7seg port map  (hex => address_bus(7 downto 4),   seg => HEX3); 
-	h4 : hexto7seg port map  (hex => address_bus(11 downto 8),  seg => HEX4); 
-	h5 : hexto7seg port map  (hex => address_bus(15 downto 12), seg => HEX5); 
+	h2 : hexto7seg generic map (SEGMENTS => 8) port map  (hex => address_bus(3 downto 0),   seg => HEX2); 
+	h3 : hexto7seg generic map (SEGMENTS => 8) port map  (hex => address_bus(7 downto 4),   seg => HEX3); 
+	h4 : hexto7seg generic map (SEGMENTS => 8) port map  (hex => address_bus(11 downto 8),  seg => HEX4); 
+	h5 : hexto7seg generic map (SEGMENTS => 8) port map  (hex => address_bus(15 downto 12), seg => HEX5); 
 
 	-- reset_n is mapped to KEY 0 of the DE10 Lite
 	-- reset_n is used to reset low level layers of the fpga modules
