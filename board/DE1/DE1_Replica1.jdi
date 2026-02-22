@@ -1,6 +1,6 @@
 <sld_project_info>
   <project>
-    <hash md5_digest_80b="227a3d151d4bbb987b13"/>
+    <hash md5_digest_80b="06890144cb7c9cd92745"/>
   </project>
   <file_info>
     <file device="EP2C20F484C7" path="//wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/DE1_Replica1.sof" usercode="0xFFFFFFFF"/>

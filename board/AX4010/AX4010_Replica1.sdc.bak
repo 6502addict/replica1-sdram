@@ -1,0 +1,28 @@
+# Clock constraints
+create_clock -name clk -period 20.000 [get_ports {clk}]
+create_generated_clock -name sdram_clk -source [get_pins {mclk|altpll_component|auto_generated|pll1|clk[2]}] -divide_by 1 [get_ports {sdram_clk}]
+
+# SDRAM output delays (from FPGA to SDRAM)
+set_output_delay -clock sdram_clk -max 1.5 [get_ports {sdram_addr[*]}]
+set_output_delay -clock sdram_clk -min -0.8 [get_ports {sdram_addr[*]}]
+set_output_delay -clock sdram_clk -max 1.5 [get_ports {sdram_ba[*]}]
+set_output_delay -clock sdram_clk -min -0.8 [get_ports {sdram_ba[*]}]
+set_output_delay -clock sdram_clk -max 1.5 [get_ports {sdram_cas_n}]
+set_output_delay -clock sdram_clk -min -0.8 [get_ports {sdram_cas_n}]
+set_output_delay -clock sdram_clk -max 1.5 [get_ports {sdram_ras_n}]
+set_output_delay -clock sdram_clk -min -0.8 [get_ports {sdram_ras_n}]
+set_output_delay -clock sdram_clk -max 1.5 [get_ports {sdram_we_n}]
+set_output_delay -clock sdram_clk -min -0.8 [get_ports {sdram_we_n}]
+set_output_delay -clock sdram_clk -max 1.5 [get_ports {sdram_dqm[*]}]
+set_output_delay -clock sdram_clk -min -0.8 [get_ports {sdram_dqm[*]}]
+
+# SDRAM bidirectional data
+set_output_delay -clock sdram_clk -max 1.5 [get_ports {sdram_dq[*]}]
+set_output_delay -clock sdram_clk -min -0.8 [get_ports {sdram_dq[*]}]
+set_input_delay -clock sdram_clk -max 5.4 [get_ports {sdram_dq[*]}]
+set_input_delay -clock sdram_clk -min 2.5 [get_ports {sdram_dq[*]}]
+
+# Multicycle for SDRAM read (CAS latency = 3)
+set_multicycle_path -from [get_clocks {sdram_clk}] -to [get_clocks {clk}] -setup -end 2
+set_multicycle_path -from [get_clocks {sdram_clk}] -to [get_clocks {clk}] -hold -end 1
+

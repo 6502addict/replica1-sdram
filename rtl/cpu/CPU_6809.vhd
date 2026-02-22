@@ -36,8 +36,7 @@ entity CPU_6809 is
 		so_n        : in  std_logic := '1'; -- Set overflow (not used by 6800)
 		
 		-- wait states
-		mrdy        : in  std_logic;
-		strch       : out std_logic
+		mrdy        : in  std_logic
 	);
 end CPU_6809;
 
@@ -91,7 +90,7 @@ begin
 									    mrdy    => mrdy,
 									    clk_1x  => mc6809_clk,
 									    clk_2x  => open,
-									    stretch => strch);	
+									    stretch => open);	
 										 
 										 
 	E <= mc6809_clk;

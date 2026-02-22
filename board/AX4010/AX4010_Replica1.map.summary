@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Sun Feb 22 18:32:17 2026
+Quartus Prime Version : 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
+Revision Name : AX4010_Replica1
+Top-level Entity Name : AX4010_Replica1
+Family : Cyclone IV E
+Total logic elements : 1,081
+    Total combinational functions : 988
+    Dedicated logic registers : 396
+Total registers : 396
+Total pins : 96
+Total virtual pins : 0
+Total memory bits : 264,192
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 1

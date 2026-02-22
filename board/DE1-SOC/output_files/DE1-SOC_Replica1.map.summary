@@ -1,0 +1,17 @@
+Analysis & Synthesis Status : Successful - Sun Feb 22 15:28:43 2026
+Quartus Prime Version : 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
+Revision Name : DE1-SOC_Replica1
+Top-level Entity Name : DE1_SoC_Replica1
+Family : Cyclone V
+Logic utilization (in ALMs) : N/A
+Total registers : 348
+Total pins : 251
+Total virtual pins : 0
+Total block memory bits : 395,264
+Total DSP Blocks : 0
+Total HSSI RX PCSs : 0
+Total HSSI PMA RX Deserializers : 0
+Total HSSI TX PCSs : 0
+Total HSSI PMA TX Serializers : 0
+Total PLLs : 1
+Total DLLs : 0

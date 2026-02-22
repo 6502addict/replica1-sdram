@@ -1,0 +1,18 @@
+Fitter Status : Successful - Sun Feb 22 13:52:45 2026
+Quartus Prime Version : 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
+Revision Name : MAX1000_Replica1
+Top-level Entity Name : MAX1000_Replica1
+Family : MAX 10
+Device : 10M08SAU169C8G
+Timing Models : Final
+Total logic elements : 1,164 / 8,064 ( 14 % )
+    Total combinational functions : 1,107 / 8,064 ( 14 % )
+    Dedicated logic registers : 349 / 8,064 ( 4 % )
+Total registers : 349
+Total pins : 97 / 130 ( 75 % )
+Total virtual pins : 0
+Total memory bits : 262,144 / 387,072 ( 68 % )
+Embedded Multiplier 9-bit elements : 0 / 48 ( 0 % )
+Total PLLs : 1 / 1 ( 100 % )
+UFM blocks : 0 / 1 ( 0 % )
+ADC blocks : 0 / 1 ( 0 % )

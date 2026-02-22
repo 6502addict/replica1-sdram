@@ -35,8 +35,7 @@ entity CPU_MX65 is
 		so_n        : in  std_logic := '1'; -- Set overflow (active low)
 		
 		-- wait states
-		mrdy        : in  std_logic;
-		strch       : out std_logic
+		mrdy        : in  std_logic
 	);
 end CPU_MX65;
 
@@ -84,11 +83,11 @@ architecture MX65_impl of CPU_MX65 is
 	begin
 	
 	clk: cpu_clock_gen port map(clk_4x  => main_clk,
-						 			    reset_n => reset_n,
-									    mrdy    => mrdy,
-									    clk_1x  => phi2_internal,
-									    clk_2x  => mx65_clk,
-									    stretch => strch);	
+						 	          reset_n => reset_n,
+							          mrdy    => mrdy,
+							          clk_1x  => phi2_internal,
+							          clk_2x  => mx65_clk,
+							          stretch => open);	
 	
 	
 	phi2 <= phi2_internal;

@@ -1,0 +1,1768 @@
+Analysis & Synthesis report for DE1_Replica1
+Sun Feb 22 16:00:43 2026
+Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. Analysis & Synthesis RAM Summary
+  9. Analysis & Synthesis IP Cores Summary
+ 10. State Machine - |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv|uart_state
+ 11. State Machine - |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_send:send|uart_state
+ 12. State Machine - |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Set_Addr_To_r
+ 13. State Machine - |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Write_Data_r
+ 14. State Machine - |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|ALU_Op_r
+ 15. User-Specified and Inferred Latches
+ 16. Registers Removed During Synthesis
+ 17. Removed Registers Triggering Further Register Optimizations
+ 18. General Register Statistics
+ 19. Inverted Register Statistics
+ 20. Registers Packed Into Inferred Megafunctions
+ 21. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 22. Source assignments for Replica1_CORE:ap1|WOZMON65:\woz65:rom|altsyncram:rom_rtl_0|altsyncram_85f1:auto_generated
+ 23. Parameter Settings for User Entity Instance: hexto7seg:h0
+ 24. Parameter Settings for User Entity Instance: hexto7seg:h1
+ 25. Parameter Settings for User Entity Instance: hexto7seg:h2
+ 26. Parameter Settings for User Entity Instance: hexto7seg:h3
+ 27. Parameter Settings for User Entity Instance: main_clock:mclk|altpll:altpll_component
+ 28. Parameter Settings for User Entity Instance: fractional_clock_divider:uclk
+ 29. Parameter Settings for User Entity Instance: Replica1_CORE:ap1
+ 30. Parameter Settings for User Entity Instance: Replica1_CORE:ap1|pia_uart:pia
+ 31. Parameter Settings for User Entity Instance: Replica1_CORE:ap1|pia_uart:pia|uart_send:send
+ 32. Parameter Settings for User Entity Instance: Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv
+ 33. Parameter Settings for User Entity Instance: RAM_DE1:ram
+ 34. Parameter Settings for User Entity Instance: sram_sdram_bridge:bridge
+ 35. Parameter Settings for User Entity Instance: sdram_controller:sdram
+ 36. Parameter Settings for Inferred Entity Instance: Replica1_CORE:ap1|WOZMON65:\woz65:rom|altsyncram:rom_rtl_0
+ 37. altpll Parameter Settings by Entity Instance
+ 38. altsyncram Parameter Settings by Entity Instance
+ 39. Port Connectivity Checks: "sdram_controller:sdram"
+ 40. Port Connectivity Checks: "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|T65_ALU:alu"
+ 41. Port Connectivity Checks: "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst"
+ 42. Port Connectivity Checks: "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|cpu_clock_gen:clk"
+ 43. Port Connectivity Checks: "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu"
+ 44. Elapsed Time Per Partition
+ 45. Analysis & Synthesis Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 1991-2013 Altera Corporation
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, Altera MegaCore Function License 
+Agreement, or other applicable license agreement, including, 
+without limitation, that your use is for the sole purpose of 
+programming logic devices manufactured by Altera and sold by 
+Altera or its authorized distributors.  Please refer to the 
+applicable agreement for further details.
+
+
+
++--------------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                         ;
++------------------------------------+-------------------------------------------------+
+; Analysis & Synthesis Status        ; Successful - Sun Feb 22 16:00:43 2026           ;
+; Quartus II 64-Bit Version          ; 13.0.1 Build 232 06/12/2013 SP 1 SJ Web Edition ;
+; Revision Name                      ; DE1_Replica1                                    ;
+; Top-level Entity Name              ; DE1_Replica1                                    ;
+; Family                             ; Cyclone II                                      ;
+; Total logic elements               ; 1,638                                           ;
+;     Total combinational functions  ; 1,524                                           ;
+;     Dedicated logic registers      ; 408                                             ;
+; Total registers                    ; 408                                             ;
+; Total pins                         ; 235                                             ;
+; Total virtual pins                 ; 0                                               ;
+; Total memory bits                  ; 2,048                                           ;
+; Embedded Multiplier 9-bit elements ; 0                                               ;
+; Total PLLs                         ; 1                                               ;
++------------------------------------+-------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                                  ;
++----------------------------------------------------------------------------+--------------+--------------------+
+; Option                                                                     ; Setting      ; Default Value      ;
++----------------------------------------------------------------------------+--------------+--------------------+
+; Device                                                                     ; EP2C20F484C7 ;                    ;
+; Top-level entity name                                                      ; DE1_Replica1 ; DE1_Replica1       ;
+; Family name                                                                ; Cyclone II   ; Stratix            ;
+; Allow Any RAM Size For Recognition                                         ; On           ; Off                ;
+; PowerPlay Power Optimization                                               ; Extra effort ; Normal compilation ;
+; Use smart compilation                                                      ; Off          ; Off                ;
+; Enable parallel Assembler and TimeQuest Timing Analyzer during compilation ; On           ; On                 ;
+; Enable compact report table                                                ; Off          ; Off                ;
+; Restructure Multiplexers                                                   ; Auto         ; Auto               ;
+; Create Debugging Nodes for IP Cores                                        ; Off          ; Off                ;
+; Preserve fewer node names                                                  ; On           ; On                 ;
+; Disable OpenCore Plus hardware evaluation                                  ; Off          ; Off                ;
+; Verilog Version                                                            ; Verilog_2001 ; Verilog_2001       ;
+; VHDL Version                                                               ; VHDL_1993    ; VHDL_1993          ;
+; State Machine Processing                                                   ; Auto         ; Auto               ;
+; Safe State Machine                                                         ; Off          ; Off                ;
+; Extract Verilog State Machines                                             ; On           ; On                 ;
+; Extract VHDL State Machines                                                ; On           ; On                 ;
+; Ignore Verilog initial constructs                                          ; Off          ; Off                ;
+; Iteration limit for constant Verilog loops                                 ; 5000         ; 5000               ;
+; Iteration limit for non-constant Verilog loops                             ; 250          ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                                    ; On           ; On                 ;
+; Infer RAMs from Raw Logic                                                  ; On           ; On                 ;
+; Parallel Synthesis                                                         ; On           ; On                 ;
+; DSP Block Balancing                                                        ; Auto         ; Auto               ;
+; Maximum DSP Block Usage                                                    ; -1           ; -1                 ;
+; NOT Gate Push-Back                                                         ; On           ; On                 ;
+; Power-Up Don't Care                                                        ; On           ; On                 ;
+; Remove Redundant Logic Cells                                               ; Off          ; Off                ;
+; Remove Duplicate Registers                                                 ; On           ; On                 ;
+; Ignore CARRY Buffers                                                       ; Off          ; Off                ;
+; Ignore CASCADE Buffers                                                     ; Off          ; Off                ;
+; Ignore GLOBAL Buffers                                                      ; Off          ; Off                ;
+; Ignore ROW GLOBAL Buffers                                                  ; Off          ; Off                ;
+; Ignore LCELL Buffers                                                       ; Off          ; Off                ;
+; Ignore SOFT Buffers                                                        ; On           ; On                 ;
+; Limit AHDL Integers to 32 Bits                                             ; Off          ; Off                ;
+; Optimization Technique                                                     ; Balanced     ; Balanced           ;
+; Carry Chain Length                                                         ; 70           ; 70                 ;
+; Auto Carry Chains                                                          ; On           ; On                 ;
+; Auto Open-Drain Pins                                                       ; On           ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                                      ; Off          ; Off                ;
+; Auto ROM Replacement                                                       ; On           ; On                 ;
+; Auto RAM Replacement                                                       ; On           ; On                 ;
+; Auto Shift Register Replacement                                            ; Auto         ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                            ; Auto         ; Auto               ;
+; Auto Clock Enable Replacement                                              ; On           ; On                 ;
+; Strict RAM Replacement                                                     ; Off          ; Off                ;
+; Allow Synchronous Control Signals                                          ; On           ; On                 ;
+; Force Use of Synchronous Clear Signals                                     ; Off          ; Off                ;
+; Auto RAM to Logic Cell Conversion                                          ; Off          ; Off                ;
+; Auto Resource Sharing                                                      ; Off          ; Off                ;
+; Allow Any ROM Size For Recognition                                         ; Off          ; Off                ;
+; Allow Any Shift Register Size For Recognition                              ; Off          ; Off                ;
+; Use LogicLock Constraints during Resource Balancing                        ; On           ; On                 ;
+; Maximum Number of M4K/M9K/M20K/M10K Memory Blocks                          ; -1           ; -1                 ;
+; Ignore translate_off and synthesis_off directives                          ; Off          ; Off                ;
+; Timing-Driven Synthesis                                                    ; Off          ; Off                ;
+; Report Parameter Settings                                                  ; On           ; On                 ;
+; Report Source Assignments                                                  ; On           ; On                 ;
+; Report Connectivity Checks                                                 ; On           ; On                 ;
+; Ignore Maximum Fan-Out Assignments                                         ; Off          ; Off                ;
+; Synchronization Register Chain Length                                      ; 2            ; 2                  ;
+; HDL message level                                                          ; Level2       ; Level2             ;
+; Suppress Register Optimization Related Messages                            ; Off          ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report                   ; 5000         ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report                         ; 5000         ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report                  ; 100          ; 100                ;
+; Clock MUX Protection                                                       ; On           ; On                 ;
+; Auto Gated Clock Conversion                                                ; Off          ; Off                ;
+; Block Design Naming                                                        ; Auto         ; Auto               ;
+; SDC constraint protection                                                  ; Off          ; Off                ;
+; Synthesis Effort                                                           ; Auto         ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal               ; On           ; On                 ;
+; Pre-Mapping Resynthesis Optimization                                       ; Off          ; Off                ;
+; Analysis & Synthesis Message Level                                         ; Medium       ; Medium             ;
+; Disable Register Merging Across Hierarchies                                ; Auto         ; Auto               ;
+; Resource Aware Inference For Block RAM                                     ; On           ; On                 ;
+; Synthesis Seed                                                             ; 1            ; 1                  ;
++----------------------------------------------------------------------------+--------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 32          ;
+; Maximum allowed            ; 16          ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 1           ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
+;     Processors 2-32        ;   0.0%      ;
++----------------------------+-------------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                                                                                                                                ;
++--------------------------------------------------------------------------------------------------------------+-----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path                                                                             ; Used in Netlist ; File Type                   ; File Name with Absolute Path                                                                                 ; Library ;
++--------------------------------------------------------------------------------------------------------------+-----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------+---------+
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/sdram/sram_sdram_bridge.vhd        ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/sdram/sram_sdram_bridge.vhd        ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/sdram/sdram_controller.vhd         ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/sdram/sdram_controller.vhd         ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/utils/hexto7seg.vhd                ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/utils/hexto7seg.vhd                ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/utils/fractional_clock_divider.vhd ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/utils/fractional_clock_divider.vhd ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/rom/WOZMON65.vhd                   ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/rom/WOZMON65.vhd                   ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/peripherals/pia/uart_send.vhd      ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/peripherals/pia/uart_send.vhd      ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/peripherals/pia/uart_receive.vhd   ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/peripherals/pia/uart_receive.vhd   ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/peripherals/pia/pia_uart.vhd       ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/peripherals/pia/pia_uart.vhd       ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/core/Replica1_CORE.vhd             ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/core/Replica1_CORE.vhd             ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/main_clock.vhd               ; yes             ; User Wizard-Generated File  ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/main_clock.vhd               ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/RAM_DE1.vhd                  ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/RAM_DE1.vhd                  ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/DE1_Replica1.vhdl            ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/DE1_Replica1.vhdl            ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_Pack.vhd                   ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_Pack.vhd                   ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_MCode.vhd                  ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_MCode.vhd                  ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_ALU.vhd                    ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65_ALU.vhd                    ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65.vhd                        ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/T65.vhd                        ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/CPU_T65.vhd                    ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/CPU_T65.vhd                    ;         ;
+; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/cpu_clock_gen.vhd              ; yes             ; User VHDL File              ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/rtl/cpu/cpu_clock_gen.vhd              ;         ;
+; altpll.tdf                                                                                                   ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/altpll.tdf                                                 ;         ;
+; aglobal130.inc                                                                                               ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/aglobal130.inc                                             ;         ;
+; stratix_pll.inc                                                                                              ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/stratix_pll.inc                                            ;         ;
+; stratixii_pll.inc                                                                                            ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/stratixii_pll.inc                                          ;         ;
+; cycloneii_pll.inc                                                                                            ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/cycloneii_pll.inc                                          ;         ;
+; altsyncram.tdf                                                                                               ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/altsyncram.tdf                                             ;         ;
+; stratix_ram_block.inc                                                                                        ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/stratix_ram_block.inc                                      ;         ;
+; lpm_mux.inc                                                                                                  ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/lpm_mux.inc                                                ;         ;
+; lpm_decode.inc                                                                                               ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/lpm_decode.inc                                             ;         ;
+; a_rdenreg.inc                                                                                                ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/a_rdenreg.inc                                              ;         ;
+; altrom.inc                                                                                                   ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/altrom.inc                                                 ;         ;
+; altram.inc                                                                                                   ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/altram.inc                                                 ;         ;
+; altdpram.inc                                                                                                 ; yes             ; Megafunction                ; c:/altera/13.0sp1/quartus/libraries/megafunctions/altdpram.inc                                               ;         ;
+; altsyncram_85f1.tdf                                                                                          ; yes             ; Auto-Found AHDL File        ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/db/altsyncram_85f1.tdf       ;         ;
++--------------------------------------------------------------------------------------------------------------+-----------------+-----------------------------+--------------------------------------------------------------------------------------------------------------+---------+
+
+
++---------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary                                                                         ;
++---------------------------------------------+-----------------------------------------------------------------------+
+; Resource                                    ; Usage                                                                 ;
++---------------------------------------------+-----------------------------------------------------------------------+
+; Estimated Total logic elements              ; 1,638                                                                 ;
+;                                             ;                                                                       ;
+; Total combinational functions               ; 1524                                                                  ;
+; Logic element usage by number of LUT inputs ;                                                                       ;
+;     -- 4 input functions                    ; 942                                                                   ;
+;     -- 3 input functions                    ; 302                                                                   ;
+;     -- <=2 input functions                  ; 280                                                                   ;
+;                                             ;                                                                       ;
+; Logic elements by mode                      ;                                                                       ;
+;     -- normal mode                          ; 1317                                                                  ;
+;     -- arithmetic mode                      ; 207                                                                   ;
+;                                             ;                                                                       ;
+; Total registers                             ; 408                                                                   ;
+;     -- Dedicated logic registers            ; 408                                                                   ;
+;     -- I/O registers                        ; 0                                                                     ;
+;                                             ;                                                                       ;
+; I/O pins                                    ; 235                                                                   ;
+; Total memory bits                           ; 2048                                                                  ;
+; Embedded Multiplier 9-bit elements          ; 0                                                                     ;
+; Total PLLs                                  ; 1                                                                     ;
+;     -- PLLs                                 ; 1                                                                     ;
+;                                             ;                                                                       ;
+; Maximum fan-out node                        ; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|cpu_clock_gen:clk|count[0] ;
+; Maximum fan-out                             ; 164                                                                   ;
+; Total fan-out                               ; 6887                                                                  ;
+; Average fan-out                             ; 3.16                                                                  ;
++---------------------------------------------+-----------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                               ;
++----------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------------------------------------------------------------------------------------------+--------------+
+; Compilation Hierarchy Node                   ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                     ; Library Name ;
++----------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------------------------------------------------------------------------------------------+--------------+
+; |DE1_Replica1                                ; 1524 (17)         ; 408 (0)      ; 2048        ; 0            ; 0       ; 0         ; 235  ; 0            ; |DE1_Replica1                                                                                           ; work         ;
+;    |RAM_DE1:ram|                             ; 2 (2)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|RAM_DE1:ram                                                                               ; work         ;
+;    |Replica1_CORE:ap1|                       ; 1214 (47)         ; 269 (0)      ; 2048        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1                                                                         ; work         ;
+;       |CPU_T65:\gen_cpu0:c1:cpu|             ; 1038 (0)          ; 163 (0)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu                                                ; work         ;
+;          |T65:t65_inst|                      ; 1036 (465)        ; 161 (161)    ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst                                   ; work         ;
+;             |T65_ALU:alu|                    ; 178 (178)         ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|T65_ALU:alu                       ; work         ;
+;             |T65_MCode:mcode|                ; 393 (393)         ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|T65_MCode:mcode                   ; work         ;
+;          |cpu_clock_gen:clk|                 ; 2 (2)             ; 2 (2)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|cpu_clock_gen:clk                              ; work         ;
+;       |WOZMON65:\woz65:rom|                  ; 0 (0)             ; 0 (0)        ; 2048        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|WOZMON65:\woz65:rom                                                     ; work         ;
+;          |altsyncram:rom_rtl_0|              ; 0 (0)             ; 0 (0)        ; 2048        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|WOZMON65:\woz65:rom|altsyncram:rom_rtl_0                                ; work         ;
+;             |altsyncram_85f1:auto_generated| ; 0 (0)             ; 0 (0)        ; 2048        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|WOZMON65:\woz65:rom|altsyncram:rom_rtl_0|altsyncram_85f1:auto_generated ; work         ;
+;       |pia_uart:pia|                         ; 129 (44)          ; 106 (60)     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia                                                            ; work         ;
+;          |uart_receive:recv|                 ; 56 (56)           ; 26 (26)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv                                          ; work         ;
+;          |uart_send:send|                    ; 29 (29)           ; 20 (20)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_send:send                                             ; work         ;
+;    |fractional_clock_divider:uclk|           ; 42 (42)           ; 28 (28)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|fractional_clock_divider:uclk                                                             ; work         ;
+;    |hexto7seg:h0|                            ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|hexto7seg:h0                                                                              ; work         ;
+;    |hexto7seg:h1|                            ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|hexto7seg:h1                                                                              ; work         ;
+;    |hexto7seg:h2|                            ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|hexto7seg:h2                                                                              ; work         ;
+;    |hexto7seg:h3|                            ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|hexto7seg:h3                                                                              ; work         ;
+;    |main_clock:mclk|                         ; 0 (0)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|main_clock:mclk                                                                           ; work         ;
+;       |altpll:altpll_component|              ; 0 (0)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|main_clock:mclk|altpll:altpll_component                                                   ; work         ;
+;    |sdram_controller:sdram|                  ; 182 (182)         ; 62 (62)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|sdram_controller:sdram                                                                    ; work         ;
+;    |sram_sdram_bridge:bridge|                ; 39 (39)           ; 49 (49)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE1_Replica1|sram_sdram_bridge:bridge                                                                  ; work         ;
++----------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------------------------------------------------------------------------------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis RAM Summary                                                                                                                                                                                                                                                                                     ;
++------------------------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+------+------------------------------------------------------------------------------------------------------------------------------+
+; Name                                                                                                 ; Type ; Mode ; Port A Depth ; Port A Width ; Port B Depth ; Port B Width ; Size ; MIF                                                                                                                          ;
++------------------------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+------+------------------------------------------------------------------------------------------------------------------------------+
+; Replica1_CORE:ap1|WOZMON65:\woz65:rom|altsyncram:rom_rtl_0|altsyncram_85f1:auto_generated|ALTSYNCRAM ; AUTO ; ROM  ; 256          ; 8            ; --           ; --           ; 2048 ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/db/DE1_Replica1.ram0_WOZMON65_890eda.hdl.mif ;
++------------------------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+------+------------------------------------------------------------------------------------------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis IP Cores Summary                                                                                                                                                          ;
++--------+--------------+---------+--------------+--------------+-------------------------------+------------------------------------------------------------------------------------------------+
+; Vendor ; IP Core Name ; Version ; Release Date ; License Type ; Entity Instance               ; IP Include File                                                                                ;
++--------+--------------+---------+--------------+--------------+-------------------------------+------------------------------------------------------------------------------------------------+
+; Altera ; ALTPLL       ; 13.0    ; N/A          ; N/A          ; |DE1_Replica1|main_clock:mclk ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/main_clock.vhd ;
++--------+--------------+---------+--------------+--------------+-------------------------------+------------------------------------------------------------------------------------------------+
+
+
+Encoding Type:  One-Hot
++----------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv|uart_state                                                    ;
++------------------------+------------------------+----------------------+----------------------+-----------------------+----------------------+
+; Name                   ; uart_state.UART_STROBE ; uart_state.UART_STOP ; uart_state.UART_DATA ; uart_state.UART_START ; uart_state.UART_IDLE ;
++------------------------+------------------------+----------------------+----------------------+-----------------------+----------------------+
+; uart_state.UART_IDLE   ; 0                      ; 0                    ; 0                    ; 0                     ; 0                    ;
+; uart_state.UART_START  ; 0                      ; 0                    ; 0                    ; 1                     ; 1                    ;
+; uart_state.UART_DATA   ; 0                      ; 0                    ; 1                    ; 0                     ; 1                    ;
+; uart_state.UART_STOP   ; 0                      ; 1                    ; 0                    ; 0                     ; 1                    ;
+; uart_state.UART_STROBE ; 1                      ; 0                    ; 0                    ; 0                     ; 1                    ;
++------------------------+------------------------+----------------------+----------------------+-----------------------+----------------------+
+
+
+Encoding Type:  One-Hot
++--------------------------------------------------------------------------------------------------------------------+
+; State Machine - |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_send:send|uart_state                             ;
++-----------------------+----------------------+----------------------+-----------------------+----------------------+
+; Name                  ; uart_state.UART_STOP ; uart_state.UART_DATA ; uart_state.UART_START ; uart_state.UART_IDLE ;
++-----------------------+----------------------+----------------------+-----------------------+----------------------+
+; uart_state.UART_IDLE  ; 0                    ; 0                    ; 0                     ; 0                    ;
+; uart_state.UART_START ; 0                    ; 0                    ; 1                     ; 1                    ;
+; uart_state.UART_DATA  ; 0                    ; 1                    ; 0                     ; 1                    ;
+; uart_state.UART_STOP  ; 1                    ; 0                    ; 0                     ; 1                    ;
++-----------------------+----------------------+----------------------+-----------------------+----------------------+
+
+
+Encoding Type:  One-Hot
++-------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Set_Addr_To_r                                                         ;
++-------------------------------+------------------------------+-------------------------------+------------------------------+-------------------------------+
+; Name                          ; Set_Addr_To_r.Set_Addr_To_BA ; Set_Addr_To_r.Set_Addr_To_ZPG ; Set_Addr_To_r.Set_Addr_To_SP ; Set_Addr_To_r.Set_Addr_To_PBR ;
++-------------------------------+------------------------------+-------------------------------+------------------------------+-------------------------------+
+; Set_Addr_To_r.Set_Addr_To_PBR ; 0                            ; 0                             ; 0                            ; 0                             ;
+; Set_Addr_To_r.Set_Addr_To_SP  ; 0                            ; 0                             ; 1                            ; 1                             ;
+; Set_Addr_To_r.Set_Addr_To_ZPG ; 0                            ; 1                             ; 0                            ; 1                             ;
+; Set_Addr_To_r.Set_Addr_To_BA  ; 1                            ; 0                             ; 0                            ; 1                             ;
++-------------------------------+------------------------------+-------------------------------+------------------------------+-------------------------------+
+
+
+Encoding Type:  One-Hot
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Write_Data_r                                                                                                                                                                                                                                                                                                                              ;
++----------------------------------+----------------------------------+----------------------------+----------------------------+-----------------------------+----------------------------+-----------------------------+-----------------------------+---------------------------+---------------------------+---------------------------+---------------------------+-----------------------------+----------------------------+
+; Name                             ; Write_Data_r.Write_Data_DONTCARE ; Write_Data_r.Write_Data_YB ; Write_Data_r.Write_Data_XB ; Write_Data_r.Write_Data_AXB ; Write_Data_r.Write_Data_AX ; Write_Data_r.Write_Data_PCH ; Write_Data_r.Write_Data_PCL ; Write_Data_r.Write_Data_P ; Write_Data_r.Write_Data_S ; Write_Data_r.Write_Data_Y ; Write_Data_r.Write_Data_X ; Write_Data_r.Write_Data_ABC ; Write_Data_r.Write_Data_DL ;
++----------------------------------+----------------------------------+----------------------------+----------------------------+-----------------------------+----------------------------+-----------------------------+-----------------------------+---------------------------+---------------------------+---------------------------+---------------------------+-----------------------------+----------------------------+
+; Write_Data_r.Write_Data_DL       ; 0                                ; 0                          ; 0                          ; 0                           ; 0                          ; 0                           ; 0                           ; 0                         ; 0                         ; 0                         ; 0                         ; 0                           ; 0                          ;
+; Write_Data_r.Write_Data_ABC      ; 0                                ; 0                          ; 0                          ; 0                           ; 0                          ; 0                           ; 0                           ; 0                         ; 0                         ; 0                         ; 0                         ; 1                           ; 1                          ;
+; Write_Data_r.Write_Data_X        ; 0                                ; 0                          ; 0                          ; 0                           ; 0                          ; 0                           ; 0                           ; 0                         ; 0                         ; 0                         ; 1                         ; 0                           ; 1                          ;
+; Write_Data_r.Write_Data_Y        ; 0                                ; 0                          ; 0                          ; 0                           ; 0                          ; 0                           ; 0                           ; 0                         ; 0                         ; 1                         ; 0                         ; 0                           ; 1                          ;
+; Write_Data_r.Write_Data_S        ; 0                                ; 0                          ; 0                          ; 0                           ; 0                          ; 0                           ; 0                           ; 0                         ; 1                         ; 0                         ; 0                         ; 0                           ; 1                          ;
+; Write_Data_r.Write_Data_P        ; 0                                ; 0                          ; 0                          ; 0                           ; 0                          ; 0                           ; 0                           ; 1                         ; 0                         ; 0                         ; 0                         ; 0                           ; 1                          ;
+; Write_Data_r.Write_Data_PCL      ; 0                                ; 0                          ; 0                          ; 0                           ; 0                          ; 0                           ; 1                           ; 0                         ; 0                         ; 0                         ; 0                         ; 0                           ; 1                          ;
+; Write_Data_r.Write_Data_PCH      ; 0                                ; 0                          ; 0                          ; 0                           ; 0                          ; 1                           ; 0                           ; 0                         ; 0                         ; 0                         ; 0                         ; 0                           ; 1                          ;
+; Write_Data_r.Write_Data_AX       ; 0                                ; 0                          ; 0                          ; 0                           ; 1                          ; 0                           ; 0                           ; 0                         ; 0                         ; 0                         ; 0                         ; 0                           ; 1                          ;
+; Write_Data_r.Write_Data_AXB      ; 0                                ; 0                          ; 0                          ; 1                           ; 0                          ; 0                           ; 0                           ; 0                         ; 0                         ; 0                         ; 0                         ; 0                           ; 1                          ;
+; Write_Data_r.Write_Data_XB       ; 0                                ; 0                          ; 1                          ; 0                           ; 0                          ; 0                           ; 0                           ; 0                         ; 0                         ; 0                         ; 0                         ; 0                           ; 1                          ;
+; Write_Data_r.Write_Data_YB       ; 0                                ; 1                          ; 0                          ; 0                           ; 0                          ; 0                           ; 0                           ; 0                         ; 0                         ; 0                         ; 0                         ; 0                           ; 1                          ;
+; Write_Data_r.Write_Data_DONTCARE ; 1                                ; 0                          ; 0                          ; 0                           ; 0                          ; 0                           ; 0                           ; 0                         ; 0                         ; 0                         ; 0                         ; 0                           ; 1                          ;
++----------------------------------+----------------------------------+----------------------------+----------------------------+-----------------------------+----------------------------+-----------------------------+-----------------------------+---------------------------+---------------------------+---------------------------+---------------------------+-----------------------------+----------------------------+
+
+
+Encoding Type:  One-Hot
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|ALU_Op_r                                                                                                                                                                                                                                                                                                                                                       ;
++---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+--------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+
+; Name                ; ALU_Op_r.ALU_OP_XAA ; ALU_Op_r.ALU_OP_SAX ; ALU_Op_r.ALU_OP_ANC ; ALU_Op_r.ALU_OP_ARR ; ALU_Op_r.ALU_OP_INC ; ALU_Op_r.ALU_OP_DEC ; ALU_Op_r.ALU_OP_OR ; ALU_Op_r.ALU_OP_ROR ; ALU_Op_r.ALU_OP_LSR ; ALU_Op_r.ALU_OP_ROL ; ALU_Op_r.ALU_OP_ASL ; ALU_Op_r.ALU_OP_SBC ; ALU_Op_r.ALU_OP_CMP ; ALU_Op_r.ALU_OP_EQ2 ; ALU_Op_r.ALU_OP_EQ1 ; ALU_Op_r.ALU_OP_ADC ; ALU_Op_r.ALU_OP_EOR ; ALU_Op_r.ALU_OP_AND ; ALU_Op_r.ALU_OP_BIT ;
++---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+--------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+
+; ALU_Op_r.ALU_OP_BIT ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ;
+; ALU_Op_r.ALU_OP_AND ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ; 1                   ;
+; ALU_Op_r.ALU_OP_EOR ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_ADC ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_EQ1 ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_EQ2 ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_CMP ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_SBC ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_ASL ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 1                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_ROL ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 1                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_LSR ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 1                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_ROR ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 1                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_OR  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_DEC ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_INC ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_ARR ; 0                   ; 0                   ; 0                   ; 1                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_ANC ; 0                   ; 0                   ; 1                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_SAX ; 0                   ; 1                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
+; ALU_Op_r.ALU_OP_XAA ; 1                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                  ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 0                   ; 1                   ;
++---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+--------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+---------------------+
+
+
++--------------------------------------------------------------------------------------------------------------+
+; User-Specified and Inferred Latches                                                                          ;
++-----------------------------------------------------+-------------------------------+------------------------+
+; Latch Name                                          ; Latch Enable Signal           ; Free of Timing Hazards ;
++-----------------------------------------------------+-------------------------------+------------------------+
+; sdram_controller:sdram|addr_row_latched[0]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|addr_col_latched[0]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|addr_row_latched[1]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|addr_col_latched[1]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|addr_row_latched[2]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|addr_col_latched[2]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|addr_col_latched[3]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|addr_col_latched[4]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|addr_col_latched[5]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|addr_col_latched[6]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|addr_col_latched[7]          ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|byte_en_latched[0]           ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|byte_en_latched[1]           ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|wr_n_latched                 ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|refresh_postponed_next       ; sdram_controller:sdram|Mux135 ; yes                    ;
+; sdram_controller:sdram|din_latched[0]               ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[1]               ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[2]               ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[3]               ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[4]               ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[5]               ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[6]               ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[7]               ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[8]               ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[9]               ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[10]              ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[11]              ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[12]              ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[13]              ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[14]              ; sdram_controller:sdram|Mux2   ; yes                    ;
+; sdram_controller:sdram|din_latched[15]              ; sdram_controller:sdram|Mux2   ; yes                    ;
+; Number of user-specified and inferred latches = 31  ;                               ;                        ;
++-----------------------------------------------------+-------------------------------+------------------------+
+Note: All latches listed above may not be present at the end of synthesis due to various synthesis optimizations.
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                                                                                                                              ;
++------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+; Register name                                                                            ; Reason for Removal                                                                                   ;
++------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+; sdram_controller:sdram|sdram_cs_n                                                        ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|SO_n_o                           ; Lost fanout                                                                                          ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|NMI_n_o                          ; Lost fanout                                                                                          ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Mode_r[0,1]                      ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|BCD_en_r                         ; Stuck at VCC due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|rdy_mod                          ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|NMIAct                           ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|IRQ_n_o                          ; Stuck at VCC due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|IRQReq                           ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|NMIReq                           ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|NMICycle                         ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|IRQCycle                         ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|P[4]                             ; Merged with Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|P[5]                             ;
+; sram_sdram_bridge:bridge|sdram_din[8]                                                    ; Merged with sram_sdram_bridge:bridge|sdram_din[0]                                                    ;
+; sram_sdram_bridge:bridge|sdram_din[9]                                                    ; Merged with sram_sdram_bridge:bridge|sdram_din[1]                                                    ;
+; sram_sdram_bridge:bridge|sdram_din[2]                                                    ; Merged with sram_sdram_bridge:bridge|sdram_din[10]                                                   ;
+; sram_sdram_bridge:bridge|sdram_din[3]                                                    ; Merged with sram_sdram_bridge:bridge|sdram_din[11]                                                   ;
+; sram_sdram_bridge:bridge|sdram_din[4]                                                    ; Merged with sram_sdram_bridge:bridge|sdram_din[12]                                                   ;
+; sram_sdram_bridge:bridge|sdram_din[5]                                                    ; Merged with sram_sdram_bridge:bridge|sdram_din[13]                                                   ;
+; sram_sdram_bridge:bridge|sdram_din[6]                                                    ; Merged with sram_sdram_bridge:bridge|sdram_din[14]                                                   ;
+; sram_sdram_bridge:bridge|sdram_din[7]                                                    ; Merged with sram_sdram_bridge:bridge|sdram_din[15]                                                   ;
+; sdram_controller:sdram|sdram_addr[8,9,11]                                                ; Stuck at GND due to stuck port data_in                                                               ;
+; sdram_controller:sdram|sdram_ba[0,1]                                                     ; Stuck at GND due to stuck port data_in                                                               ;
+; sdram_controller:sdram|active_row[6]                                                     ; Merged with sdram_controller:sdram|active_bank[0]                                                    ;
+; sdram_controller:sdram|active_bank[1]                                                    ; Merged with sdram_controller:sdram|active_bank[0]                                                    ;
+; sdram_controller:sdram|active_row[3..5,7..11]                                            ; Merged with sdram_controller:sdram|active_bank[0]                                                    ;
+; sram_sdram_bridge:bridge|sdram_byte_en[1]                                                ; Merged with sram_sdram_bridge:bridge|sdram_byte_en[0]                                                ;
+; Replica1_CORE:ap1|pia_uart:pia|tx_data[7]                                                ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|pia_uart:pia|uart_send:send|byte[7]                                    ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|NMI_entered                      ; Stuck at GND due to stuck port data_in                                                               ;
+; sdram_controller:sdram|active_bank[0]                                                    ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Write_Data_r.Write_Data_S        ; Merged with Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Write_Data_r.Write_Data_DONTCARE ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Write_Data_r.Write_Data_DONTCARE ; Stuck at GND due to stuck port data_in                                                               ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|S[8..15]                         ; Lost fanout                                                                                          ;
+; Total Number of Removed Registers = 52                                                   ;                                                                                                      ;
++------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Removed Registers Triggering Further Register Optimizations                                                                                                         ;
++-------------------------------------------------------------------+---------------------------+---------------------------------------------------------------------+
+; Register name                                                     ; Reason for Removal        ; Registers Removed due to This Register                              ;
++-------------------------------------------------------------------+---------------------------+---------------------------------------------------------------------+
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Mode_r[1] ; Stuck at GND              ; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|IRQReq,     ;
+;                                                                   ; due to stuck port data_in ; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|NMIReq,     ;
+;                                                                   ;                           ; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|IRQCycle    ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|NMICycle  ; Stuck at GND              ; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|NMI_entered ;
+;                                                                   ; due to stuck port data_in ;                                                                     ;
+; Replica1_CORE:ap1|pia_uart:pia|tx_data[7]                         ; Stuck at GND              ; Replica1_CORE:ap1|pia_uart:pia|uart_send:send|byte[7]               ;
+;                                                                   ; due to stuck port data_in ;                                                                     ;
++-------------------------------------------------------------------+---------------------------+---------------------------------------------------------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 408   ;
+; Number of registers using Synchronous Clear  ; 68    ;
+; Number of registers using Synchronous Load   ; 41    ;
+; Number of registers using Asynchronous Clear ; 219   ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 293   ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++-----------------------------------------------------------------------------+
+; Inverted Register Statistics                                                ;
++-------------------------------------------------------------------+---------+
+; Inverted Register                                                 ; Fan out ;
++-------------------------------------------------------------------+---------+
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|MCycle[0] ; 54      ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|WRn_i     ; 15      ;
+; Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|RstCycle  ; 5       ;
+; Replica1_CORE:ap1|pia_uart:pia|rx_strobe_sync[2]                  ; 3       ;
+; Replica1_CORE:ap1|pia_uart:pia|rx_strobe_prev                     ; 2       ;
+; Replica1_CORE:ap1|pia_uart:pia|tx_strobe_n                        ; 5       ;
+; Replica1_CORE:ap1|pia_uart:pia|rx_strobe_sync[1]                  ; 1       ;
+; Replica1_CORE:ap1|pia_uart:pia|rx_strobe_sync[0]                  ; 1       ;
+; Total number of inverted registers = 8                            ;         ;
++-------------------------------------------------------------------+---------+
+
+
++---------------------------------------------------------------------------------------------------------------+
+; Registers Packed Into Inferred Megafunctions                                                                  ;
++------------------------------------------------------+-------------------------------------------------+------+
+; Register Name                                        ; Megafunction                                    ; Type ;
++------------------------------------------------------+-------------------------------------------------+------+
+; Replica1_CORE:ap1|WOZMON65:\woz65:rom|data_out[0..7] ; Replica1_CORE:ap1|WOZMON65:\woz65:rom|rom_rtl_0 ; RAM  ;
++------------------------------------------------------+-------------------------------------------------+------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                                                            ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                                                  ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------------------------------------------------+
+; 3:1                ; 8 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|S[15]                 ;
+; 3:1                ; 4 bits    ; 8 LEs         ; 0 LEs                ; 8 LEs                  ; Yes        ; |DE1_Replica1|sdram_controller:sdram|active_bank[0]                                         ;
+; 3:1                ; 8 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|DL[3]                 ;
+; 3:1                ; 6 bits    ; 12 LEs        ; 0 LEs                ; 12 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|cra[2]                                         ;
+; 3:1                ; 8 bits    ; 16 LEs        ; 0 LEs                ; 16 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|crb[7]                                         ;
+; 3:1                ; 10 bits   ; 20 LEs        ; 0 LEs                ; 20 LEs                 ; Yes        ; |DE1_Replica1|sram_sdram_bridge:bridge|refresh_counter[1]                                   ;
+; 4:1                ; 16 bits   ; 32 LEs        ; 0 LEs                ; 32 LEs                 ; Yes        ; |DE1_Replica1|sdram_controller:sdram|dout[12]                                               ;
+; 4:1                ; 8 bits    ; 16 LEs        ; 0 LEs                ; 16 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|ddra[7]                                        ;
+; 4:1                ; 8 bits    ; 16 LEs        ; 0 LEs                ; 16 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|ddrb[6]                                        ;
+; 4:1                ; 7 bits    ; 14 LEs        ; 0 LEs                ; 14 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|tx_data[4]                                     ;
+; 5:1                ; 8 bits    ; 24 LEs        ; 16 LEs               ; 8 LEs                  ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|S[3]                  ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|PC[5]                 ;
+; 5:1                ; 8 bits    ; 24 LEs        ; 16 LEs               ; 8 LEs                  ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|AD[6]                 ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|BAL[7]                ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|BAL[1]                ;
+; 7:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|PC[15]                ;
+; 8:1                ; 8 bits    ; 40 LEs        ; 16 LEs               ; 24 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|BAH[4]                ;
+; 18:1               ; 7 bits    ; 84 LEs        ; 21 LEs               ; 63 LEs                 ; Yes        ; |DE1_Replica1|sdram_controller:sdram|sdram_addr[0]                                          ;
+; 19:1               ; 2 bits    ; 24 LEs        ; 8 LEs                ; 16 LEs                 ; Yes        ; |DE1_Replica1|sdram_controller:sdram|sdram_dqm[1]                                           ;
+; 19:1               ; 4 bits    ; 48 LEs        ; 4 LEs                ; 44 LEs                 ; Yes        ; |DE1_Replica1|sdram_controller:sdram|refresh_count[2]                                       ;
+; 7:1                ; 4 bits    ; 16 LEs        ; 4 LEs                ; 12 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv|clocks[2]                    ;
+; 10:1               ; 5 bits    ; 30 LEs        ; 15 LEs               ; 15 LEs                 ; Yes        ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|data_out[1]                                    ;
+; 23:1               ; 8 bits    ; 120 LEs       ; 16 LEs               ; 104 LEs                ; Yes        ; |DE1_Replica1|sdram_controller:sdram|seq_count[7]                                           ;
+; 23:1               ; 5 bits    ; 75 LEs        ; 10 LEs               ; 65 LEs                 ; Yes        ; |DE1_Replica1|sdram_controller:sdram|seq_count[5]                                           ;
+; 27:1               ; 2 bits    ; 36 LEs        ; 8 LEs                ; 28 LEs                 ; Yes        ; |DE1_Replica1|sdram_controller:sdram|seq_count[0]                                           ;
+; 3:1                ; 3 bits    ; 6 LEs         ; 6 LEs                ; 0 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv|bitno                        ;
+; 3:1                ; 3 bits    ; 6 LEs         ; 6 LEs                ; 0 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_send:send|bitno                           ;
+; 4:1                ; 3 bits    ; 6 LEs         ; 6 LEs                ; 0 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|T65_ALU:alu|Q[3]      ;
+; 4:1                ; 3 bits    ; 6 LEs         ; 6 LEs                ; 0 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|T65_ALU:alu|Q[7]      ;
+; 4:1                ; 8 bits    ; 16 LEs        ; 16 LEs               ; 0 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Selector27            ;
+; 1:1                ; 16 bits   ; 0 LEs         ; 0 LEs                ; 0 LEs                  ; No         ; |DE1_Replica1|sdram_controller:sdram|Mux91                                                  ;
+; 1:1                ; 30 bits   ; 0 LEs         ; 0 LEs                ; 0 LEs                  ; No         ; |DE1_Replica1|sdram_controller:sdram|Mux121                                                 ;
+; 7:1                ; 8 bits    ; 32 LEs        ; 32 LEs               ; 0 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|data_bus[1]                                                 ;
+; 7:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_send:send|Selector9                       ;
+; 8:1                ; 6 bits    ; 30 LEs        ; 30 LEs               ; 0 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Selector1             ;
+; 9:1                ; 2 bits    ; 12 LEs        ; 6 LEs                ; 6 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_send:send|Selector10                      ;
+; 11:1               ; 4 bits    ; 28 LEs        ; 24 LEs               ; 4 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|ALU_Op_r              ;
+; 11:1               ; 4 bits    ; 28 LEs        ; 8 LEs                ; 20 LEs                 ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|ALU_Op_r              ;
+; 9:1                ; 2 bits    ; 12 LEs        ; 10 LEs               ; 2 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Selector7             ;
+; 11:1               ; 3 bits    ; 21 LEs        ; 12 LEs               ; 9 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv|Selector15                   ;
+; 11:1               ; 2 bits    ; 14 LEs        ; 4 LEs                ; 10 LEs                 ; No         ; |DE1_Replica1|Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv|Selector13                   ;
+; 61:1               ; 2 bits    ; 80 LEs        ; 4 LEs                ; 76 LEs                 ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Write_Data_r          ;
+; 12:1               ; 8 bits    ; 64 LEs        ; 64 LEs               ; 0 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Selector39            ;
+; 15:1               ; 3 bits    ; 30 LEs        ; 24 LEs               ; 6 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|T65_ALU:alu|Selector4 ;
+; 15:1               ; 2 bits    ; 20 LEs        ; 16 LEs               ; 4 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|T65_ALU:alu|Selector1 ;
+; 9:1                ; 2 bits    ; 12 LEs        ; 4 LEs                ; 8 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Write_Data_r          ;
+; 9:1                ; 2 bits    ; 12 LEs        ; 4 LEs                ; 8 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Write_Data_r          ;
+; 9:1                ; 2 bits    ; 12 LEs        ; 4 LEs                ; 8 LEs                  ; No         ; |DE1_Replica1|Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|Write_Data_r          ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------+
+; Source assignments for Replica1_CORE:ap1|WOZMON65:\woz65:rom|altsyncram:rom_rtl_0|altsyncram_85f1:auto_generated ;
++---------------------------------+--------------+------+----------------------------------------------------------+
+; Assignment                      ; Value        ; From ; To                                                       ;
++---------------------------------+--------------+------+----------------------------------------------------------+
+; OPTIMIZE_POWER_DURING_SYNTHESIS ; EXTRA_EFFORT ; -    ; -                                                        ;
++---------------------------------+--------------+------+----------------------------------------------------------+
+
+
++-----------------------------------------------------------+
+; Parameter Settings for User Entity Instance: hexto7seg:h0 ;
++----------------+-------+----------------------------------+
+; Parameter Name ; Value ; Type                             ;
++----------------+-------+----------------------------------+
+; segments       ; 7     ; Signed Integer                   ;
++----------------+-------+----------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------+
+; Parameter Settings for User Entity Instance: hexto7seg:h1 ;
++----------------+-------+----------------------------------+
+; Parameter Name ; Value ; Type                             ;
++----------------+-------+----------------------------------+
+; segments       ; 7     ; Signed Integer                   ;
++----------------+-------+----------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------+
+; Parameter Settings for User Entity Instance: hexto7seg:h2 ;
++----------------+-------+----------------------------------+
+; Parameter Name ; Value ; Type                             ;
++----------------+-------+----------------------------------+
+; segments       ; 7     ; Signed Integer                   ;
++----------------+-------+----------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------+
+; Parameter Settings for User Entity Instance: hexto7seg:h3 ;
++----------------+-------+----------------------------------+
+; Parameter Name ; Value ; Type                             ;
++----------------+-------+----------------------------------+
+; segments       ; 7     ; Signed Integer                   ;
++----------------+-------+----------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++--------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: main_clock:mclk|altpll:altpll_component ;
++-------------------------------+------------------------------+-----------------------+
+; Parameter Name                ; Value                        ; Type                  ;
++-------------------------------+------------------------------+-----------------------+
+; OPERATION_MODE                ; NORMAL                       ; Untyped               ;
+; PLL_TYPE                      ; AUTO                         ; Untyped               ;
+; LPM_HINT                      ; CBX_MODULE_PREFIX=main_clock ; Untyped               ;
+; QUALIFY_CONF_DONE             ; OFF                          ; Untyped               ;
+; COMPENSATE_CLOCK              ; CLK0                         ; Untyped               ;
+; SCAN_CHAIN                    ; LONG                         ; Untyped               ;
+; PRIMARY_CLOCK                 ; INCLK0                       ; Untyped               ;
+; INCLK0_INPUT_FREQUENCY        ; 20000                        ; Signed Integer        ;
+; INCLK1_INPUT_FREQUENCY        ; 0                            ; Untyped               ;
+; GATE_LOCK_SIGNAL              ; NO                           ; Untyped               ;
+; GATE_LOCK_COUNTER             ; 0                            ; Untyped               ;
+; LOCK_HIGH                     ; 1                            ; Untyped               ;
+; LOCK_LOW                      ; 1                            ; Untyped               ;
+; VALID_LOCK_MULTIPLIER         ; 1                            ; Signed Integer        ;
+; INVALID_LOCK_MULTIPLIER       ; 5                            ; Signed Integer        ;
+; SWITCH_OVER_ON_LOSSCLK        ; OFF                          ; Untyped               ;
+; SWITCH_OVER_ON_GATED_LOCK     ; OFF                          ; Untyped               ;
+; ENABLE_SWITCH_OVER_COUNTER    ; OFF                          ; Untyped               ;
+; SKIP_VCO                      ; OFF                          ; Untyped               ;
+; SWITCH_OVER_COUNTER           ; 0                            ; Untyped               ;
+; SWITCH_OVER_TYPE              ; AUTO                         ; Untyped               ;
+; FEEDBACK_SOURCE               ; EXTCLK0                      ; Untyped               ;
+; BANDWIDTH                     ; 0                            ; Untyped               ;
+; BANDWIDTH_TYPE                ; AUTO                         ; Untyped               ;
+; SPREAD_FREQUENCY              ; 0                            ; Untyped               ;
+; DOWN_SPREAD                   ; 0                            ; Untyped               ;
+; SELF_RESET_ON_GATED_LOSS_LOCK ; OFF                          ; Untyped               ;
+; SELF_RESET_ON_LOSS_LOCK       ; OFF                          ; Untyped               ;
+; CLK9_MULTIPLY_BY              ; 0                            ; Untyped               ;
+; CLK8_MULTIPLY_BY              ; 0                            ; Untyped               ;
+; CLK7_MULTIPLY_BY              ; 0                            ; Untyped               ;
+; CLK6_MULTIPLY_BY              ; 0                            ; Untyped               ;
+; CLK5_MULTIPLY_BY              ; 1                            ; Untyped               ;
+; CLK4_MULTIPLY_BY              ; 1                            ; Untyped               ;
+; CLK3_MULTIPLY_BY              ; 1                            ; Untyped               ;
+; CLK2_MULTIPLY_BY              ; 1                            ; Untyped               ;
+; CLK1_MULTIPLY_BY              ; 2                            ; Signed Integer        ;
+; CLK0_MULTIPLY_BY              ; 4                            ; Signed Integer        ;
+; CLK9_DIVIDE_BY                ; 0                            ; Untyped               ;
+; CLK8_DIVIDE_BY                ; 0                            ; Untyped               ;
+; CLK7_DIVIDE_BY                ; 0                            ; Untyped               ;
+; CLK6_DIVIDE_BY                ; 0                            ; Untyped               ;
+; CLK5_DIVIDE_BY                ; 1                            ; Untyped               ;
+; CLK4_DIVIDE_BY                ; 1                            ; Untyped               ;
+; CLK3_DIVIDE_BY                ; 1                            ; Untyped               ;
+; CLK2_DIVIDE_BY                ; 1                            ; Untyped               ;
+; CLK1_DIVIDE_BY                ; 1                            ; Signed Integer        ;
+; CLK0_DIVIDE_BY                ; 5                            ; Signed Integer        ;
+; CLK9_PHASE_SHIFT              ; 0                            ; Untyped               ;
+; CLK8_PHASE_SHIFT              ; 0                            ; Untyped               ;
+; CLK7_PHASE_SHIFT              ; 0                            ; Untyped               ;
+; CLK6_PHASE_SHIFT              ; 0                            ; Untyped               ;
+; CLK5_PHASE_SHIFT              ; 0                            ; Untyped               ;
+; CLK4_PHASE_SHIFT              ; 0                            ; Untyped               ;
+; CLK3_PHASE_SHIFT              ; 0                            ; Untyped               ;
+; CLK2_PHASE_SHIFT              ; 0                            ; Untyped               ;
+; CLK1_PHASE_SHIFT              ; 0                            ; Untyped               ;
+; CLK0_PHASE_SHIFT              ; 0                            ; Untyped               ;
+; CLK5_TIME_DELAY               ; 0                            ; Untyped               ;
+; CLK4_TIME_DELAY               ; 0                            ; Untyped               ;
+; CLK3_TIME_DELAY               ; 0                            ; Untyped               ;
+; CLK2_TIME_DELAY               ; 0                            ; Untyped               ;
+; CLK1_TIME_DELAY               ; 0                            ; Untyped               ;
+; CLK0_TIME_DELAY               ; 0                            ; Untyped               ;
+; CLK9_DUTY_CYCLE               ; 50                           ; Untyped               ;
+; CLK8_DUTY_CYCLE               ; 50                           ; Untyped               ;
+; CLK7_DUTY_CYCLE               ; 50                           ; Untyped               ;
+; CLK6_DUTY_CYCLE               ; 50                           ; Untyped               ;
+; CLK5_DUTY_CYCLE               ; 50                           ; Untyped               ;
+; CLK4_DUTY_CYCLE               ; 50                           ; Untyped               ;
+; CLK3_DUTY_CYCLE               ; 50                           ; Untyped               ;
+; CLK2_DUTY_CYCLE               ; 50                           ; Untyped               ;
+; CLK1_DUTY_CYCLE               ; 50                           ; Signed Integer        ;
+; CLK0_DUTY_CYCLE               ; 50                           ; Signed Integer        ;
+; CLK9_USE_EVEN_COUNTER_MODE    ; OFF                          ; Untyped               ;
+; CLK8_USE_EVEN_COUNTER_MODE    ; OFF                          ; Untyped               ;
+; CLK7_USE_EVEN_COUNTER_MODE    ; OFF                          ; Untyped               ;
+; CLK6_USE_EVEN_COUNTER_MODE    ; OFF                          ; Untyped               ;
+; CLK5_USE_EVEN_COUNTER_MODE    ; OFF                          ; Untyped               ;
+; CLK4_USE_EVEN_COUNTER_MODE    ; OFF                          ; Untyped               ;
+; CLK3_USE_EVEN_COUNTER_MODE    ; OFF                          ; Untyped               ;
+; CLK2_USE_EVEN_COUNTER_MODE    ; OFF                          ; Untyped               ;
+; CLK1_USE_EVEN_COUNTER_MODE    ; OFF                          ; Untyped               ;
+; CLK0_USE_EVEN_COUNTER_MODE    ; OFF                          ; Untyped               ;
+; CLK9_USE_EVEN_COUNTER_VALUE   ; OFF                          ; Untyped               ;
+; CLK8_USE_EVEN_COUNTER_VALUE   ; OFF                          ; Untyped               ;
+; CLK7_USE_EVEN_COUNTER_VALUE   ; OFF                          ; Untyped               ;
+; CLK6_USE_EVEN_COUNTER_VALUE   ; OFF                          ; Untyped               ;
+; CLK5_USE_EVEN_COUNTER_VALUE   ; OFF                          ; Untyped               ;
+; CLK4_USE_EVEN_COUNTER_VALUE   ; OFF                          ; Untyped               ;
+; CLK3_USE_EVEN_COUNTER_VALUE   ; OFF                          ; Untyped               ;
+; CLK2_USE_EVEN_COUNTER_VALUE   ; OFF                          ; Untyped               ;
+; CLK1_USE_EVEN_COUNTER_VALUE   ; OFF                          ; Untyped               ;
+; CLK0_USE_EVEN_COUNTER_VALUE   ; OFF                          ; Untyped               ;
+; LOCK_WINDOW_UI                ;  0.05                        ; Untyped               ;
+; LOCK_WINDOW_UI_BITS           ; UNUSED                       ; Untyped               ;
+; VCO_RANGE_DETECTOR_LOW_BITS   ; UNUSED                       ; Untyped               ;
+; VCO_RANGE_DETECTOR_HIGH_BITS  ; UNUSED                       ; Untyped               ;
+; DPA_MULTIPLY_BY               ; 0                            ; Untyped               ;
+; DPA_DIVIDE_BY                 ; 1                            ; Untyped               ;
+; DPA_DIVIDER                   ; 0                            ; Untyped               ;
+; EXTCLK3_MULTIPLY_BY           ; 1                            ; Untyped               ;
+; EXTCLK2_MULTIPLY_BY           ; 1                            ; Untyped               ;
+; EXTCLK1_MULTIPLY_BY           ; 1                            ; Untyped               ;
+; EXTCLK0_MULTIPLY_BY           ; 1                            ; Untyped               ;
+; EXTCLK3_DIVIDE_BY             ; 1                            ; Untyped               ;
+; EXTCLK2_DIVIDE_BY             ; 1                            ; Untyped               ;
+; EXTCLK1_DIVIDE_BY             ; 1                            ; Untyped               ;
+; EXTCLK0_DIVIDE_BY             ; 1                            ; Untyped               ;
+; EXTCLK3_PHASE_SHIFT           ; 0                            ; Untyped               ;
+; EXTCLK2_PHASE_SHIFT           ; 0                            ; Untyped               ;
+; EXTCLK1_PHASE_SHIFT           ; 0                            ; Untyped               ;
+; EXTCLK0_PHASE_SHIFT           ; 0                            ; Untyped               ;
+; EXTCLK3_TIME_DELAY            ; 0                            ; Untyped               ;
+; EXTCLK2_TIME_DELAY            ; 0                            ; Untyped               ;
+; EXTCLK1_TIME_DELAY            ; 0                            ; Untyped               ;
+; EXTCLK0_TIME_DELAY            ; 0                            ; Untyped               ;
+; EXTCLK3_DUTY_CYCLE            ; 50                           ; Untyped               ;
+; EXTCLK2_DUTY_CYCLE            ; 50                           ; Untyped               ;
+; EXTCLK1_DUTY_CYCLE            ; 50                           ; Untyped               ;
+; EXTCLK0_DUTY_CYCLE            ; 50                           ; Untyped               ;
+; VCO_MULTIPLY_BY               ; 0                            ; Untyped               ;
+; VCO_DIVIDE_BY                 ; 0                            ; Untyped               ;
+; SCLKOUT0_PHASE_SHIFT          ; 0                            ; Untyped               ;
+; SCLKOUT1_PHASE_SHIFT          ; 0                            ; Untyped               ;
+; VCO_MIN                       ; 0                            ; Untyped               ;
+; VCO_MAX                       ; 0                            ; Untyped               ;
+; VCO_CENTER                    ; 0                            ; Untyped               ;
+; PFD_MIN                       ; 0                            ; Untyped               ;
+; PFD_MAX                       ; 0                            ; Untyped               ;
+; M_INITIAL                     ; 0                            ; Untyped               ;
+; M                             ; 0                            ; Untyped               ;
+; N                             ; 1                            ; Untyped               ;
+; M2                            ; 1                            ; Untyped               ;
+; N2                            ; 1                            ; Untyped               ;
+; SS                            ; 1                            ; Untyped               ;
+; C0_HIGH                       ; 0                            ; Untyped               ;
+; C1_HIGH                       ; 0                            ; Untyped               ;
+; C2_HIGH                       ; 0                            ; Untyped               ;
+; C3_HIGH                       ; 0                            ; Untyped               ;
+; C4_HIGH                       ; 0                            ; Untyped               ;
+; C5_HIGH                       ; 0                            ; Untyped               ;
+; C6_HIGH                       ; 0                            ; Untyped               ;
+; C7_HIGH                       ; 0                            ; Untyped               ;
+; C8_HIGH                       ; 0                            ; Untyped               ;
+; C9_HIGH                       ; 0                            ; Untyped               ;
+; C0_LOW                        ; 0                            ; Untyped               ;
+; C1_LOW                        ; 0                            ; Untyped               ;
+; C2_LOW                        ; 0                            ; Untyped               ;
+; C3_LOW                        ; 0                            ; Untyped               ;
+; C4_LOW                        ; 0                            ; Untyped               ;
+; C5_LOW                        ; 0                            ; Untyped               ;
+; C6_LOW                        ; 0                            ; Untyped               ;
+; C7_LOW                        ; 0                            ; Untyped               ;
+; C8_LOW                        ; 0                            ; Untyped               ;
+; C9_LOW                        ; 0                            ; Untyped               ;
+; C0_INITIAL                    ; 0                            ; Untyped               ;
+; C1_INITIAL                    ; 0                            ; Untyped               ;
+; C2_INITIAL                    ; 0                            ; Untyped               ;
+; C3_INITIAL                    ; 0                            ; Untyped               ;
+; C4_INITIAL                    ; 0                            ; Untyped               ;
+; C5_INITIAL                    ; 0                            ; Untyped               ;
+; C6_INITIAL                    ; 0                            ; Untyped               ;
+; C7_INITIAL                    ; 0                            ; Untyped               ;
+; C8_INITIAL                    ; 0                            ; Untyped               ;
+; C9_INITIAL                    ; 0                            ; Untyped               ;
+; C0_MODE                       ; BYPASS                       ; Untyped               ;
+; C1_MODE                       ; BYPASS                       ; Untyped               ;
+; C2_MODE                       ; BYPASS                       ; Untyped               ;
+; C3_MODE                       ; BYPASS                       ; Untyped               ;
+; C4_MODE                       ; BYPASS                       ; Untyped               ;
+; C5_MODE                       ; BYPASS                       ; Untyped               ;
+; C6_MODE                       ; BYPASS                       ; Untyped               ;
+; C7_MODE                       ; BYPASS                       ; Untyped               ;
+; C8_MODE                       ; BYPASS                       ; Untyped               ;
+; C9_MODE                       ; BYPASS                       ; Untyped               ;
+; C0_PH                         ; 0                            ; Untyped               ;
+; C1_PH                         ; 0                            ; Untyped               ;
+; C2_PH                         ; 0                            ; Untyped               ;
+; C3_PH                         ; 0                            ; Untyped               ;
+; C4_PH                         ; 0                            ; Untyped               ;
+; C5_PH                         ; 0                            ; Untyped               ;
+; C6_PH                         ; 0                            ; Untyped               ;
+; C7_PH                         ; 0                            ; Untyped               ;
+; C8_PH                         ; 0                            ; Untyped               ;
+; C9_PH                         ; 0                            ; Untyped               ;
+; L0_HIGH                       ; 1                            ; Untyped               ;
+; L1_HIGH                       ; 1                            ; Untyped               ;
+; G0_HIGH                       ; 1                            ; Untyped               ;
+; G1_HIGH                       ; 1                            ; Untyped               ;
+; G2_HIGH                       ; 1                            ; Untyped               ;
+; G3_HIGH                       ; 1                            ; Untyped               ;
+; E0_HIGH                       ; 1                            ; Untyped               ;
+; E1_HIGH                       ; 1                            ; Untyped               ;
+; E2_HIGH                       ; 1                            ; Untyped               ;
+; E3_HIGH                       ; 1                            ; Untyped               ;
+; L0_LOW                        ; 1                            ; Untyped               ;
+; L1_LOW                        ; 1                            ; Untyped               ;
+; G0_LOW                        ; 1                            ; Untyped               ;
+; G1_LOW                        ; 1                            ; Untyped               ;
+; G2_LOW                        ; 1                            ; Untyped               ;
+; G3_LOW                        ; 1                            ; Untyped               ;
+; E0_LOW                        ; 1                            ; Untyped               ;
+; E1_LOW                        ; 1                            ; Untyped               ;
+; E2_LOW                        ; 1                            ; Untyped               ;
+; E3_LOW                        ; 1                            ; Untyped               ;
+; L0_INITIAL                    ; 1                            ; Untyped               ;
+; L1_INITIAL                    ; 1                            ; Untyped               ;
+; G0_INITIAL                    ; 1                            ; Untyped               ;
+; G1_INITIAL                    ; 1                            ; Untyped               ;
+; G2_INITIAL                    ; 1                            ; Untyped               ;
+; G3_INITIAL                    ; 1                            ; Untyped               ;
+; E0_INITIAL                    ; 1                            ; Untyped               ;
+; E1_INITIAL                    ; 1                            ; Untyped               ;
+; E2_INITIAL                    ; 1                            ; Untyped               ;
+; E3_INITIAL                    ; 1                            ; Untyped               ;
+; L0_MODE                       ; BYPASS                       ; Untyped               ;
+; L1_MODE                       ; BYPASS                       ; Untyped               ;
+; G0_MODE                       ; BYPASS                       ; Untyped               ;
+; G1_MODE                       ; BYPASS                       ; Untyped               ;
+; G2_MODE                       ; BYPASS                       ; Untyped               ;
+; G3_MODE                       ; BYPASS                       ; Untyped               ;
+; E0_MODE                       ; BYPASS                       ; Untyped               ;
+; E1_MODE                       ; BYPASS                       ; Untyped               ;
+; E2_MODE                       ; BYPASS                       ; Untyped               ;
+; E3_MODE                       ; BYPASS                       ; Untyped               ;
+; L0_PH                         ; 0                            ; Untyped               ;
+; L1_PH                         ; 0                            ; Untyped               ;
+; G0_PH                         ; 0                            ; Untyped               ;
+; G1_PH                         ; 0                            ; Untyped               ;
+; G2_PH                         ; 0                            ; Untyped               ;
+; G3_PH                         ; 0                            ; Untyped               ;
+; E0_PH                         ; 0                            ; Untyped               ;
+; E1_PH                         ; 0                            ; Untyped               ;
+; E2_PH                         ; 0                            ; Untyped               ;
+; E3_PH                         ; 0                            ; Untyped               ;
+; M_PH                          ; 0                            ; Untyped               ;
+; C1_USE_CASC_IN                ; OFF                          ; Untyped               ;
+; C2_USE_CASC_IN                ; OFF                          ; Untyped               ;
+; C3_USE_CASC_IN                ; OFF                          ; Untyped               ;
+; C4_USE_CASC_IN                ; OFF                          ; Untyped               ;
+; C5_USE_CASC_IN                ; OFF                          ; Untyped               ;
+; C6_USE_CASC_IN                ; OFF                          ; Untyped               ;
+; C7_USE_CASC_IN                ; OFF                          ; Untyped               ;
+; C8_USE_CASC_IN                ; OFF                          ; Untyped               ;
+; C9_USE_CASC_IN                ; OFF                          ; Untyped               ;
+; CLK0_COUNTER                  ; G0                           ; Untyped               ;
+; CLK1_COUNTER                  ; G0                           ; Untyped               ;
+; CLK2_COUNTER                  ; G0                           ; Untyped               ;
+; CLK3_COUNTER                  ; G0                           ; Untyped               ;
+; CLK4_COUNTER                  ; G0                           ; Untyped               ;
+; CLK5_COUNTER                  ; G0                           ; Untyped               ;
+; CLK6_COUNTER                  ; E0                           ; Untyped               ;
+; CLK7_COUNTER                  ; E1                           ; Untyped               ;
+; CLK8_COUNTER                  ; E2                           ; Untyped               ;
+; CLK9_COUNTER                  ; E3                           ; Untyped               ;
+; L0_TIME_DELAY                 ; 0                            ; Untyped               ;
+; L1_TIME_DELAY                 ; 0                            ; Untyped               ;
+; G0_TIME_DELAY                 ; 0                            ; Untyped               ;
+; G1_TIME_DELAY                 ; 0                            ; Untyped               ;
+; G2_TIME_DELAY                 ; 0                            ; Untyped               ;
+; G3_TIME_DELAY                 ; 0                            ; Untyped               ;
+; E0_TIME_DELAY                 ; 0                            ; Untyped               ;
+; E1_TIME_DELAY                 ; 0                            ; Untyped               ;
+; E2_TIME_DELAY                 ; 0                            ; Untyped               ;
+; E3_TIME_DELAY                 ; 0                            ; Untyped               ;
+; M_TIME_DELAY                  ; 0                            ; Untyped               ;
+; N_TIME_DELAY                  ; 0                            ; Untyped               ;
+; EXTCLK3_COUNTER               ; E3                           ; Untyped               ;
+; EXTCLK2_COUNTER               ; E2                           ; Untyped               ;
+; EXTCLK1_COUNTER               ; E1                           ; Untyped               ;
+; EXTCLK0_COUNTER               ; E0                           ; Untyped               ;
+; ENABLE0_COUNTER               ; L0                           ; Untyped               ;
+; ENABLE1_COUNTER               ; L0                           ; Untyped               ;
+; CHARGE_PUMP_CURRENT           ; 2                            ; Untyped               ;
+; LOOP_FILTER_R                 ;  1.000000                    ; Untyped               ;
+; LOOP_FILTER_C                 ; 5                            ; Untyped               ;
+; CHARGE_PUMP_CURRENT_BITS      ; 9999                         ; Untyped               ;
+; LOOP_FILTER_R_BITS            ; 9999                         ; Untyped               ;
+; LOOP_FILTER_C_BITS            ; 9999                         ; Untyped               ;
+; VCO_POST_SCALE                ; 0                            ; Untyped               ;
+; CLK2_OUTPUT_FREQUENCY         ; 0                            ; Untyped               ;
+; CLK1_OUTPUT_FREQUENCY         ; 0                            ; Untyped               ;
+; CLK0_OUTPUT_FREQUENCY         ; 0                            ; Untyped               ;
+; INTENDED_DEVICE_FAMILY        ; Cyclone II                   ; Untyped               ;
+; PORT_CLKENA0                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLKENA1                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLKENA2                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLKENA3                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLKENA4                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLKENA5                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_EXTCLKENA0               ; PORT_CONNECTIVITY            ; Untyped               ;
+; PORT_EXTCLKENA1               ; PORT_CONNECTIVITY            ; Untyped               ;
+; PORT_EXTCLKENA2               ; PORT_CONNECTIVITY            ; Untyped               ;
+; PORT_EXTCLKENA3               ; PORT_CONNECTIVITY            ; Untyped               ;
+; PORT_EXTCLK0                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_EXTCLK1                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_EXTCLK2                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_EXTCLK3                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLKBAD0                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLKBAD1                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLK0                     ; PORT_USED                    ; Untyped               ;
+; PORT_CLK1                     ; PORT_USED                    ; Untyped               ;
+; PORT_CLK2                     ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLK3                     ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLK4                     ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLK5                     ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLK6                     ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLK7                     ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLK8                     ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLK9                     ; PORT_UNUSED                  ; Untyped               ;
+; PORT_SCANDATA                 ; PORT_UNUSED                  ; Untyped               ;
+; PORT_SCANDATAOUT              ; PORT_UNUSED                  ; Untyped               ;
+; PORT_SCANDONE                 ; PORT_UNUSED                  ; Untyped               ;
+; PORT_SCLKOUT1                 ; PORT_CONNECTIVITY            ; Untyped               ;
+; PORT_SCLKOUT0                 ; PORT_CONNECTIVITY            ; Untyped               ;
+; PORT_ACTIVECLOCK              ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLKLOSS                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_INCLK1                   ; PORT_UNUSED                  ; Untyped               ;
+; PORT_INCLK0                   ; PORT_USED                    ; Untyped               ;
+; PORT_FBIN                     ; PORT_UNUSED                  ; Untyped               ;
+; PORT_PLLENA                   ; PORT_UNUSED                  ; Untyped               ;
+; PORT_CLKSWITCH                ; PORT_UNUSED                  ; Untyped               ;
+; PORT_ARESET                   ; PORT_USED                    ; Untyped               ;
+; PORT_PFDENA                   ; PORT_UNUSED                  ; Untyped               ;
+; PORT_SCANCLK                  ; PORT_UNUSED                  ; Untyped               ;
+; PORT_SCANACLR                 ; PORT_UNUSED                  ; Untyped               ;
+; PORT_SCANREAD                 ; PORT_UNUSED                  ; Untyped               ;
+; PORT_SCANWRITE                ; PORT_UNUSED                  ; Untyped               ;
+; PORT_ENABLE0                  ; PORT_CONNECTIVITY            ; Untyped               ;
+; PORT_ENABLE1                  ; PORT_CONNECTIVITY            ; Untyped               ;
+; PORT_LOCKED                   ; PORT_USED                    ; Untyped               ;
+; PORT_CONFIGUPDATE             ; PORT_UNUSED                  ; Untyped               ;
+; PORT_FBOUT                    ; PORT_CONNECTIVITY            ; Untyped               ;
+; PORT_PHASEDONE                ; PORT_UNUSED                  ; Untyped               ;
+; PORT_PHASESTEP                ; PORT_UNUSED                  ; Untyped               ;
+; PORT_PHASEUPDOWN              ; PORT_UNUSED                  ; Untyped               ;
+; PORT_SCANCLKENA               ; PORT_UNUSED                  ; Untyped               ;
+; PORT_PHASECOUNTERSELECT       ; PORT_UNUSED                  ; Untyped               ;
+; PORT_VCOOVERRANGE             ; PORT_CONNECTIVITY            ; Untyped               ;
+; PORT_VCOUNDERRANGE            ; PORT_CONNECTIVITY            ; Untyped               ;
+; M_TEST_SOURCE                 ; 5                            ; Untyped               ;
+; C0_TEST_SOURCE                ; 5                            ; Untyped               ;
+; C1_TEST_SOURCE                ; 5                            ; Untyped               ;
+; C2_TEST_SOURCE                ; 5                            ; Untyped               ;
+; C3_TEST_SOURCE                ; 5                            ; Untyped               ;
+; C4_TEST_SOURCE                ; 5                            ; Untyped               ;
+; C5_TEST_SOURCE                ; 5                            ; Untyped               ;
+; C6_TEST_SOURCE                ; 5                            ; Untyped               ;
+; C7_TEST_SOURCE                ; 5                            ; Untyped               ;
+; C8_TEST_SOURCE                ; 5                            ; Untyped               ;
+; C9_TEST_SOURCE                ; 5                            ; Untyped               ;
+; CBXI_PARAMETER                ; NOTHING                      ; Untyped               ;
+; VCO_FREQUENCY_CONTROL         ; AUTO                         ; Untyped               ;
+; VCO_PHASE_SHIFT_STEP          ; 0                            ; Untyped               ;
+; WIDTH_CLOCK                   ; 6                            ; Untyped               ;
+; WIDTH_PHASECOUNTERSELECT      ; 4                            ; Untyped               ;
+; USING_FBMIMICBIDIR_PORT       ; OFF                          ; Untyped               ;
+; DEVICE_FAMILY                 ; Cyclone II                   ; Untyped               ;
+; SCAN_CHAIN_MIF_FILE           ; UNUSED                       ; Untyped               ;
+; SIM_GATE_LOCK_DEVICE_BEHAVIOR ; OFF                          ; Untyped               ;
+; AUTO_CARRY_CHAINS             ; ON                           ; AUTO_CARRY            ;
+; IGNORE_CARRY_BUFFERS          ; OFF                          ; IGNORE_CARRY          ;
+; AUTO_CASCADE_CHAINS           ; ON                           ; AUTO_CASCADE          ;
+; IGNORE_CASCADE_BUFFERS        ; OFF                          ; IGNORE_CASCADE        ;
++-------------------------------+------------------------------+-----------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: fractional_clock_divider:uclk ;
++----------------+----------+------------------------------------------------+
+; Parameter Name ; Value    ; Type                                           ;
++----------------+----------+------------------------------------------------+
+; clk_freq_hz    ; 50000000 ; Signed Integer                                 ;
+; frequency_hz   ; 1843200  ; Signed Integer                                 ;
++----------------+----------+------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: Replica1_CORE:ap1 ;
++----------------+----------+------------------------------------+
+; Parameter Name ; Value    ; Type                               ;
++----------------+----------+------------------------------------+
+; cpu_type       ; 6502     ; String                             ;
+; cpu_core       ; T65      ; String                             ;
+; rom            ; WOZMON65 ; String                             ;
+; ram_size_kb    ; 48       ; Signed Integer                     ;
+; baud_rate      ; 115200   ; Signed Integer                     ;
+; has_aci        ; false    ; Enumerated                         ;
+; has_mspi       ; false    ; Enumerated                         ;
+; has_timer      ; false    ; Enumerated                         ;
++----------------+----------+------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: Replica1_CORE:ap1|pia_uart:pia ;
++----------------+---------+--------------------------------------------------+
+; Parameter Name ; Value   ; Type                                             ;
++----------------+---------+--------------------------------------------------+
+; clk_freq_hz    ; 1843200 ; Signed Integer                                   ;
+; baud_rate      ; 115200  ; Signed Integer                                   ;
+; bits           ; 8       ; Signed Integer                                   ;
++----------------+---------+--------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++--------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: Replica1_CORE:ap1|pia_uart:pia|uart_send:send ;
++----------------+---------+-----------------------------------------------------------------+
+; Parameter Name ; Value   ; Type                                                            ;
++----------------+---------+-----------------------------------------------------------------+
+; clk_freq_hz    ; 1843200 ; Signed Integer                                                  ;
+; baud_rate      ; 115200  ; Signed Integer                                                  ;
+; bits           ; 8       ; Signed Integer                                                  ;
++----------------+---------+-----------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv ;
++----------------+---------+--------------------------------------------------------------------+
+; Parameter Name ; Value   ; Type                                                               ;
++----------------+---------+--------------------------------------------------------------------+
+; clk_freq_hz    ; 1843200 ; Signed Integer                                                     ;
+; baud_rate      ; 115200  ; Signed Integer                                                     ;
+; bits           ; 8       ; Signed Integer                                                     ;
++----------------+---------+--------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------+
+; Parameter Settings for User Entity Instance: RAM_DE1:ram ;
++----------------+-------+---------------------------------+
+; Parameter Name ; Value ; Type                            ;
++----------------+-------+---------------------------------+
+; ram_size_kb    ; 48    ; Signed Integer                  ;
++----------------+-------+---------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: sram_sdram_bridge:bridge ;
++------------------+------------------+---------------------------------+
+; Parameter Name   ; Value            ; Type                            ;
++------------------+------------------+---------------------------------+
+; addr_bits        ; 12               ; Signed Integer                  ;
+; sdram_mhz        ; 100              ; Signed Integer                  ;
+; generate_refresh ; true             ; Enumerated                      ;
+; use_cache        ; false            ; Enumerated                      ;
+; cache_size_bytes ; 1024             ; Signed Integer                  ;
+; line_size_bytes  ; 16               ; Signed Integer                  ;
+; ram_block_type   ; M4K, no_rw_check ; String                          ;
++------------------+------------------+---------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: sdram_controller:sdram ;
++--------------------+-------+----------------------------------------+
+; Parameter Name     ; Value ; Type                                   ;
++--------------------+-------+----------------------------------------+
+; freq_mhz           ; 100   ; Signed Integer                         ;
+; row_bits           ; 12    ; Signed Integer                         ;
+; col_bits           ; 8     ; Signed Integer                         ;
+; trp_ns             ; 20    ; Signed Integer                         ;
+; trcd_ns            ; 20    ; Signed Integer                         ;
+; trfc_ns            ; 70    ; Signed Integer                         ;
+; cas_latency        ; 2     ; Signed Integer                         ;
+; use_auto_precharge ; false ; Enumerated                             ;
+; use_auto_refresh   ; false ; Enumerated                             ;
++--------------------+-------+----------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: Replica1_CORE:ap1|WOZMON65:\woz65:rom|altsyncram:rom_rtl_0                                                                        ;
++------------------------------------+------------------------------------------------------------------------------------------------------------------------------+----------------+
+; Parameter Name                     ; Value                                                                                                                        ; Type           ;
++------------------------------------+------------------------------------------------------------------------------------------------------------------------------+----------------+
+; BYTE_SIZE_BLOCK                    ; 8                                                                                                                            ; Untyped        ;
+; AUTO_CARRY_CHAINS                  ; ON                                                                                                                           ; AUTO_CARRY     ;
+; IGNORE_CARRY_BUFFERS               ; OFF                                                                                                                          ; IGNORE_CARRY   ;
+; AUTO_CASCADE_CHAINS                ; ON                                                                                                                           ; AUTO_CASCADE   ;
+; IGNORE_CASCADE_BUFFERS             ; OFF                                                                                                                          ; IGNORE_CASCADE ;
+; WIDTH_BYTEENA                      ; 1                                                                                                                            ; Untyped        ;
+; OPERATION_MODE                     ; ROM                                                                                                                          ; Untyped        ;
+; WIDTH_A                            ; 8                                                                                                                            ; Untyped        ;
+; WIDTHAD_A                          ; 8                                                                                                                            ; Untyped        ;
+; NUMWORDS_A                         ; 256                                                                                                                          ; Untyped        ;
+; OUTDATA_REG_A                      ; UNREGISTERED                                                                                                                 ; Untyped        ;
+; ADDRESS_ACLR_A                     ; NONE                                                                                                                         ; Untyped        ;
+; OUTDATA_ACLR_A                     ; NONE                                                                                                                         ; Untyped        ;
+; WRCONTROL_ACLR_A                   ; NONE                                                                                                                         ; Untyped        ;
+; INDATA_ACLR_A                      ; NONE                                                                                                                         ; Untyped        ;
+; BYTEENA_ACLR_A                     ; NONE                                                                                                                         ; Untyped        ;
+; WIDTH_B                            ; 1                                                                                                                            ; Untyped        ;
+; WIDTHAD_B                          ; 1                                                                                                                            ; Untyped        ;
+; NUMWORDS_B                         ; 1                                                                                                                            ; Untyped        ;
+; INDATA_REG_B                       ; CLOCK1                                                                                                                       ; Untyped        ;
+; WRCONTROL_WRADDRESS_REG_B          ; CLOCK1                                                                                                                       ; Untyped        ;
+; RDCONTROL_REG_B                    ; CLOCK1                                                                                                                       ; Untyped        ;
+; ADDRESS_REG_B                      ; CLOCK1                                                                                                                       ; Untyped        ;
+; OUTDATA_REG_B                      ; UNREGISTERED                                                                                                                 ; Untyped        ;
+; BYTEENA_REG_B                      ; CLOCK1                                                                                                                       ; Untyped        ;
+; INDATA_ACLR_B                      ; NONE                                                                                                                         ; Untyped        ;
+; WRCONTROL_ACLR_B                   ; NONE                                                                                                                         ; Untyped        ;
+; ADDRESS_ACLR_B                     ; NONE                                                                                                                         ; Untyped        ;
+; OUTDATA_ACLR_B                     ; NONE                                                                                                                         ; Untyped        ;
+; RDCONTROL_ACLR_B                   ; NONE                                                                                                                         ; Untyped        ;
+; BYTEENA_ACLR_B                     ; NONE                                                                                                                         ; Untyped        ;
+; WIDTH_BYTEENA_A                    ; 1                                                                                                                            ; Untyped        ;
+; WIDTH_BYTEENA_B                    ; 1                                                                                                                            ; Untyped        ;
+; RAM_BLOCK_TYPE                     ; AUTO                                                                                                                         ; Untyped        ;
+; BYTE_SIZE                          ; 8                                                                                                                            ; Untyped        ;
+; READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                                                                                                                    ; Untyped        ;
+; READ_DURING_WRITE_MODE_PORT_A      ; NEW_DATA_NO_NBE_READ                                                                                                         ; Untyped        ;
+; READ_DURING_WRITE_MODE_PORT_B      ; NEW_DATA_NO_NBE_READ                                                                                                         ; Untyped        ;
+; INIT_FILE                          ; //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/db/DE1_Replica1.ram0_WOZMON65_890eda.hdl.mif ; Untyped        ;
+; INIT_FILE_LAYOUT                   ; PORT_A                                                                                                                       ; Untyped        ;
+; MAXIMUM_DEPTH                      ; 0                                                                                                                            ; Untyped        ;
+; CLOCK_ENABLE_INPUT_A               ; NORMAL                                                                                                                       ; Untyped        ;
+; CLOCK_ENABLE_INPUT_B               ; NORMAL                                                                                                                       ; Untyped        ;
+; CLOCK_ENABLE_OUTPUT_A              ; NORMAL                                                                                                                       ; Untyped        ;
+; CLOCK_ENABLE_OUTPUT_B              ; NORMAL                                                                                                                       ; Untyped        ;
+; CLOCK_ENABLE_CORE_A                ; USE_INPUT_CLKEN                                                                                                              ; Untyped        ;
+; CLOCK_ENABLE_CORE_B                ; USE_INPUT_CLKEN                                                                                                              ; Untyped        ;
+; ENABLE_ECC                         ; FALSE                                                                                                                        ; Untyped        ;
+; ECC_PIPELINE_STAGE_ENABLED         ; FALSE                                                                                                                        ; Untyped        ;
+; WIDTH_ECCSTATUS                    ; 3                                                                                                                            ; Untyped        ;
+; DEVICE_FAMILY                      ; Cyclone II                                                                                                                   ; Untyped        ;
+; CBXI_PARAMETER                     ; altsyncram_85f1                                                                                                              ; Untyped        ;
++------------------------------------+------------------------------------------------------------------------------------------------------------------------------+----------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------------------------------------------------+
+; altpll Parameter Settings by Entity Instance                            ;
++-------------------------------+-----------------------------------------+
+; Name                          ; Value                                   ;
++-------------------------------+-----------------------------------------+
+; Number of entity instances    ; 1                                       ;
+; Entity Instance               ; main_clock:mclk|altpll:altpll_component ;
+;     -- OPERATION_MODE         ; NORMAL                                  ;
+;     -- PLL_TYPE               ; AUTO                                    ;
+;     -- PRIMARY_CLOCK          ; INCLK0                                  ;
+;     -- INCLK0_INPUT_FREQUENCY ; 20000                                   ;
+;     -- INCLK1_INPUT_FREQUENCY ; 0                                       ;
+;     -- VCO_MULTIPLY_BY        ; 0                                       ;
+;     -- VCO_DIVIDE_BY          ; 0                                       ;
++-------------------------------+-----------------------------------------+
+
+
++--------------------------------------------------------------------------------------------------------+
+; altsyncram Parameter Settings by Entity Instance                                                       ;
++-------------------------------------------+------------------------------------------------------------+
+; Name                                      ; Value                                                      ;
++-------------------------------------------+------------------------------------------------------------+
+; Number of entity instances                ; 1                                                          ;
+; Entity Instance                           ; Replica1_CORE:ap1|WOZMON65:\woz65:rom|altsyncram:rom_rtl_0 ;
+;     -- OPERATION_MODE                     ; ROM                                                        ;
+;     -- WIDTH_A                            ; 8                                                          ;
+;     -- NUMWORDS_A                         ; 256                                                        ;
+;     -- OUTDATA_REG_A                      ; UNREGISTERED                                               ;
+;     -- WIDTH_B                            ; 1                                                          ;
+;     -- NUMWORDS_B                         ; 1                                                          ;
+;     -- ADDRESS_REG_B                      ; CLOCK1                                                     ;
+;     -- OUTDATA_REG_B                      ; UNREGISTERED                                               ;
+;     -- RAM_BLOCK_TYPE                     ; AUTO                                                       ;
+;     -- READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                                                  ;
++-------------------------------------------+------------------------------------------------------------+
+
+
++----------------------------------------------------+
+; Port Connectivity Checks: "sdram_controller:sdram" ;
++--------------+-------+----------+------------------+
+; Port         ; Type  ; Severity ; Details          ;
++--------------+-------+----------+------------------+
+; addr[21..11] ; Input ; Info     ; Stuck at GND     ;
++--------------+-------+----------+------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|T65_ALU:alu"                       ;
++-------------+--------+----------+-------------------------------------------------------------------------------------+
+; Port        ; Type   ; Severity ; Details                                                                             ;
++-------------+--------+----------+-------------------------------------------------------------------------------------+
+; p_out[5..4] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++-------------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst"                                 ;
++-----------+--------+----------+-------------------------------------------------------------------------------------+
+; Port      ; Type   ; Severity ; Details                                                                             ;
++-----------+--------+----------+-------------------------------------------------------------------------------------+
+; mode      ; Input  ; Info     ; Stuck at GND                                                                        ;
+; bcd_en    ; Input  ; Info     ; Stuck at VCC                                                                        ;
+; rdy       ; Input  ; Info     ; Stuck at VCC                                                                        ;
+; abort_n   ; Input  ; Info     ; Stuck at VCC                                                                        ;
+; ef        ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; mf        ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; xf        ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; ml_n      ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; vp_n      ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; vda       ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; vpa       ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; a[23..16] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; regs      ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; debug     ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; nmi_ack   ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++-----------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++-------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|cpu_clock_gen:clk"                          ;
++---------+--------+----------+-------------------------------------------------------------------------------------+
+; Port    ; Type   ; Severity ; Details                                                                             ;
++---------+--------+----------+-------------------------------------------------------------------------------------+
+; stretch ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++---------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu"                                          ;
++-------+--------+----------+-------------------------------------------------------------------------------------+
+; Port  ; Type   ; Severity ; Details                                                                             ;
++-------+--------+----------+-------------------------------------------------------------------------------------+
+; sync  ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; nmi_n ; Input  ; Info     ; Stuck at VCC                                                                        ;
+; irq_n ; Input  ; Info     ; Stuck at VCC                                                                        ;
+; so_n  ; Input  ; Info     ; Stuck at VCC                                                                        ;
++-------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:03     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus II 64-Bit Analysis & Synthesis
+    Info: Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
+    Info: Processing started: Sun Feb 22 16:00:36 2026
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off DE1_Replica1 -c DE1_Replica1
+Warning (125092): Tcl Script File hclk.qip not found
+    Info (125063): set_global_assignment -name QIP_FILE hclk.qip
+Critical Warning (138069): Setting INCREMENTAL_COMPILATION to "OFF" is no longer supported. Assignment is ignored. To disable partitions, set the IGNORE_PARTITIONS global assignment to "ON" instead.
+Info (11104): Parallel Compilation has detected 32 hyper-threaded processors. However, the extra hyper-threaded processors will not be used by default. Parallel Compilation will use 16 of the 24 physical processors detected instead.
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/sdram/sram_sdram_bridge.vhd
+    Info (12022): Found design unit 1: sram_sdram_bridge-rtl
+    Info (12023): Found entity 1: sram_sdram_bridge
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/sdram/sdram_controller.vhd
+    Info (12022): Found design unit 1: sdram_controller-rtl
+    Info (12023): Found entity 1: sdram_controller
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/utils/spi-master.vhd
+    Info (12022): Found design unit 1: spi_master-behavioral
+    Info (12023): Found entity 1: spi_master
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/utils/simple_clock_switch.vhd
+    Info (12022): Found design unit 1: simple_clock_switch-Behavioral
+    Info (12023): Found entity 1: simple_clock_switch
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/utils/prog_clock_divider.vhd
+    Info (12022): Found design unit 1: prog_clock_divider-Behavioral
+    Info (12023): Found entity 1: prog_clock_divider
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/utils/nor_gate.vhd
+    Info (12022): Found design unit 1: nor_gate-Behavioral
+    Info (12023): Found entity 1: nor_gate
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/utils/nand3_gate.vhd
+    Info (12022): Found design unit 1: nand3_gate-Behavioral
+    Info (12023): Found entity 1: nand3_gate
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/utils/hexto7seg.vhd
+    Info (12022): Found design unit 1: hexto7seg-rtl
+    Info (12023): Found entity 1: hexto7seg
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/utils/fractional_clock_divider.vhd
+    Info (12022): Found design unit 1: fractional_clock_divider-rtl
+    Info (12023): Found entity 1: fractional_clock_divider
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/utils/debug_clock_button.vhd
+    Info (12022): Found design unit 1: debug_clock_button-Behavioral
+    Info (12023): Found entity 1: debug_clock_button
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/utils/clock_divider.vhd
+    Info (12022): Found design unit 1: clock_divider-rtl
+    Info (12023): Found entity 1: clock_divider
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/rom/wozmon68.vhd
+    Info (12022): Found design unit 1: WOZMON68-rtl
+    Info (12023): Found entity 1: WOZMON68
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/rom/wozmon65.vhd
+    Info (12022): Found design unit 1: WOZMON65-rtl
+    Info (12023): Found entity 1: WOZMON65
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/rom/wozmon69.vhd
+    Info (12022): Found design unit 1: WOZMON69-rtl
+    Info (12023): Found entity 1: WOZMON69
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/rom/wozaci.vhd
+    Info (12022): Found design unit 1: WOZACI-rtl
+    Info (12023): Found entity 1: WOZACI
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/rom/mon6809.vhd
+    Info (12022): Found design unit 1: MON6809-rtl
+    Info (12023): Found entity 1: MON6809
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/rom/basic.vhd
+    Info (12022): Found design unit 1: BASIC-rtl
+    Info (12023): Found entity 1: BASIC
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/peripherals/timer/simple_timer.vhd
+    Info (12022): Found design unit 1: simple_timer-rtl
+    Info (12023): Found entity 1: simple_timer
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/peripherals/pia/uart_send.vhd
+    Info (12022): Found design unit 1: uart_send-rtl
+    Info (12023): Found entity 1: uart_send
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/peripherals/pia/uart_receive.vhd
+    Info (12022): Found design unit 1: uart_receive-rtl
+    Info (12023): Found entity 1: uart_receive
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/peripherals/pia/pia_uart.vhd
+    Info (12022): Found design unit 1: pia_uart-rtl
+    Info (12023): Found entity 1: pia_uart
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/peripherals/mspi/mspi-iface.vhd
+    Info (12022): Found design unit 1: mspi_iface-rtl
+    Info (12023): Found entity 1: mspi_iface
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/peripherals/aci/aci.vhd
+    Info (12022): Found design unit 1: aci-rtl
+    Info (12023): Found entity 1: aci
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/core/replica1_core.vhd
+    Info (12022): Found design unit 1: Replica1_CORE-rtl
+    Info (12023): Found entity 1: Replica1_CORE
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/cpu68.vhd
+    Info (12022): Found design unit 1: cpu68-CPU_ARCH
+    Info (12023): Found entity 1: cpu68
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/cpu65xx.vhd
+    Info (12022): Found design unit 1: cpu65xx-fast
+    Info (12023): Found entity 1: cpu65xx
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/cpu09.vhd
+    Info (12022): Found design unit 1: cpu09-rtl
+    Info (12023): Found entity 1: cpu09
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/cpu_6800.vhd
+    Info (12022): Found design unit 1: CPU_6800-MC6800_impl
+    Info (12023): Found entity 1: CPU_6800
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/cpu_65xx.vhd
+    Info (12022): Found design unit 1: CPU_65XX-CPU65XX_impl
+    Info (12023): Found entity 1: CPU_65XX
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/cpu_6809.vhd
+    Info (12022): Found design unit 1: CPU_6809-MC6809_impl
+    Info (12023): Found entity 1: CPU_6809
+Info (12021): Found 2 design units, including 1 entities, in source file main_clock.vhd
+    Info (12022): Found design unit 1: main_clock-SYN
+    Info (12023): Found entity 1: main_clock
+Info (12021): Found 2 design units, including 1 entities, in source file sram.vhd
+    Info (12022): Found design unit 1: sram-rtl
+    Info (12023): Found entity 1: sram
+Info (12021): Found 2 design units, including 1 entities, in source file ram_de1.vhd
+    Info (12022): Found design unit 1: RAM_DE1-rtl
+    Info (12023): Found entity 1: RAM_DE1
+Info (12021): Found 2 design units, including 1 entities, in source file de1_replica1.vhdl
+    Info (12022): Found design unit 1: DE1_Replica1-top
+    Info (12023): Found entity 1: DE1_Replica1
+Info (12021): Found 2 design units, including 0 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/t65_pack.vhd
+    Info (12022): Found design unit 1: T65_Pack
+    Info (12022): Found design unit 2: T65_Pack-body
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/t65_mcode.vhd
+    Info (12022): Found design unit 1: T65_MCode-rtl
+    Info (12023): Found entity 1: T65_MCode
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/t65_alu.vhd
+    Info (12022): Found design unit 1: T65_ALU-rtl
+    Info (12023): Found entity 1: T65_ALU
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/t65.vhd
+    Info (12022): Found design unit 1: T65-rtl
+    Info (12023): Found entity 1: T65
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/r65c02.vhd
+    Info (12022): Found design unit 1: R65C02-Behavioral
+    Info (12023): Found entity 1: R65C02
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/mx65.vhd
+    Info (12022): Found design unit 1: mx65-rtl
+    Info (12023): Found entity 1: mx65
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/cpu_t65.vhd
+    Info (12022): Found design unit 1: CPU_T65-T65_impl
+    Info (12023): Found entity 1: CPU_T65
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/cpu_r65c02.vhd
+    Info (12022): Found design unit 1: CPU_R65C02-CPU_R65C02_impl
+    Info (12023): Found entity 1: CPU_R65C02
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/cpu_mx65.vhd
+    Info (12022): Found design unit 1: CPU_MX65-MX65_impl
+    Info (12023): Found entity 1: CPU_MX65
+Info (12021): Found 2 design units, including 1 entities, in source file //wsl$/debian/home/didier/developments/altera/projects/replica1-sdram/rtl/cpu/cpu_clock_gen.vhd
+    Info (12022): Found design unit 1: cpu_clock_gen-Behavioral
+    Info (12023): Found entity 1: cpu_clock_gen
+Info (12127): Elaborating entity "DE1_Replica1" for the top level hierarchy
+Info (12128): Elaborating entity "hexto7seg" for hierarchy "hexto7seg:h0"
+Info (12128): Elaborating entity "main_clock" for hierarchy "main_clock:mclk"
+Info (12128): Elaborating entity "altpll" for hierarchy "main_clock:mclk|altpll:altpll_component"
+Info (12130): Elaborated megafunction instantiation "main_clock:mclk|altpll:altpll_component"
+Info (12133): Instantiated megafunction "main_clock:mclk|altpll:altpll_component" with the following parameter:
+    Info (12134): Parameter "clk0_divide_by" = "5"
+    Info (12134): Parameter "clk0_duty_cycle" = "50"
+    Info (12134): Parameter "clk0_multiply_by" = "4"
+    Info (12134): Parameter "clk0_phase_shift" = "0"
+    Info (12134): Parameter "clk1_divide_by" = "1"
+    Info (12134): Parameter "clk1_duty_cycle" = "50"
+    Info (12134): Parameter "clk1_multiply_by" = "2"
+    Info (12134): Parameter "clk1_phase_shift" = "0"
+    Info (12134): Parameter "compensate_clock" = "CLK0"
+    Info (12134): Parameter "gate_lock_signal" = "NO"
+    Info (12134): Parameter "inclk0_input_frequency" = "20000"
+    Info (12134): Parameter "intended_device_family" = "Cyclone II"
+    Info (12134): Parameter "invalid_lock_multiplier" = "5"
+    Info (12134): Parameter "lpm_hint" = "CBX_MODULE_PREFIX=main_clock"
+    Info (12134): Parameter "lpm_type" = "altpll"
+    Info (12134): Parameter "operation_mode" = "NORMAL"
+    Info (12134): Parameter "port_activeclock" = "PORT_UNUSED"
+    Info (12134): Parameter "port_areset" = "PORT_USED"
+    Info (12134): Parameter "port_clkbad0" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clkbad1" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clkloss" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clkswitch" = "PORT_UNUSED"
+    Info (12134): Parameter "port_configupdate" = "PORT_UNUSED"
+    Info (12134): Parameter "port_fbin" = "PORT_UNUSED"
+    Info (12134): Parameter "port_inclk0" = "PORT_USED"
+    Info (12134): Parameter "port_inclk1" = "PORT_UNUSED"
+    Info (12134): Parameter "port_locked" = "PORT_USED"
+    Info (12134): Parameter "port_pfdena" = "PORT_UNUSED"
+    Info (12134): Parameter "port_phasecounterselect" = "PORT_UNUSED"
+    Info (12134): Parameter "port_phasedone" = "PORT_UNUSED"
+    Info (12134): Parameter "port_phasestep" = "PORT_UNUSED"
+    Info (12134): Parameter "port_phaseupdown" = "PORT_UNUSED"
+    Info (12134): Parameter "port_pllena" = "PORT_UNUSED"
+    Info (12134): Parameter "port_scanaclr" = "PORT_UNUSED"
+    Info (12134): Parameter "port_scanclk" = "PORT_UNUSED"
+    Info (12134): Parameter "port_scanclkena" = "PORT_UNUSED"
+    Info (12134): Parameter "port_scandata" = "PORT_UNUSED"
+    Info (12134): Parameter "port_scandataout" = "PORT_UNUSED"
+    Info (12134): Parameter "port_scandone" = "PORT_UNUSED"
+    Info (12134): Parameter "port_scanread" = "PORT_UNUSED"
+    Info (12134): Parameter "port_scanwrite" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clk0" = "PORT_USED"
+    Info (12134): Parameter "port_clk1" = "PORT_USED"
+    Info (12134): Parameter "port_clk2" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clk3" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clk4" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clk5" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clkena0" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clkena1" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clkena2" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clkena3" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clkena4" = "PORT_UNUSED"
+    Info (12134): Parameter "port_clkena5" = "PORT_UNUSED"
+    Info (12134): Parameter "port_extclk0" = "PORT_UNUSED"
+    Info (12134): Parameter "port_extclk1" = "PORT_UNUSED"
+    Info (12134): Parameter "port_extclk2" = "PORT_UNUSED"
+    Info (12134): Parameter "port_extclk3" = "PORT_UNUSED"
+    Info (12134): Parameter "valid_lock_multiplier" = "1"
+Info (12128): Elaborating entity "fractional_clock_divider" for hierarchy "fractional_clock_divider:uclk"
+Warning (10631): VHDL Process Statement warning at fractional_clock_divider.vhd(35): inferring latch(es) for signal or variable "accumulator", which holds its previous value in one or more paths through the process
+Info (12128): Elaborating entity "Replica1_CORE" for hierarchy "Replica1_CORE:ap1"
+Warning (10541): VHDL Signal Declaration warning at Replica1_CORE.vhd(36): used implicit default value for signal "tape_out" because signal was never assigned a value or an explicit default value. Use of implicit default value may introduce unintended design optimizations.
+Warning (10541): VHDL Signal Declaration warning at Replica1_CORE.vhd(371): used implicit default value for signal "mspi_data" because signal was never assigned a value or an explicit default value. Use of implicit default value may introduce unintended design optimizations.
+Warning (10541): VHDL Signal Declaration warning at Replica1_CORE.vhd(372): used implicit default value for signal "aci_data" because signal was never assigned a value or an explicit default value. Use of implicit default value may introduce unintended design optimizations.
+Warning (10541): VHDL Signal Declaration warning at Replica1_CORE.vhd(373): used implicit default value for signal "timer_data" because signal was never assigned a value or an explicit default value. Use of implicit default value may introduce unintended design optimizations.
+Warning (10540): VHDL Signal Declaration warning at Replica1_CORE.vhd(377): used explicit default value for signal "nmi_n" because signal was never assigned a value
+Warning (10540): VHDL Signal Declaration warning at Replica1_CORE.vhd(378): used explicit default value for signal "irq_n" because signal was never assigned a value
+Warning (10540): VHDL Signal Declaration warning at Replica1_CORE.vhd(379): used explicit default value for signal "so_n" because signal was never assigned a value
+Warning (10036): Verilog HDL or VHDL warning at Replica1_CORE.vhd(389): object "sync" assigned a value but never read
+Warning (10873): Using initial value X (don't care) for net "spi_cs" at Replica1_CORE.vhd(32)
+Warning (10873): Using initial value X (don't care) for net "spi_sck" at Replica1_CORE.vhd(33)
+Warning (10873): Using initial value X (don't care) for net "spi_mosi" at Replica1_CORE.vhd(34)
+Info (12128): Elaborating entity "CPU_T65" for hierarchy "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu"
+Info (12128): Elaborating entity "cpu_clock_gen" for hierarchy "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|cpu_clock_gen:clk"
+Info (12128): Elaborating entity "T65" for hierarchy "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst"
+Info (12128): Elaborating entity "T65_MCode" for hierarchy "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|T65_MCode:mcode"
+Info (12128): Elaborating entity "T65_ALU" for hierarchy "Replica1_CORE:ap1|CPU_T65:\gen_cpu0:c1:cpu|T65:t65_inst|T65_ALU:alu"
+Info (12128): Elaborating entity "WOZMON65" for hierarchy "Replica1_CORE:ap1|WOZMON65:\woz65:rom"
+Info (12128): Elaborating entity "pia_uart" for hierarchy "Replica1_CORE:ap1|pia_uart:pia"
+Info (12128): Elaborating entity "uart_send" for hierarchy "Replica1_CORE:ap1|pia_uart:pia|uart_send:send"
+Info (12128): Elaborating entity "uart_receive" for hierarchy "Replica1_CORE:ap1|pia_uart:pia|uart_receive:recv"
+Info (12128): Elaborating entity "RAM_DE1" for hierarchy "RAM_DE1:ram"
+Info (12128): Elaborating entity "sram_sdram_bridge" for hierarchy "sram_sdram_bridge:bridge"
+Info (12128): Elaborating entity "sdram_controller" for hierarchy "sdram_controller:sdram"
+Warning (10541): VHDL Signal Declaration warning at sdram_controller.vhd(197): used implicit default value for signal "refresh_active" because signal was never assigned a value or an explicit default value. Use of implicit default value may introduce unintended design optimizations.
+Warning (10631): VHDL Process Statement warning at sdram_controller.vhd(417): inferring latch(es) for signal or variable "refresh_postponed_next", which holds its previous value in one or more paths through the process
+Warning (10631): VHDL Process Statement warning at sdram_controller.vhd(417): inferring latch(es) for signal or variable "addr_bank_latched", which holds its previous value in one or more paths through the process
+Warning (10631): VHDL Process Statement warning at sdram_controller.vhd(417): inferring latch(es) for signal or variable "addr_row_latched", which holds its previous value in one or more paths through the process
+Warning (10631): VHDL Process Statement warning at sdram_controller.vhd(417): inferring latch(es) for signal or variable "addr_col_latched", which holds its previous value in one or more paths through the process
+Warning (10631): VHDL Process Statement warning at sdram_controller.vhd(417): inferring latch(es) for signal or variable "byte_en_latched", which holds its previous value in one or more paths through the process
+Warning (10631): VHDL Process Statement warning at sdram_controller.vhd(417): inferring latch(es) for signal or variable "wr_n_latched", which holds its previous value in one or more paths through the process
+Warning (10631): VHDL Process Statement warning at sdram_controller.vhd(417): inferring latch(es) for signal or variable "din_latched", which holds its previous value in one or more paths through the process
+Info (10041): Inferred latch for "din_latched[0]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[1]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[2]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[3]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[4]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[5]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[6]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[7]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[8]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[9]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[10]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[11]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[12]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[13]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[14]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "din_latched[15]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "wr_n_latched" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "byte_en_latched[0]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "byte_en_latched[1]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_col_latched[0]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_col_latched[1]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_col_latched[2]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_col_latched[3]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_col_latched[4]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_col_latched[5]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_col_latched[6]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_col_latched[7]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[0]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[1]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[2]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[3]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[4]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[5]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[6]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[7]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[8]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[9]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[10]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_row_latched[11]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_bank_latched[0]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "addr_bank_latched[1]" at sdram_controller.vhd(417)
+Info (10041): Inferred latch for "refresh_postponed_next" at sdram_controller.vhd(417)
+Info (19000): Inferred 1 megafunctions from design logic
+    Info (276029): Inferred altsyncram megafunction from the following design logic: "Replica1_CORE:ap1|WOZMON65:\woz65:rom|rom_rtl_0" 
+        Info (286033): Parameter OPERATION_MODE set to ROM
+        Info (286033): Parameter WIDTH_A set to 8
+        Info (286033): Parameter WIDTHAD_A set to 8
+        Info (286033): Parameter NUMWORDS_A set to 256
+        Info (286033): Parameter OUTDATA_REG_A set to UNREGISTERED
+        Info (286033): Parameter ADDRESS_ACLR_A set to NONE
+        Info (286033): Parameter OUTDATA_ACLR_A set to NONE
+        Info (286033): Parameter INDATA_ACLR_A set to NONE
+        Info (286033): Parameter WRCONTROL_ACLR_A set to NONE
+        Info (286033): Parameter INIT_FILE set to //wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/db/DE1_Replica1.ram0_WOZMON65_890eda.hdl.mif
+Info (12130): Elaborated megafunction instantiation "Replica1_CORE:ap1|WOZMON65:\woz65:rom|altsyncram:rom_rtl_0"
+Info (12133): Instantiated megafunction "Replica1_CORE:ap1|WOZMON65:\woz65:rom|altsyncram:rom_rtl_0" with the following parameter:
+    Info (12134): Parameter "OPERATION_MODE" = "ROM"
+    Info (12134): Parameter "WIDTH_A" = "8"
+    Info (12134): Parameter "WIDTHAD_A" = "8"
+    Info (12134): Parameter "NUMWORDS_A" = "256"
+    Info (12134): Parameter "OUTDATA_REG_A" = "UNREGISTERED"
+    Info (12134): Parameter "ADDRESS_ACLR_A" = "NONE"
+    Info (12134): Parameter "OUTDATA_ACLR_A" = "NONE"
+    Info (12134): Parameter "INDATA_ACLR_A" = "NONE"
+    Info (12134): Parameter "WRCONTROL_ACLR_A" = "NONE"
+    Info (12134): Parameter "INIT_FILE" = "//wsl$/Debian/home/didier/Developments/altera/Projects/replica1-sdram/board/DE1/db/DE1_Replica1.ram0_WOZMON65_890eda.hdl.mif"
+Info (12021): Found 1 design units, including 1 entities, in source file db/altsyncram_85f1.tdf
+    Info (12023): Found entity 1: altsyncram_85f1
+Warning (13039): The following bidir pins have no drivers
+    Warning (13040): Bidir "GPIO_1[1]" has no driver
+    Warning (13040): Bidir "GPIO_0[0]" has no driver
+    Warning (13040): Bidir "GPIO_0[1]" has no driver
+    Warning (13040): Bidir "GPIO_0[2]" has no driver
+    Warning (13040): Bidir "GPIO_0[3]" has no driver
+    Warning (13040): Bidir "GPIO_0[4]" has no driver
+    Warning (13040): Bidir "GPIO_0[5]" has no driver
+    Warning (13040): Bidir "GPIO_0[6]" has no driver
+    Warning (13040): Bidir "GPIO_0[7]" has no driver
+    Warning (13040): Bidir "GPIO_0[8]" has no driver
+    Warning (13040): Bidir "GPIO_0[9]" has no driver
+    Warning (13040): Bidir "GPIO_0[10]" has no driver
+    Warning (13040): Bidir "GPIO_0[11]" has no driver
+    Warning (13040): Bidir "GPIO_0[12]" has no driver
+    Warning (13040): Bidir "GPIO_0[13]" has no driver
+    Warning (13040): Bidir "GPIO_0[14]" has no driver
+    Warning (13040): Bidir "GPIO_0[15]" has no driver
+    Warning (13040): Bidir "GPIO_0[16]" has no driver
+    Warning (13040): Bidir "GPIO_0[17]" has no driver
+    Warning (13040): Bidir "GPIO_0[18]" has no driver
+    Warning (13040): Bidir "GPIO_0[19]" has no driver
+    Warning (13040): Bidir "GPIO_0[20]" has no driver
+    Warning (13040): Bidir "GPIO_0[21]" has no driver
+    Warning (13040): Bidir "GPIO_0[22]" has no driver
+    Warning (13040): Bidir "GPIO_0[23]" has no driver
+    Warning (13040): Bidir "GPIO_0[24]" has no driver
+    Warning (13040): Bidir "GPIO_0[25]" has no driver
+    Warning (13040): Bidir "GPIO_0[26]" has no driver
+    Warning (13040): Bidir "GPIO_0[27]" has no driver
+    Warning (13040): Bidir "GPIO_0[28]" has no driver
+    Warning (13040): Bidir "GPIO_0[29]" has no driver
+    Warning (13040): Bidir "GPIO_0[30]" has no driver
+    Warning (13040): Bidir "GPIO_0[31]" has no driver
+    Warning (13040): Bidir "GPIO_0[32]" has no driver
+    Warning (13040): Bidir "GPIO_0[33]" has no driver
+    Warning (13040): Bidir "GPIO_0[34]" has no driver
+    Warning (13040): Bidir "GPIO_0[35]" has no driver
+    Warning (13040): Bidir "GPIO_1[2]" has no driver
+    Warning (13040): Bidir "GPIO_1[3]" has no driver
+    Warning (13040): Bidir "GPIO_1[4]" has no driver
+    Warning (13040): Bidir "GPIO_1[5]" has no driver
+    Warning (13040): Bidir "GPIO_1[6]" has no driver
+    Warning (13040): Bidir "GPIO_1[7]" has no driver
+    Warning (13040): Bidir "GPIO_1[8]" has no driver
+    Warning (13040): Bidir "GPIO_1[9]" has no driver
+    Warning (13040): Bidir "GPIO_1[10]" has no driver
+    Warning (13040): Bidir "GPIO_1[11]" has no driver
+    Warning (13040): Bidir "GPIO_1[12]" has no driver
+    Warning (13040): Bidir "GPIO_1[13]" has no driver
+    Warning (13040): Bidir "GPIO_1[14]" has no driver
+    Warning (13040): Bidir "GPIO_1[15]" has no driver
+    Warning (13040): Bidir "GPIO_1[16]" has no driver
+    Warning (13040): Bidir "GPIO_1[17]" has no driver
+    Warning (13040): Bidir "GPIO_1[18]" has no driver
+    Warning (13040): Bidir "GPIO_1[19]" has no driver
+    Warning (13040): Bidir "GPIO_1[20]" has no driver
+    Warning (13040): Bidir "GPIO_1[21]" has no driver
+    Warning (13040): Bidir "GPIO_1[22]" has no driver
+    Warning (13040): Bidir "GPIO_1[23]" has no driver
+    Warning (13040): Bidir "GPIO_1[24]" has no driver
+    Warning (13040): Bidir "GPIO_1[25]" has no driver
+    Warning (13040): Bidir "GPIO_1[26]" has no driver
+    Warning (13040): Bidir "GPIO_1[27]" has no driver
+    Warning (13040): Bidir "GPIO_1[28]" has no driver
+    Warning (13040): Bidir "GPIO_1[29]" has no driver
+    Warning (13040): Bidir "GPIO_1[30]" has no driver
+    Warning (13040): Bidir "GPIO_1[31]" has no driver
+    Warning (13040): Bidir "GPIO_1[32]" has no driver
+    Warning (13040): Bidir "GPIO_1[33]" has no driver
+    Warning (13040): Bidir "GPIO_1[34]" has no driver
+    Warning (13040): Bidir "GPIO_1[35]" has no driver
+Warning (13032): The following tri-state nodes are fed by constants
+    Warning (13033): The pin "GPIO_1[0]" is fed by GND
+Info (13025): Duplicate LATCH primitives merged into single LATCH primitive
+    Info (13026): Duplicate LATCH primitive "sdram_controller:sdram|din_latched[8]" merged with LATCH primitive "sdram_controller:sdram|din_latched[0]"
+    Info (13026): Duplicate LATCH primitive "sdram_controller:sdram|din_latched[9]" merged with LATCH primitive "sdram_controller:sdram|din_latched[1]"
+    Info (13026): Duplicate LATCH primitive "sdram_controller:sdram|din_latched[10]" merged with LATCH primitive "sdram_controller:sdram|din_latched[2]"
+    Info (13026): Duplicate LATCH primitive "sdram_controller:sdram|din_latched[11]" merged with LATCH primitive "sdram_controller:sdram|din_latched[3]"
+    Info (13026): Duplicate LATCH primitive "sdram_controller:sdram|din_latched[12]" merged with LATCH primitive "sdram_controller:sdram|din_latched[4]"
+    Info (13026): Duplicate LATCH primitive "sdram_controller:sdram|din_latched[13]" merged with LATCH primitive "sdram_controller:sdram|din_latched[5]"
+    Info (13026): Duplicate LATCH primitive "sdram_controller:sdram|din_latched[14]" merged with LATCH primitive "sdram_controller:sdram|din_latched[6]"
+    Info (13026): Duplicate LATCH primitive "sdram_controller:sdram|din_latched[15]" merged with LATCH primitive "sdram_controller:sdram|din_latched[7]"
+Warning (13012): Latch sdram_controller:sdram|refresh_postponed_next has unsafe behavior
+    Warning (13013): Ports D and ENA on the latch are fed by the same signal sdram_controller:sdram|state[0]
+Info (13000): Registers with preset signals will power-up high
+Info (13003): DEV_CLRn pin will set, and not reset, register with preset signal due to NOT Gate Push-Back
+Warning (13024): Output pins are stuck at VCC or GND
+    Warning (13410): Pin "LEDR[0]" is stuck at GND
+    Warning (13410): Pin "LEDR[1]" is stuck at GND
+    Warning (13410): Pin "LEDR[2]" is stuck at GND
+    Warning (13410): Pin "LEDR[3]" is stuck at GND
+    Warning (13410): Pin "LEDR[4]" is stuck at GND
+    Warning (13410): Pin "LEDR[5]" is stuck at GND
+    Warning (13410): Pin "LEDR[6]" is stuck at GND
+    Warning (13410): Pin "LEDR[7]" is stuck at GND
+    Warning (13410): Pin "LEDR[8]" is stuck at GND
+    Warning (13410): Pin "LEDR[9]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[8]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[9]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[11]" is stuck at GND
+    Warning (13410): Pin "DRAM_CS_N" is stuck at GND
+    Warning (13410): Pin "DRAM_BA[0]" is stuck at GND
+    Warning (13410): Pin "DRAM_BA[1]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[15]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[16]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[17]" is stuck at GND
+    Warning (13410): Pin "SD_DAT3" is stuck at GND
+    Warning (13410): Pin "SD_CMD" is stuck at GND
+    Warning (13410): Pin "SD_CLK" is stuck at GND
+Critical Warning (18061): Ignored Power-Up Level option on the following registers
+    Critical Warning (18010): Register Replica1_CORE:ap1|pia_uart:pia|tx_strobe_n will power up to High
+Info (17049): 10 registers lost all their fanouts during netlist optimizations.
+Critical Warning (138069): Setting INCREMENTAL_COMPILATION to "OFF" is no longer supported. Assignment is ignored. To disable partitions, set the IGNORE_PARTITIONS global assignment to "ON" instead.
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 1 node(s), including 0 DDIO, 1 PLL, 0 transceiver and 0 LCELL
+Warning (21074): Design contains 18 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "CLOCK_24[0]"
+    Warning (15610): No output dependent on input pin "CLOCK_24[1]"
+    Warning (15610): No output dependent on input pin "CLOCK_27[0]"
+    Warning (15610): No output dependent on input pin "CLOCK_27[1]"
+    Warning (15610): No output dependent on input pin "EXT_CLOCK"
+    Warning (15610): No output dependent on input pin "KEY[1]"
+    Warning (15610): No output dependent on input pin "KEY[2]"
+    Warning (15610): No output dependent on input pin "KEY[3]"
+    Warning (15610): No output dependent on input pin "SW[0]"
+    Warning (15610): No output dependent on input pin "SW[1]"
+    Warning (15610): No output dependent on input pin "SW[2]"
+    Warning (15610): No output dependent on input pin "SW[3]"
+    Warning (15610): No output dependent on input pin "SW[4]"
+    Warning (15610): No output dependent on input pin "SW[5]"
+    Warning (15610): No output dependent on input pin "SW[6]"
+    Warning (15610): No output dependent on input pin "SW[7]"
+    Warning (15610): No output dependent on input pin "SW[8]"
+    Warning (15610): No output dependent on input pin "SD_DAT"
+Info (21057): Implemented 1931 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 22 input pins
+    Info (21059): Implemented 109 output pins
+    Info (21060): Implemented 104 bidirectional pins
+    Info (21061): Implemented 1687 logic cells
+    Info (21064): Implemented 8 RAM segments
+    Info (21065): Implemented 1 PLLs
+Info: Quartus II 64-Bit Analysis & Synthesis was successful. 0 errors, 143 warnings
+    Info: Peak virtual memory: 4705 megabytes
+    Info: Processing ended: Sun Feb 22 16:00:43 2026
+    Info: Elapsed time: 00:00:07
+    Info: Total CPU time (on all processors): 00:00:05
+
+

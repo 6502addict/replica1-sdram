@@ -1,0 +1,558 @@
+--------------------------------------------------------------------------
+-- AX4010 Replica1 Top Level
+-- Board: Alinx AX4010 - Cyclone IV E EP4CE10F17C8
+-- SDRAM: Hynix H57V2562GTR (256Mbit = 32MB, 16Mx16, ROW=12, COL=8)
+--------------------------------------------------------------------------
+-- To configure the machine search "Board Configuration Parameters"
+-- and adapt the configuration to your needs 
+--------------------------------------------------------------------------
+
+library IEEE;
+    use IEEE.std_logic_1164.all;
+    use ieee.numeric_std.all; 
+   
+entity AX4010_Replica1 is
+    port (
+        --------- CLOCK ---------
+        clk              : in    std_logic;  -- 50MHz
+
+        --------- RESET & KEYS ---------
+        rst_n            : in    std_logic;
+        key2             : in    std_logic;
+        key3             : in    std_logic;
+        key4             : in    std_logic;
+
+        --------- LEDs ---------
+        led              : out   std_logic_vector(3 downto 0);
+
+        --------- 7-SEGMENT DISPLAY ---------
+        seg_data         : out   std_logic_vector(7 downto 0);
+        seg_sel          : out   std_logic_vector(5 downto 0);
+
+        --------- SDRAM ---------
+        sdram_addr       : out   std_logic_vector(12 downto 0);
+        sdram_ba         : out   std_logic_vector(1 downto 0);
+        sdram_cas_n      : out   std_logic;
+        sdram_cke        : out   std_logic;
+        sdram_clk        : out   std_logic;
+        sdram_cs_n       : out   std_logic;
+        sdram_dq         : inout std_logic_vector(15 downto 0);
+        sdram_dqm        : out   std_logic_vector(1 downto 0);
+        sdram_ras_n      : out   std_logic;
+        sdram_we_n       : out   std_logic;
+
+        --------- UART ---------
+        uart_tx          : out   std_logic;
+        uart_rx          : in    std_logic;
+
+        --------- VGA ---------
+        vga_out_r        : out   std_logic_vector(4 downto 0);
+        vga_out_g        : out   std_logic_vector(5 downto 0);
+        vga_out_b        : out   std_logic_vector(4 downto 0);
+        vga_out_hs       : out   std_logic;
+        vga_out_vs       : out   std_logic;
+
+        --------- SD CARD ---------
+        SD_DCLK          : out   std_logic;
+        SD_MISO          : in    std_logic;
+        SD_MOSI          : out   std_logic;
+        SD_nCS           : out   std_logic;
+
+        --------- SPI FLASH ---------
+        dclk             : out   std_logic;
+        miso             : in    std_logic;
+        mosi             : out   std_logic;
+        ncs              : out   std_logic;
+
+        --------- I2C EEPROM ---------
+        i2c_scl          : inout std_logic;
+        i2c_sda          : inout std_logic;
+
+        --------- RTC DS1302 ---------
+        rtc_sclk         : out   std_logic;
+        rtc_data         : inout std_logic;
+        rtc_ce           : out   std_logic;
+
+        --------- BUZZER ---------
+        buzzer           : out   std_logic
+    );
+end entity AX4010_Replica1;
+
+architecture top of AX4010_Replica1 is
+
+component hexto7seg is
+    generic (SEGMENTS : integer := 8);
+    port (
+        hex           : in   std_logic_vector(3 downto 0);
+        seg           : out  std_logic_vector(SEGMENTS-1 downto 0)
+    );
+end component;
+
+component main_clock is
+    port (
+        areset        : in  std_logic  := '0';
+        inclk0        : in  std_logic  := '0';
+        c0            : out std_logic;
+        c1            : out std_logic;
+        c2            : out std_logic;
+        locked        : out std_logic 
+    );
+end component;
+
+component clock_divider is
+    generic (divider : integer := 4);
+    port (
+        reset    : in  std_logic := '1';
+        clk_in   : in  std_logic;
+        clk_out  : out std_logic
+    );
+end component;
+
+component fractional_clock_divider is
+    generic (
+        CLK_FREQ_HZ     : positive := 50_000_000;  
+        FREQUENCY_HZ    : positive := 1_843_200      
+    );
+    port (
+        clk_in   : in  std_logic;  
+        reset_n  : in  std_logic;  
+        clk_out  : out std_logic   
+    );
+end component;
+
+component EBR_RAM is
+    generic (
+        RAM_SIZE_KB : integer := 32
+    );
+    port (
+        clock:      in std_logic;
+        cs_n:       in std_logic;
+        we_n:       in std_logic;
+        address:    in std_logic_vector(15 downto 0);
+        data_in:    in std_logic_vector(7 downto 0);
+        data_out:   out std_logic_vector(7 downto 0)
+    );
+end component;
+
+component Replica1_CORE is
+    generic (
+        BOARD           : string   := "AX4010";
+        CPU_TYPE        : string   := "6502";
+        CPU_CORE        : string   := "MX65";
+        ROM             : string   := "WOZMON65";
+        RAM_SIZE_KB     : positive := 8;
+        BAUD_RATE       : integer  := 9600;
+        HAS_ACI         : boolean  := false;
+        HAS_MSPI        : boolean  := false;
+        HAS_TIMER       : boolean  := false
+    );
+    port (
+        sdram_clk      : in     std_logic;
+        main_clk       : in     std_logic;
+        serial_clk     : in     std_logic;
+        reset_n        : in     std_logic;
+        cpu_reset_n    : in     std_logic;
+        bus_phi2       : out    std_logic;
+        bus_phi1       : out    std_logic;
+        bus_address    : out    std_logic_vector(15 downto 0);
+        bus_data       : out    std_logic_vector(7  downto 0);
+        bus_rw         : out    std_logic;
+        bus_mrdy       : in     std_logic;
+        bus_strch      : out    std_logic;
+        bus_bshit      : out    std_logic;
+        ext_ram_cs_n   : out    std_logic;
+        ext_ram_data   : in     std_logic_vector(7  downto 0);
+        ext_tram_cs_n  : out    std_logic;
+        ext_tram_data  : in     std_logic_vector(7  downto 0);
+        uart_rx        : in     std_logic;
+        uart_tx        : out    std_logic;
+        spi_cs         : out    std_logic;
+        spi_sck        : out    std_logic;
+        spi_mosi       : out    std_logic;
+        spi_miso       : in     std_logic;
+        tape_out       : out    std_logic;
+        tape_in        : in     std_logic;
+        la_state       : out    std_logic_vector(1 downto 0)
+    );
+end component;
+
+component simple_clock_switch is
+    port (
+        clock_debug : in  STD_LOGIC;
+        clock_1hz   : in  STD_LOGIC;
+        clock_1mhz  : in  STD_LOGIC;
+        clock_2mhz  : in  STD_LOGIC;
+        clock_5mhz  : in  STD_LOGIC;
+        clock_10mhz : in  STD_LOGIC;
+        clock_15mhz : in  STD_LOGIC;
+        clock_30mhz : in  STD_LOGIC;
+        SW          : in  STD_LOGIC_VECTOR(2 downto 0);
+        main_clock  : out STD_LOGIC
+    );
+end component;
+
+component sdram_controller is
+    generic (
+        FREQ_MHZ           : integer := 100;
+        ROW_BITS           : integer := 13;
+        COL_BITS           : integer := 10;
+        USE_AUTO_PRECHARGE : boolean := true;
+        USE_AUTO_REFRESH   : boolean := true
+    );
+    port(
+        clk         : in    std_logic;
+        reset_n     : in    std_logic;
+        req         : in    std_logic;
+        wr_n        : in    std_logic;
+        addr        : in    std_logic_vector(ROW_BITS+COL_BITS+1 downto 0); 
+        din         : in    std_logic_vector(15 downto 0);
+        dout        : out   std_logic_vector(15 downto 0);
+        byte_en     : in    std_logic_vector(1 downto 0);
+        ready       : out   std_logic;
+        ack         : out   std_logic;
+        debug_state    : out   std_logic_vector(3 downto 0);
+        debug_cmd      : out   std_logic_vector(3 downto 0);
+        debug_addr_10  : out   std_logic;
+        debug_addr_9   : out   std_logic;
+        debug_addr_0   : out   std_logic;
+        debug_dqm      : out   std_logic_vector(1 downto 0);
+        debug_dq_0     : out   std_logic;
+        refresh_active : out   std_logic;
+        sdram_clk   : out   std_logic;
+        sdram_cke   : out   std_logic;
+        sdram_cs_n  : out   std_logic;
+        sdram_ras_n : out   std_logic;
+        sdram_cas_n : out   std_logic;
+        sdram_we_n  : out   std_logic;
+        sdram_ba    : out   std_logic_vector(1 downto 0);
+        sdram_addr  : out   std_logic_vector(ROW_BITS-1 downto 0);
+        sdram_dq    : inout std_logic_vector(15 downto 0);
+        sdram_dqm   : out   std_logic_vector(1 downto 0)
+    );
+end component;
+
+component sram_sdram_bridge is
+    generic (
+        ADDR_BITS        : integer := 24;
+        SDRAM_MHZ        : integer := 75;
+        GENERATE_REFRESH : boolean := true;
+        USE_CACHE        : boolean := true;
+        CACHE_SIZE_BYTES : integer := 4096;
+        LINE_SIZE_BYTES  : integer := 16;
+        RAM_BLOCK_TYPE   : string  := "M9K"
+    );
+    port (
+        sdram_clk     : in  std_logic;
+        E             : in  std_logic;
+        reset_n       : in  std_logic;
+        sram_ce_n     : in  std_logic;
+        sram_we_n     : in  std_logic;
+        sram_oe_n     : in  std_logic;
+        sram_addr     : in  std_logic_vector(ADDR_BITS-1 downto 0);
+        sram_din      : in  std_logic_vector(7 downto 0);
+        sram_dout     : out std_logic_vector(7 downto 0);
+        mrdy          : out std_logic;
+        sdram_req     : out std_logic;
+        sdram_wr_n    : out std_logic;
+        sdram_addr    : out std_logic_vector(ADDR_BITS-2 downto 0);  
+        sdram_din     : out std_logic_vector(15 downto 0);
+        sdram_dout    : in  std_logic_vector(15 downto 0);
+        sdram_byte_en : out std_logic_vector(1 downto 0);
+        sdram_ready   : in  std_logic;
+        sdram_ack     : in  std_logic;
+        cache_hitp    : out unsigned(6 downto 0);
+        debug         : out std_logic_vector(2 downto 0)
+    );
+end component;
+
+--------------------------------------------------------------------------
+-- Board Configuration Parameters 
+--------------------------------------------------------------------------
+constant BOARD            : string   := "AX4010";
+constant CPU_TYPE         : string   := "6502";
+constant CPU_CORE         : string   := "MX65";
+constant ROM              : string   := "WOZMON65";
+constant RAM_SIZE_KB      : positive := 32;                       -- AX4010: max 32KB (limited by 10K LEs)
+constant BAUD_RATE        : integer  := 115200;
+constant HAS_ACI          : boolean  := false;
+constant HAS_MSPI         : boolean  := false;
+constant HAS_TIMER        : boolean  := false;
+constant USE_EBR_RAM      : boolean  := true;
+constant SDRAM_MHZ        : integer  := 100;                      -- 100MHz SDRAM clock
+constant ROW_BITS         : integer  := 12;                       -- H57V2562GTR: 12 row bits
+constant COL_BITS         : integer  := 8;                        -- H57V2562GTR: 8 col bits
+constant ADDR_BITS        : integer  := 12;                       -- 4KB test window
+constant AUTO_PRECHARGE   : boolean  := false;
+constant AUTO_REFRESH     : boolean  := false;
+constant CACHE_DATA       : boolean  := false;                    -- WARNING: Cache uses LUTs on this small FPGA!
+constant CACHE_SIZE_BYTES : integer  := 512;                      -- Small cache (512B) to save resources
+constant LINE_SIZE_BYTES  : integer  := 16;
+constant SDRAM_ADDR_WIDTH : integer  := ROW_BITS + COL_BITS + 2;
+constant RAM_BLOCK_TYPE   : string   := "M9K";
+
+-- IMPORTANT: AX4010 has only 10K LEs - cache must use M9K blocks, not LUTs!
+
+signal  address_bus    : std_logic_vector(15 downto 0);
+signal  data_bus       : std_logic_vector(7 downto 0);
+signal  sw_prev        : std_logic_vector(2 downto 0) := "000";
+signal  ram_data       : std_logic_vector(7 downto 0);
+signal  tram_data      : std_logic_vector(7 downto 0);
+signal  ram_cs_n       : std_logic;
+signal  tram_cs_n      : std_logic;
+signal  reset_n        : std_logic;
+signal  cpu_reset_n    : std_logic;
+signal  main_clk       : std_logic;
+signal  raw_clk        : std_logic;
+signal  clock_1mhz     : std_logic;
+signal  clock_2mhz     : std_logic;
+signal  clock_5mhz     : std_logic;
+signal  clock_10mhz    : std_logic;
+signal  clock_15mhz    : std_logic;
+signal  clock_30mhz    : std_logic;
+signal  clock_sdram    : std_logic;
+signal  serial_clk     : std_logic;
+signal  main_locked    : std_logic;
+signal  phi2           : std_logic;
+signal  rw             : std_logic;
+signal  mrdy           : std_logic;
+
+-- SDRAM Controller Interface
+signal sdram_req       : std_logic;
+signal sdram_wr_n      : std_logic;
+signal sdram_bridge_addr : std_logic_vector(10 downto 0);
+signal sdram_din       : std_logic_vector(15 downto 0);
+signal sdram_dout      : std_logic_vector(15 downto 0);
+signal sdram_byte_en   : std_logic_vector(1 downto 0);
+signal sdram_ready     : std_logic;
+signal sdram_ack       : std_logic;
+signal refresh_busy    : std_logic;
+
+signal cache_hit       : unsigned(6 downto 0);
+signal cache_hit_tens  : unsigned(3 downto 0);
+signal cache_hit_ones  : unsigned(3 downto 0);
+
+begin
+
+    -- 7-segment display: show cache hit rate
+    cache_hit_tens <= resize(cache_hit / 10, 4);
+    cache_hit_ones <= resize(cache_hit mod 10, 4);
+    
+    h0 : hexto7seg generic map (SEGMENTS => 8) port map (hex => std_logic_vector(cache_hit_ones), seg => seg_data); 
+    h1 : hexto7seg generic map (SEGMENTS => 8) port map (hex => std_logic_vector(cache_hit_tens), seg => seg_sel(0)); 
+    h2 : hexto7seg generic map (SEGMENTS => 8) port map (hex => address_bus(3 downto 0),   seg => seg_sel(1)); 
+    h3 : hexto7seg generic map (SEGMENTS => 8) port map (hex => address_bus(7 downto 4),   seg => seg_sel(2)); 
+    h4 : hexto7seg generic map (SEGMENTS => 8) port map (hex => address_bus(11 downto 8),  seg => seg_sel(3)); 
+    h5 : hexto7seg generic map (SEGMENTS => 8) port map (hex => address_bus(15 downto 12), seg => seg_sel(4));
+    
+    seg_sel(5) <= '1';  -- Unused digit
+
+    -- Reset management
+    reset_n <= rst_n;
+    cpu_reset_n <= '1' when reset_n = '1' and main_locked = '1' else '0';
+
+    -- Main PLL: generate clocks
+    mclk: main_clock port map(
+        areset    => not reset_n,
+        inclk0    => clk,
+        c0        => clock_30mhz,
+        c1        => open,
+        c2        => clock_sdram,
+        locked    => main_locked
+    );
+
+    -- Clock dividers
+    clk1mhz: clock_divider generic map(divider => 30)
+        port map(reset => '1', clk_in => clock_30mhz, clk_out => clock_1mhz);
+
+    clk2mhz: clock_divider generic map(divider => 15)
+        port map(reset => '1', clk_in => clock_30mhz, clk_out => clock_2mhz);
+
+    clk5mhz: clock_divider generic map(divider => 6)
+        port map(reset => '1', clk_in => clock_30mhz, clk_out => clock_5mhz);
+
+    clk10mhz: clock_divider generic map(divider => 3)
+        port map(reset => '1', clk_in => clock_30mhz, clk_out => clock_10mhz);
+
+    clk15mhz: clock_divider generic map(divider => 2)
+        port map(reset => '1', clk_in => clock_30mhz, clk_out => clock_15mhz);
+
+    -- Clock switch using key2, key3, key4 as SW(2:0)
+    csw: simple_clock_switch port map(
+        clock_debug   => '1',
+        clock_1hz     => '1',
+        clock_1mhz    => clock_1mhz,
+        clock_2mhz    => clock_2mhz,
+        clock_5mhz    => clock_5mhz,
+        clock_10mhz   => clock_10mhz,
+        clock_15mhz   => clock_15mhz,
+        clock_30mhz   => clock_30mhz,
+        SW            => key4 & key3 & key2,
+        main_clock    => raw_clk
+    );
+
+    process(clock_30mhz) 
+    begin
+        if rising_edge(clock_30mhz) then
+            sw_prev <= key4 & key3 & key2;
+        end if;
+    end process;
+
+    main_clk <= raw_clk when (key4 & key3 & key2) = sw_prev else '0';
+
+    -- UART baud rate clock
+    uclk: fractional_clock_divider 
+        generic map(CLK_FREQ_HZ => 50_000_000, FREQUENCY_HZ => 1_843_200)
+        port map(clk_in => clk, reset_n => reset_n, clk_out => serial_clk);
+
+    -- Replica1 Core
+    ap1: Replica1_CORE 
+        generic map(
+            BOARD          => BOARD,
+            CPU_TYPE       => CPU_TYPE,
+            CPU_CORE       => CPU_CORE,
+            ROM            => ROM,
+            RAM_SIZE_KB    => RAM_SIZE_KB,
+            BAUD_RATE      => BAUD_RATE,
+            HAS_ACI        => HAS_ACI,
+            HAS_MSPI       => HAS_MSPI,
+            HAS_TIMER      => HAS_TIMER
+        )
+        port map(
+            sdram_clk      => clock_sdram,
+            main_clk       => main_clk,
+            serial_clk     => serial_clk,
+            reset_n        => reset_n,
+            cpu_reset_n    => cpu_reset_n,
+            bus_phi2       => phi2,
+            bus_phi1       => open,
+            bus_address    => address_bus,
+            bus_data       => data_bus,
+            bus_rw         => rw,
+            bus_mrdy       => mrdy,
+            bus_strch      => open,
+            bus_bshit      => open,
+            ext_ram_cs_n   => ram_cs_n,
+            ext_ram_data   => ram_data,
+            ext_tram_cs_n  => tram_cs_n,
+            ext_tram_data  => tram_data,
+            uart_rx        => uart_rx,
+            uart_tx        => uart_tx,
+            spi_cs         => SD_nCS,
+            spi_sck        => SD_DCLK,
+            spi_mosi       => SD_MOSI,
+            spi_miso       => SD_MISO,
+            tape_out       => open,
+            tape_in        => '0',
+            la_state       => open
+        );
+
+    -- EBR RAM
+    gen_ebr_ram: if USE_EBR_RAM = true generate
+        ram: EBR_RAM 
+            generic map(RAM_SIZE_KB => RAM_SIZE_KB)
+            port map(
+                clock    => phi2,
+                cs_n     => ram_cs_n,
+                we_n     => rw,
+                address  => address_bus,
+                data_in  => data_bus,
+                data_out => ram_data
+            );
+    end generate gen_ebr_ram;
+
+    -- SRAM-SDRAM Bridge
+    bridge_inst : sram_sdram_bridge  
+        generic map(
+            ADDR_BITS        => ADDR_BITS,
+            SDRAM_MHZ        => SDRAM_MHZ,
+            GENERATE_REFRESH => not AUTO_REFRESH,
+            USE_CACHE        => CACHE_DATA,
+            CACHE_SIZE_BYTES => CACHE_SIZE_BYTES,
+            LINE_SIZE_BYTES  => LINE_SIZE_BYTES,
+            RAM_BLOCK_TYPE   => RAM_BLOCK_TYPE
+        )
+        port map(
+            sdram_clk        => clock_sdram,
+            E                => phi2,
+            reset_n          => reset_n,
+            sram_ce_n        => tram_cs_n,
+            sram_we_n        => rw,
+            sram_oe_n        => not rw,
+            sram_addr        => address_bus(ADDR_BITS-1 downto 0),
+            sram_din         => data_bus,
+            sram_dout        => tram_data,
+            mrdy             => mrdy,
+            sdram_req        => sdram_req,
+            sdram_wr_n       => sdram_wr_n,
+            sdram_addr       => sdram_bridge_addr,
+            sdram_din        => sdram_din,
+            sdram_dout       => sdram_dout,
+            sdram_byte_en    => sdram_byte_en,
+            sdram_ready      => sdram_ready,
+            sdram_ack        => sdram_ack,
+            cache_hitp       => cache_hit,
+            debug            => open
+        );
+
+    -- SDRAM Controller
+    sdram_inst : sdram_controller 
+        generic map (
+            FREQ_MHZ           => SDRAM_MHZ,
+            ROW_BITS           => ROW_BITS, 
+            COL_BITS           => COL_BITS,
+            USE_AUTO_PRECHARGE => AUTO_PRECHARGE,
+            USE_AUTO_REFRESH   => AUTO_REFRESH
+        )
+        port map (
+            clk                => clock_sdram,
+            reset_n            => reset_n,
+            req                => sdram_req,
+            wr_n               => sdram_wr_n,
+            addr               => std_logic_vector(resize(unsigned(sdram_bridge_addr), SDRAM_ADDR_WIDTH)),
+            din                => sdram_din,
+            dout               => sdram_dout,
+            byte_en            => sdram_byte_en,
+            ready              => sdram_ready,
+            ack                => sdram_ack,
+            debug_state        => open,
+            debug_cmd          => open,
+            debug_addr_10      => open,
+            debug_addr_9       => open,
+            debug_addr_0       => open,
+            debug_dqm          => open,
+            debug_dq_0         => open,
+            refresh_active     => refresh_busy,
+            sdram_clk          => sdram_clk,
+            sdram_cke          => sdram_cke,
+            sdram_cs_n         => sdram_cs_n,
+            sdram_ras_n        => sdram_ras_n,
+            sdram_cas_n        => sdram_cas_n,
+            sdram_we_n         => sdram_we_n,
+            sdram_ba           => sdram_ba,
+            sdram_addr         => sdram_addr(12 downto 0),
+            sdram_dq           => sdram_dq,
+            sdram_dqm          => sdram_dqm
+        );
+
+    -- LEDs
+    led(0) <= refresh_busy;
+    led(1) <= '0';
+    led(2) <= '0';
+    led(3) <= main_locked;
+
+    -- VGA: not used yet (for future TVI925 terminal)
+    vga_out_r  <= (others => '0');
+    vga_out_g  <= (others => '0');
+    vga_out_b  <= (others => '0');
+    vga_out_hs <= '0';
+    vga_out_vs <= '0';
+
+    -- Unused peripherals
+    dclk    <= '0';
+    mosi    <= '0';
+    ncs     <= '1';
+    buzzer  <= '0';
+    rtc_sclk <= '0';
+    rtc_ce   <= '0';
+
+end top;

@@ -1,0 +1,100 @@
+library IEEE;
+    use IEEE.NUMERIC_STD.ALL;
+    use IEEE.STD_LOGIC_1164.ALL;
+
+entity mux7seg_6digit is
+    generic (
+        CLK_FREQ_HZ : integer := 50_000_000
+    );
+    port (
+        clk        : in  std_logic;
+        reset      : in  std_logic;
+        display    : in  std_logic_vector(23 downto 0);  -- 6 digits x 4 bits
+        cathode_o  : out std_logic_vector(6 downto 0);
+        anode_o    : out std_logic_vector(5 downto 0)    -- 6 digits
+    );
+end mux7seg_6digit;
+
+architecture rtl of mux7seg_6digit is
+
+    signal data          : std_logic_vector(3 downto 0);
+    signal anode         : std_logic_vector(5 downto 0);
+    signal cathode       : std_logic_vector(6 downto 0);
+    
+    -- Clock divider pour ~1kHz refresh rate
+    constant DIV_COUNT   : integer := CLK_FREQ_HZ / 6000;  -- 6 digits x 1kHz
+    signal   clk_counter : integer range 0 to DIV_COUNT := 0;
+    signal   clk_div     : std_logic := '0';
+
+begin
+
+    -- Clock divider
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            clk_counter <= 0;
+            clk_div <= '0';
+        elsif rising_edge(clk) then
+            if clk_counter = DIV_COUNT-1 then
+                clk_counter <= 0;
+                clk_div <= not clk_div;
+            else
+                clk_counter <= clk_counter + 1;
+            end if;
+        end if;
+    end process;
+
+    -- Anode rotation (6 digits)
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            anode <= "111110";
+        elsif rising_edge(clk) then
+            if clk_div = '1' and clk_counter = 0 then
+                anode <= anode(4 downto 0) & anode(5);
+            end if;
+        end if;
+    end process;
+
+    -- Digit selection (6 digits)
+    process(anode, text)
+    begin
+        case anode is
+            when "111110" => data <= text(3  downto  0);   -- Digit 0 (data LSB)
+            when "111101" => data <= text(7  downto  4);   -- Digit 1 (data MSB)
+            when "111011" => data <= text(11 downto  8);   -- Digit 2 (addr[11:8])
+            when "110111" => data <= text(15 downto 12);   -- Digit 3 (addr[15:12])
+            when "101111" => data <= text(19 downto 16);   -- Digit 4 (unused)
+            when "011111" => data <= text(23 downto 20);   -- Digit 5 (unused)
+            when others   => data <= "1111"; 
+        end case;
+    end process;
+
+    -- 7-segment decoder
+    process(data)
+    begin
+        case data is
+            when "0000" => cathode <= "1000000";  -- 0
+            when "0001" => cathode <= "1111001";  -- 1
+            when "0010" => cathode <= "0100100";  -- 2 
+            when "0011" => cathode <= "0110000";  -- 3
+            when "0100" => cathode <= "0011001";  -- 4
+            when "0101" => cathode <= "0010010";  -- 5
+            when "0110" => cathode <= "0000010";  -- 6
+            when "0111" => cathode <= "1111000";  -- 7
+            when "1000" => cathode <= "0000000";  -- 8
+            when "1001" => cathode <= "0010000";  -- 9
+            when "1010" => cathode <= "0001000";  -- A
+            when "1011" => cathode <= "0000011";  -- B
+            when "1100" => cathode <= "1000110";  -- C
+            when "1101" => cathode <= "0100001";  -- D
+            when "1110" => cathode <= "0000110";  -- E
+            when others => cathode <= "0001110";  -- F
+        end case;
+    end process;
+
+    -- Output
+    anode_o   <= anode;
+    cathode_o <= cathode;
+
+end rtl;

@@ -36,8 +36,7 @@ entity CPU_6800 is
 		so_n        : in  std_logic := '1';  -- Set overflow (not used by 6800)
 		
 		-- wait states
-		mrdy        : in  std_logic;
-		strch       : out std_logic
+		mrdy        : in  std_logic
 	);
 end CPU_6800;
 
@@ -89,7 +88,7 @@ begin
 									    mrdy    => mrdy,
 									    clk_1x  => mc6800_clk,
 									    clk_2x  => open,
-									    stretch => strch);	
+									    stretch => open);	
 
 	E <= mc6800_clk;
 	data_bus <= data_in;

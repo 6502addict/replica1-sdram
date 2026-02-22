@@ -33,8 +33,7 @@ entity CPU_T65 is
 		irq_n       : in  std_logic;        -- Interrupt request (active low)
 		so_n        : in  std_logic := '1'; -- Set overflow (active low)
 		-- wait states
-		mrdy        : in  std_logic;        -- Memory Ready (Low = stretch clock)
-		strch       : out std_logic         -- Stretched clock status
+		mrdy        : in  std_logic         -- Memory Ready (Low = stretch clock)
 	);
 end CPU_T65;
 
@@ -64,9 +63,7 @@ begin
 									    mrdy    => mrdy,
 									    clk_1x  => phi2_internal,
 									    clk_2x  => t65_clk,
-									    stretch => strch);
-
-
+									    stretch => open);
 	
 	-- T65 Instantiation
 	t65_inst: work.T65 

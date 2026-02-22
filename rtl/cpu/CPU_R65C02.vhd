@@ -30,8 +30,7 @@ entity CPU_R65C02 is
 		so_n        : in  std_logic := '1'; -- Set overflow (active low)
 		
 		-- wait states
-		mrdy        : in  std_logic;
-		strch       : out std_logic
+		mrdy        : in  std_logic
 	);
 end CPU_R65C02;
 
@@ -92,7 +91,7 @@ begin
 									    mrdy    => mrdy,
 									    clk_1x  => phi2_internal,
 									    clk_2x  => r6502_clk,
-									    stretch => strch);
+									    stretch => open);
 											  
 	-- R65C02 instantiation
 	cpu65c02_inst: R65C02

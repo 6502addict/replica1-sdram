@@ -1,0 +1,113 @@
+------------------------------------------------------------
+Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 85C Model Setup 'clock_sdram'
+Slack : 3.643
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Setup 'clk'
+Slack : 12.452
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Setup 'clock_30mhz'
+Slack : 30.686
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'clock_sdram'
+Slack : 0.452
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'clk'
+Slack : 0.465
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'clock_30mhz'
+Slack : 0.726
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clock_sdram'
+Slack : 4.718
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clk'
+Slack : 9.683
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clock_30mhz'
+Slack : 16.384
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'clock_sdram'
+Slack : 4.958
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'clk'
+Slack : 12.963
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'clock_30mhz'
+Slack : 30.799
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'clock_sdram'
+Slack : 0.400
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'clk'
+Slack : 0.416
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'clock_30mhz'
+Slack : 0.669
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clock_sdram'
+Slack : 4.716
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clk'
+Slack : 9.587
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clock_30mhz'
+Slack : 16.384
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'clock_sdram'
+Slack : 11.152
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'clk'
+Slack : 16.606
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'clock_30mhz'
+Slack : 32.206
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'clock_sdram'
+Slack : 0.186
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'clk'
+Slack : 0.193
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'clock_30mhz'
+Slack : 0.280
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clock_sdram'
+Slack : 4.796
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clk'
+Slack : 9.323
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clock_30mhz'
+Slack : 16.464
+TNS   : 0.000
+
+------------------------------------------------------------

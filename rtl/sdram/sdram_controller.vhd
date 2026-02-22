@@ -1,8 +1,9 @@
+
 --------------------------------------------------------------------------------
 -- SDRAM Controller for IS42S16320F (and compatible)
 -- Copyright (c) 2026 Didier Derny
 --
--- This work is licensed under the Creative Commons 
+-- This work is licensed under the Creative Commons
 -- Attribution-NonCommercial-ShareAlike 4.0 International License.
 --
 -- You are free to:
@@ -14,9 +15,20 @@
 --   - NonCommercial: You may not use for commercial purposes
 --   - ShareAlike: Distribute derivatives under the same license
 --
--- For commercial licensing inquiries, contact: [ton email si tu veux]
 --
 -- Full license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+--------------------------------------------------------------------------------
+-- Tested Boards and SDRAM Chips
+--------------------------------------------------------------------------------
+--
+--  Board           FPGA                         SDRAM chip          Status
+--  --------------- -----------------------     ------------------- ---------------
+--  DE10-Lite       Intel MAX10 10M50            ISSI IS42S16320F    OK
+--  DE1             Intel Cylclone 2 EP2C20      ISSI IS42S16400F    OK
+--  DE1-SoC         Intel Cyclone V  5CSEMA      ISSI IS42S16320F    OK
+--  AX4010          Intel Cyclone 4  EP4CE10F17  Hynix H57V2562GTR   OK
+--  MAX1000         Intel MAX10 10M16            Winbond W9825G6KB   OK
+--
 --------------------------------------------------------------------------------
 -- SDRAM Controller - Theory of Operation
 --------------------------------------------------------------------------------
@@ -44,16 +56,21 @@
 --
 -- 3. Auto-Precharge Mode
 --    - When USE_AUTO_PRECHARGE = true:
---      * READA/WRITEA commands used (A10=1)
+--      * READ and WRITE commands issued with A10=1
 --      * Row automatically closes after operation
 --      * Simpler state machine, no explicit precharge needed
 --      * Slightly slower for sequential same-row accesses
 --    - When USE_AUTO_PRECHARGE = false:
---      * READ/WRITE commands used (A10=0)
+--      * READ and WRITE commands issued with A10=0
 --      * Row remains open for next access
 --      * Controller tracks active row per bank
 --      * Faster for sequential accesses to same row
 --      * Must explicitly precharge before changing rows
+--
+--    Note: READ and WRITE commands are unified in the state machine.
+--    The only hardware difference between a plain access and an
+--    auto-precharge access is address bit A10 (0=normal, 1=auto-precharge).
+--    All other command bits and timing are identical.
 --
 -- 4. Initialization Sequence (Per JEDEC Standard)
 --    Power-up sequence required before normal operation:
@@ -69,13 +86,13 @@
 --
 -- 5. Refresh Management
 --    SDRAM requires periodic refresh to retain data (every 7.8µs typical):
---    
+--
 --    - When USE_AUTO_REFRESH = true:
 --      * Controller automatically generates refresh requests
 --      * Internal counter triggers refresh every 7.8µs
 --      * Refresh postponed if CPU access in progress
 --      * Automatic and transparent to external logic
---    
+--
 --    - When USE_AUTO_REFRESH = false:
 --      * External logic provides refresh_req signal
 --      * Useful for multi-master systems or custom scheduling
@@ -92,7 +109,7 @@
 --      - Updates all state registers on clock edge
 --      - Transfers next values to current values
 --      - Handles reset logic
---    
+--
 --    Process 2 (Combinational):
 --      - Computes all next values based on current state
 --      - Implements state machine logic
@@ -102,7 +119,7 @@
 -- 7. Address Mapping
 --    CPU Address breakdown:
 --      [BANK(1:0)][ROW(12:0 or 11:0)][COL(9:0 or 7:0)]
---    
+--
 --    Example for DE10-Lite (13-bit row, 10-bit col):
 --      addr(24:23) = Bank select (BA1:0)
 --      addr(22:10) = Row address (13 bits)
@@ -140,7 +157,7 @@
 --     With AUTO_PRECHARGE = true:
 --       - Read:  ACT + tRCD + READ + CAS_LAT + tRP = ~8-10 cycles
 --       - Write: ACT + tRCD + WRITE + tRP = ~6-8 cycles
---     
+--
 --     With AUTO_PRECHARGE = false and same-row access:
 --       - Read:  READ + CAS_LAT = ~4 cycles (much faster!)
 --       - Write: WRITE + 1 = ~2 cycles (much faster!)
@@ -156,47 +173,40 @@ entity sdram_controller is
         FREQ_MHZ           : integer := 100;  -- Clock frequency in MHz
         ROW_BITS           : integer := 13;   -- 13 for DE10-Lite, 12 for DE1
         COL_BITS           : integer := 10;   -- 10 for DE10-Lite, 8 for DE1
+        TRP_NS             : integer := 20;   -- Precharge time (for PRECHARGE wait)
+        TRCD_NS            : integer := 20;   -- RAS to CAS delay (for ACTIVE→READ/WRITE)
+        TRFC_NS            : integer := 70;   -- Refresh cycle time (for AUTO REFRESH wait)
+        CAS_LATENCY        : integer := 2;    -- CAS Latency: 2 or 3 cycles
         USE_AUTO_PRECHARGE : boolean := true; -- true = READA/WRITEA false = READ/WRITE
         USE_AUTO_REFRESH   : boolean := true  -- true = autorefresh, false = triggered refresh
     );
     port(
-        clk         : in    std_logic;  -- 20MHz
-        reset_n     : in    std_logic;  -- Active low
+        clk            : in    std_logic;  
+        reset_n        : in    std_logic;  
         
         -- Simple CPU interface
-        req         : in    std_logic;
-        wr_n        : in    std_logic;  -- 0=write, 1=read
-        addr        : in    std_logic_vector(ROW_BITS+COL_BITS+1 downto 0); 
-        din         : in    std_logic_vector(15 downto 0);
-        dout        : out   std_logic_vector(15 downto 0);
-        byte_en     : in    std_logic_vector(1 downto 0);  -- Active low (not used yet, always "00")
-        ready       : out   std_logic;
-        ack         : out   std_logic;
-        refresh_req : in    std_logic;
-        
-        -- Debug outputs for logic analyzer
-        debug_state    : out   std_logic_vector(3 downto 0);  -- Current FSM state
-        debug_cmd      : out   std_logic_vector(3 downto 0);  -- Current SDRAM command
---      debug_seq      : out   std_logic_vector(15 downto 0);  -- Sequence counter (lower 8 bits)
-        debug_addr_10  : out   std_logic;
-        debug_addr_9   : out   std_logic;
-        debug_addr_0   : out   std_logic;
-        debug_dqm      : out   std_logic_vector(1 downto 0);
-        debug_dq_0     : out   std_logic;
-
-        refresh_active : out   std_logic;  -- High during refresh
+        req            : in    std_logic;
+        wr_n           : in    std_logic;  
+        addr           : in    std_logic_vector(ROW_BITS+COL_BITS+1 downto 0); 
+        din            : in    std_logic_vector(15 downto 0);
+        dout           : out   std_logic_vector(15 downto 0);
+        byte_en        : in    std_logic_vector(1 downto 0); 
+        ready          : out   std_logic;
+        ack            : out   std_logic;
+        refresh_req    : in    std_logic;
+        refresh_active : out   std_logic;
         
         -- SDRAM pins
-        sdram_clk   : out   std_logic;
-        sdram_cke   : out   std_logic;
-        sdram_cs_n  : out   std_logic;
-        sdram_ras_n : out   std_logic;
-        sdram_cas_n : out   std_logic;
-        sdram_we_n  : out   std_logic;
-        sdram_ba    : out   std_logic_vector(1 downto 0);
-		sdram_addr  : out   std_logic_vector(ROW_BITS-1 downto 0);  		
-        sdram_dq    : inout std_logic_vector(15 downto 0);
-        sdram_dqm   : out   std_logic_vector(1 downto 0)
+        sdram_clk      : out   std_logic;
+        sdram_cke      : out   std_logic;
+        sdram_cs_n     : out   std_logic;
+        sdram_ras_n    : out   std_logic;
+        sdram_cas_n    : out   std_logic;
+        sdram_we_n     : out   std_logic;
+        sdram_ba       : out   std_logic_vector(1 downto 0);
+        sdram_addr     : out   std_logic_vector(ROW_BITS-1 downto 0);  		
+        sdram_dq       : inout std_logic_vector(15 downto 0);
+        sdram_dqm      : out   std_logic_vector(1 downto 0)
     );
 end sdram_controller;
 
@@ -208,18 +218,18 @@ architecture rtl of sdram_controller is
     --  1     x      x      x    | DESELECT (DESL)       | Chip deselected
     --  0     1      1      1    | NOP                   | No operation
     --  0     1      1      0    | BURST STOP (BST)      | Terminate burst read/write
-	--  0     1      0      1    | READ                  | A10=0: normal, A10=1: auto-precharge
-  	--  0     1      0      0    | WRITE                 | A10=0: normal, A10=1: auto-precharge
-	--  0     0      1      1    | BANK ACTIVATE (ACT)   | Open row, BA1:0 selects bank
-	--  0     0      1      0    | PRECHARGE (PRE/PALL)  | A10=0: selected bank, A10=1: all banks
-	--  0     0      0      1    | AUTO REFRESH (REF)    | CKE stays high
-	--  0     0      0      1    | SELF REFRESH (SELF)   | CKE: H→L (entry), L→H (exit)
-	--  0     0      0      0    | MODE REGISTER SET     | BA="00" for standard mode register
+ 	 --  0     1      0      1    | READ                  | A10=0: normal, A10=1: auto-precharge
+  	 --  0     1      0      0    | WRITE                 | A10=0: normal, A10=1: auto-precharge
+	 --  0     0      1      1    | BANK ACTIVATE (ACT)   | Open row, BA1:0 selects bank
+	 --  0     0      1      0    | PRECHARGE (PRE/PALL)  | A10=0: selected bank, A10=1: all banks
+	 --  0     0      0      1    | AUTO REFRESH (REF)    | CKE stays high
+	 --  0     0      0      1    | SELF REFRESH (SELF)   | CKE: H→L (entry), L→H (exit)
+	 --  0     0      0      0    | MODE REGISTER SET     | BA="00" for standard mode register
 	  
-	constant CMD_DESL             : std_logic_vector(3 downto 0) := "1111";  -- Device Deselect (CS=H)
-	constant CMD_NOP              : std_logic_vector(3 downto 0) := "0111";  -- No Operation
+	 constant CMD_DESL             : std_logic_vector(3 downto 0) := "1111";  -- Device Deselect (CS=H)
+	 constant CMD_NOP              : std_logic_vector(3 downto 0) := "0111";  -- No Operation
     constant CMD_BST              : std_logic_vector(3 downto 0) := "0110";  -- Burst Stop
-    constant CMD_READ             :  std_logic_vector(3 downto 0) := "0101";  -- Read (A10=L for normal, A10=H for auto-precharge)
+    constant CMD_READ             : std_logic_vector(3 downto 0) := "0101";  -- Read (A10=L for normal, A10=H for auto-precharge)
     constant CMD_WRITE            : std_logic_vector(3 downto 0) := "0100";  -- Write (A10=L for normal, A10=H for auto-precharge)
     constant CMD_ACT              : std_logic_vector(3 downto 0) := "0011";  -- Bank Activate
     constant CMD_PRE              : std_logic_vector(3 downto 0) := "0010";  -- Precharge (A10=L for selected bank, A10=H for all banks)
@@ -236,33 +246,23 @@ architecture rtl of sdram_controller is
     constant ST_REFRESH           : std_logic_vector(3 downto 0) := "0101";
     constant ST_ACTIVATE          : std_logic_vector(3 downto 0) := "0110";
     constant ST_READ              : std_logic_vector(3 downto 0) := "0111";
-    constant ST_READA             : std_logic_vector(3 downto 0) := "1000";
-    constant ST_WRITE             : std_logic_vector(3 downto 0) := "1001";
-    constant ST_WRITEA            : std_logic_vector(3 downto 0) := "1010";
-    constant ST_PRECHARGE         : std_logic_vector(3 downto 0) := "1011";
-	 
-	 -- SDRAM timing parameters (in nanoseconds)
-	constant TRP_NS               : integer := 20;   -- Precharge time (for PRECHARGE wait)
-	constant TRCD_NS              : integer := 20;   -- RAS to CAS delay (for ACTIVE→READ/WRITE)
-	constant TRFC_NS              : integer := 70;   -- Refresh cycle time (for AUTO REFRESH wait)
+    constant ST_WRITE             : std_logic_vector(3 downto 0) := "1000";
+    constant ST_PRECHARGE         : std_logic_vector(3 downto 0) := "1001";
+    
+    constant DQM_IDLE             : std_logic_vector(1 downto 0) := "00";
     
 	 -- Calculated cycles:
-	constant TRP_CYCLES           : integer := ((TRP_NS * FREQ_MHZ) + 999) / 1000;
-	constant TRCD_CYCLES          : integer := ((TRCD_NS * FREQ_MHZ) + 999) / 1000;
-	constant TRFC_CYCLES          : integer := ((TRFC_NS * FREQ_MHZ) + 999) / 1000;  -- Use THIS for AUTO REFRESH!
-	constant TMRD_CYCLES          : integer := 2;  -- Mode register delay (2 cycles fixed)
---	constant TWR_CYCLES           : integer := 2;  -- Write recovery time
-    
---  constant CAS_LATENCY          : integer := 2;  -- Or 2, depending on SDRAM
-	
-    constant CAS_LATENCY          : integer := 2;  -- CAS Latency: 2 or 3 cycles
+	 constant TRP_CYCLES           : integer := ((TRP_NS * FREQ_MHZ) + 999) / 1000;
+	 constant TRCD_CYCLES          : integer := ((TRCD_NS * FREQ_MHZ) + 999) / 1000;
+	 constant TRFC_CYCLES          : integer := ((TRFC_NS * FREQ_MHZ) + 999) / 1000;  -- Use THIS for AUTO REFRESH!
+	 constant TMRD_CYCLES          : integer := 2;  -- Mode register delay (2 cycles fixed)
     constant TWR_CYCLES           : integer := 2;  -- Write recovery time
     
     -- Mode Register Parameters (JEDEC Standard bit fields)
     constant MR_BURST_LENGTH      : std_logic_vector(2 downto 0) := "000";  -- Bits [2:0]: Burst Length = 1
     constant MR_BURST_TYPE        : std_logic := '0';                       -- Bit [3]: Sequential (0) or Interleaved (1)
     constant MR_OPERATING_MODE    : std_logic_vector(1 downto 0) := "00";   -- Bits [8:7]: Standard operation
-    constant MR_WRITE_BURST_MODE  : std_logic := '1';                       -- Bit [9]: Single location access (1) or Burst (0)
+    constant MR_WRITE_BURST_MODE  : std_logic := '0';                       -- Bit [9]: Single location access (1) or Burst (0)
     constant MR_RESERVED          : std_logic_vector(2 downto 0) := "000";  -- Bits [12:10]: Must be 000
     
     -- CAS Latency encoding for Mode Register bits [6:4]
@@ -291,14 +291,14 @@ architecture rtl of sdram_controller is
 	 -- ISSI datatasheet at least 100µs delay 
 	 -- before issing a command other than NOP or INHIBIT
     constant INIT_WAIT            : integer := FREQ_MHZ * 200;      -- 200µs
-	constant REFRESH_INTERVAL     : integer := (FREQ_MHZ * 78) / 10; -- 7.8µs
+	 constant REFRESH_INTERVAL     : integer := (FREQ_MHZ * 78) / 10; -- 7.8µs
 
     signal state                  : std_logic_vector(3 downto 0) := ST_INIT;
     signal state_next             : std_logic_vector(3 downto 0) := ST_INIT;
-	signal seq_count              : integer range 0 to INIT_WAIT + 50 := 0;
-	signal seq_count_next         : integer range 0 to INIT_WAIT + 50 := 0;
-	signal row_active             : std_logic := '0';  -- '1' when a row is open
-  	signal row_active_next        : std_logic := '0';  -- '1' when a row is open
+	 signal seq_count              : integer range 0 to INIT_WAIT + 50 := 0;
+	 signal seq_count_next         : integer range 0 to INIT_WAIT + 50 := 0;
+	 signal row_active             : std_logic := '0';  -- '1' when a row is open
+  	 signal row_active_next        : std_logic := '0';  -- '1' when a row is open
     signal need_refresh           : std_logic := '0';  -- '1' when a refresh is needed
     signal need_refresh_next      : std_logic := '0';  -- '1' when a refresh is needed
     signal refresh_postponed      : std_logic := '0';  -- '1' when a refresh is postponed
@@ -329,7 +329,7 @@ architecture rtl of sdram_controller is
     signal cmd_next               : std_logic_vector(3 downto 0) := CMD_NOP;
 
     -- next values
-	signal sdram_cke_next         : std_logic;
+	 signal sdram_cke_next         : std_logic;
     signal sdram_ba_next          : std_logic_vector(1 downto 0);
     signal sdram_addr_next        : std_logic_vector(ROW_BITS-1 downto 0);
     signal sdram_dqm_next         : std_logic_vector(1 downto 0);
@@ -345,7 +345,7 @@ begin
     
     -- Output assignments
     sdram_clk  <= not clk;
-    sdram_dq   <= sdram_dq_next when (state = ST_WRITE or state = ST_WRITEA) else (others => 'Z');
+    sdram_dq   <= sdram_dq_next when (state = ST_WRITE) else (others => 'Z');
     
     process(clk)
     begin
@@ -392,15 +392,6 @@ begin
                 sdram_addr        <= sdram_addr_next;
                 sdram_ba          <= sdram_ba_next;
                 sdram_dqm         <= sdram_dqm_next;
-
-                -- transfer next values to debug pins
-                debug_state       <= state_next;
-                debug_cmd         <= cmd_next;
-                debug_addr_0      <= sdram_addr_next(0);  
-                debug_addr_9      <= sdram_addr_next(9);  
-                debug_addr_10     <= sdram_addr_next(10);  
-                debug_dqm         <= sdram_dqm_next;
-                debug_dq_0        <= sdram_dq_next(0);
             
                 if USE_AUTO_REFRESH = true then
                     -- Refresh counter (ONLY after initialization complete)
@@ -543,7 +534,7 @@ begin
             if seq_count = 0 then
                 state_next         <= ST_INIT_REFRESH;
                 cmd_next           <= CMD_REF;  -- Issue first refresh
-                refresh_count_next <= 7;  -- 7 more to go
+                refresh_count_next <= 7;  
                 seq_count_next     <= TRFC_CYCLES;
             else
                 seq_count_next <= seq_count - 1;
@@ -881,7 +872,7 @@ begin
         --   Cycle 1 (seq_count=0):  Issue CMD_ACT with bank and row address
         --                           Latch bank/row into active tracking
         --   Cycles 2-tRCD:          Issue CMD_NOP while row activates
-        --   Cycle tRCD:             Row ready! Transition to READ or WRITE
+        --   Cycle tRCD:             Row ready! Transition to ST_READ or ST_WRITE
         --
         -- Timing: Wait tRCD cycles (~20ns = 2 cycles @ 100MHz)
         --         This is RAS-to-CAS delay - time for row to stabilize
@@ -891,13 +882,10 @@ begin
         --   active_bank = addr_bank_latched  --> Remember which bank
         --   row_active  = '1'                --> Flag that a row is open
         --
-        -- Exit Paths:
-        --   USE_AUTO_PRECHARGE = true:  → ST_READA or ST_WRITEA
-        --   USE_AUTO_PRECHARGE = false: → ST_READ or ST_WRITE
-        --
-        -- Why Two Paths?
-        --   Auto-precharge: Row will auto-close after operation (A10=1)
-        --   No auto-precharge: Row stays open for potential next access (A10=0)
+        -- Exit Path:
+        --   Always → ST_READ or ST_WRITE
+        --   Auto-precharge behaviour (A10) is handled inside ST_READ/ST_WRITE,
+        --   not here. ACTIVATE is identical regardless of USE_AUTO_PRECHARGE.        
         
         when ST_ACTIVATE =>
             if seq_count = 0 then
@@ -910,19 +898,10 @@ begin
                 seq_count_next   <= seq_count + 1;
             elsif seq_count = TRCD_CYCLES then
                 cmd_next         <= CMD_NOP;
-                -- Decide read or write AND auto-precharge
-                if USE_AUTO_PRECHARGE then
-                    if wr_n_latched = '0' then
-                        state_next <= ST_WRITEA;
-                    else
-                        state_next <= ST_READA;
-                    end if;
+                if wr_n_latched = '0' then
+                    state_next <= ST_WRITE;
                 else
-                    if wr_n_latched = '0' then
-                        state_next <= ST_WRITE;
-                    else
-                        state_next <= ST_READ;
-                    end if;
+                    state_next <= ST_READ;
                 end if;
                 seq_count_next <= 0;
             else
@@ -930,51 +909,56 @@ begin
                 seq_count_next   <= seq_count + 1;
             end if;
 
-         --========================================
-        -- ST_READA - Read with auto-precharge
         --========================================
-        -- Purpose: Read data from currently active row with automatic row close.
-        --          Simplifies state machine - row automatically precharges after read.
+        -- ST_READ - Read from active row
+        --========================================
+        -- Purpose: Read data from currently active row.
+        --          Auto-precharge behaviour is selected by USE_AUTO_PRECHARGE.
         --
         -- Signal Requirements:
         --   CMD    = READ (CS_N RAS_N CAS_N WE_N = 0101)
         --   BA     = Bank select
-        --   A10    = '1' --> AUTO-PRECHARGE enabled (row will close after read)
-        --   A9:0   = Column address (10 bits for DE10-Lite)
-        --   DQM    = NOT byte_en --> Control which bytes to read
-        --            DQM='0' enables byte, DQM='1' masks byte
+        --   A10    = USE_AUTO_PRECHARGE: '1' = row closes automatically
+        --                               '0' = row stays open
+        --   A9:0   = Column address
+        --   DQM    = NOT byte_en --> Byte selection
         --
         -- Command Timing:
-        --   Cycle 1 (seq_count=0):      Issue READ command with A10=1
-        --                               Set DQM for byte selection
-        --   Cycles 2-CAS_LAT:           NOP during CAS latency
-        --   Cycle CAS_LAT+1:            Data valid on sdram_dq
-        --                               Capture to dout, assert ack
-        --                               Row automatically closes (due to A10=1)
+        --   Cycle 1 (seq_count=0):   Issue READ command with A10 as above
+        --   Cycles 2-CAS_LAT:        NOP during CAS latency
+        --   Cycle CAS_LAT+1:         Data valid, capture and acknowledge
+        --                            Issue BST to stop any residual burst
         --
-        -- Timing: CAS Latency + 1 = 3 cycles total (for CAS_LAT=2)
+        -- NOTE: The +1 in CAS_LATENCY+1 is required because:
+        --   seq_count=0: Issue READ command
+        --   seq_count=1: First cycle of CAS latency
+        --   seq_count=2: Second cycle of CAS latency (CAS_LATENCY=2)
+        --   seq_count=3: Data valid (= CAS_LATENCY+1)
+        --   Data becomes valid one cycle AFTER the CAS latency period completes
         --
-        -- Byte Selection via DQM:
-        --   byte_en="00" → DQM="11" → both bytes masked (unusual!)
-        --   byte_en="01" → DQM="10" → lower byte enabled
-        --   byte_en="10" → DQM="01" → upper byte enabled  
-        --   byte_en="11" → DQM="00" → both bytes enabled
+        -- Row Management after operation:
+        --   USE_AUTO_PRECHARGE = true:  Row closed internally by SDRAM (A10=1)
+        --                               row_active <= '0', back to ST_IDLE
+        --   USE_AUTO_PRECHARGE = false: Row stays open (A10=0)
+        --                               row_active STAYS '1', back to ST_IDLE
+        --                               active_row/active_bank unchanged
+        --                               Next access to same row skips ACTIVATE
         --
-        -- Auto-Precharge Behavior:
-        --   - Row begins closing automatically after CAS_LAT cycles
-        --   - Must wait full tRP before accessing different row
-        --   - row_active cleared when operation completes
-        --
-        -- Exit Condition: Return to ST_IDLE with row_active='0'
-        --                 Ready immediately for next operation
-        
-        when ST_READA =>
+        -- Performance:
+        --   USE_AUTO_PRECHARGE = true:  ACT + tRCD + READ + CAS_LAT = ~6-8 cycles
+        --   USE_AUTO_PRECHARGE = false, same row: READ + CAS_LAT = ~3 cycles
+
+
+        when ST_READ =>
             if seq_count = 0 then
-                -- Issue READ command with auto-precharge
                 cmd_next                             <= CMD_READ;
                 sdram_ba_next                        <= addr_bank_latched;
                 sdram_addr_next                      <= (others => '0');
-                sdram_addr_next(10)                  <= '1';  -- A10=1, auto-precharge
+                if USE_AUTO_PRECHARGE = true then
+                    sdram_addr_next(10)              <= '1';  -- A10=1, with auto-precharge
+                else    
+                    sdram_addr_next(10)              <= '0';  -- A10=0, No auto-precharge
+                end if;
                 sdram_addr_next(COL_BITS-1 downto 0) <= addr_col_latched;
                 sdram_dqm_next                       <= not byte_en_latched;
                 seq_count_next                       <= seq_count + 1;
@@ -985,73 +969,10 @@ begin
                 --   seq_count=2: Second cycle of CAS latency (CAS_LATENCY=2)
                 --   seq_count=3: Data valid (=CAS_LATENCY+1)
                 -- Data becomes valid one cycle AFTER the CAS latency period completes            
-                cmd_next        <= CMD_NOP;
-                dout_next       <= sdram_dq;
-                ack_next        <= '1';
-                sdram_dqm_next  <= "11";
-                row_active_next <= '0';   
-                state_next      <= ST_IDLE;
-                seq_count_next  <= 0;
-            else
-                cmd_next        <= CMD_NOP;
-                seq_count_next  <= seq_count + 1;
-            end if;
-
-        --========================================
-        -- ST_READ - Read without auto-precharge
-        --========================================
-        -- Purpose: Read data from currently active row, leaving row open.
-        --          Optimizes sequential accesses to same row (much faster).
-        --
-        -- Signal Requirements:
-        --   CMD    = READ (CS_N RAS_N CAS_N WE_N = 0101)
-        --   BA     = Bank select
-        --   A10    = '0' --> NO auto-precharge (row stays open)
-        --   A9:0   = Column address
-        --   DQM    = NOT byte_en --> Byte selection
-        --
-        -- Command Timing:
-        --   Cycle 1 (seq_count=0):   Issue READ command with A10=0
-        --   Cycles 2-CAS_LAT:        NOP during CAS latency
-        --   Cycle CAS_LAT+1:         Data valid, capture and acknowledge
-        --                            Row REMAINS OPEN
-        --
-        -- Timing: CAS Latency + 1 = 3 cycles total (for CAS_LAT=2)
-        --
-        -- Performance Advantage:
-        --   - Row stays open: next access to same row is just 3 cycles
-        --   - Compare to READA: ~10 cycles per access
-        --   - Huge win for sequential/burst accesses
-        --
-        -- Row Management:
-        --   - row_active STAYS '1' after this operation
-        --   - active_row/active_bank remain unchanged
-        --   - Next IDLE will check if next access is to same row
-        --
-        -- Exit Condition: Return to ST_IDLE with row still active
-        --                 Controller tracks which row/bank is open
-
-        when ST_READ =>
-            if seq_count = 0 then
-                -- Issue READ command without auto-precharge
-                cmd_next                             <= CMD_READ;
-                sdram_ba_next                        <= addr_bank_latched;
-                sdram_addr_next                      <= (others => '0');
-                sdram_addr_next(10)                  <= '0';  -- A10=0, No auto-precharge
-                sdram_addr_next(COL_BITS-1 downto 0) <= addr_col_latched;
-                sdram_dqm_next                       <= not byte_en_latched;
-                seq_count_next                        <= seq_count + 1;
-            elsif seq_count = CAS_LATENCY + 1 then
-                -- NOTE: The +1 is REQUIRED because:
-                --   seq_count=0: Issue READ command
-                --   seq_count=1: First cycle of CAS latency
-                --   seq_count=2: Second cycle of CAS latency (CAS_LATENCY=2)
-                --   seq_count=3: Data valid (=CAS_LATENCY+1)
-                -- Data becomes valid one cycle AFTER the CAS latency period completes            
-                cmd_next       <= CMD_NOP;
+                cmd_next       <= CMD_BST;   -- was CMD_NOP
                 dout_next      <= sdram_dq;
                 ack_next       <= '1';
-                sdram_dqm_next <= "11";
+                sdram_dqm_next <= DQM_IDLE; --"11";
                 state_next     <= ST_IDLE;
                 seq_count_next <= 0;
             else
@@ -1060,130 +981,67 @@ begin
             end if;
 
         --========================================
-        -- ST_WRITEA - Write with auto-precharge
+        -- ST_WRITE - Write to active row
         --========================================
-        -- Purpose: Write data to currently active row with automatic row close.
-        --          Row closes automatically after write completes.
+        -- Purpose: Write data to currently active row.
+        --          Auto-precharge behaviour is selected by USE_AUTO_PRECHARGE.
         --
         -- Signal Requirements:
         --   CMD    = WRITE (CS_N RAS_N CAS_N WE_N = 0100)
         --   BA     = Bank select
-        --   A10    = '1' --> AUTO-PRECHARGE enabled
-        --   A9:0   = Column address
-        --   DQM    = NOT byte_en --> Control which bytes to write
-        --   DQ     = Write data (must be driven same cycle as WRITE command)
-        --
-        -- Command Timing:
-        --   Cycle 1 (seq_count=0):  Issue WRITE command with A10=1
-        --                           Drive data on sdram_dq
-        --                           Assert ack immediately (write buffered)
-        --   Cycle 2 (seq_count=1):  Tri-state sdram_dq
-        --                           Continue with NOP
-        --   Cycles 3-tRP:           NOP while auto-precharge occurs
-        --   Cycle tRP:              Complete, row closed, return to IDLE
-        --
-        -- Timing: 1 (write) + tRP (~2 cycles) = ~3 cycles total
-        --
-        -- Data Timing - CRITICAL:
-        --   - Data MUST be driven on same cycle as WRITE command
-        --   - Data MUST be tri-stated next cycle (standard practice)
-        --   - DQM registered one cycle before data (SDRAM spec)
-        --
-        -- Auto-Precharge Wait:
-        --   - Must wait tRP after write for precharge to complete
-        --   - Then row is closed and ready for different row access
-        --
-        -- ACK Timing:
-        --   - ack asserted immediately in cycle 1
-        --   - Write is "posted" - CPU can continue immediately
-        --   - Controller handles precharge automatically
-        --
-        -- Exit Condition: Return to ST_IDLE with row_active='0'
-    
-        when ST_WRITEA =>
-            if seq_count = 0 then
-                -- Issue WRITE command with auto-precharge
-                cmd_next                             <= CMD_WRITE;
-                sdram_ba_next                        <= addr_bank_latched;
-                sdram_addr_next                      <= (others => '0');
-                sdram_addr_next(10)                  <= '1';  -- A10=1, with auto-precharge
-                sdram_addr_next(COL_BITS-1 downto 0) <= addr_col_latched;
-                sdram_dqm_next                       <= not byte_en_latched;
-                sdram_dq_next                        <= din_latched;
-                ack_next                             <= '1';
-                seq_count_next                       <= seq_count + 1;
-            elsif seq_count = 1 then    
-                cmd_next       <= CMD_NOP;
-                sdram_dq_next  <= (others => 'Z');  -- Tri-state after write    
-                seq_count_next <= seq_count + 1;
-            elsif seq_count = TRP_CYCLES then
-                cmd_next        <= CMD_NOP;
-                sdram_dqm_next  <= "11";
-                row_active_next <= '0';  -- Row is closed
-                state_next      <= ST_IDLE;
-                seq_count_next  <= 0;
-            else
-                cmd_next        <= CMD_NOP;
-                seq_count_next  <= seq_count + 1;
-            end if;
-
-        --========================================
-        -- ST_WRITE - Write without auto-precharge
-        --========================================
-        -- Purpose: Write data to currently active row, leaving row open.
-        --          Optimizes sequential writes to same row.
-        --
-        -- Signal Requirements:
-        --   CMD    = WRITE (CS_N RAS_N CAS_N WE_N = 0100)
-        --   BA     = Bank select
-        --   A10    = '0' --> NO auto-precharge (row stays open)
+        --   A10    = USE_AUTO_PRECHARGE: '1' = row closes automatically
+        --                               '0' = row stays open
         --   A9:0   = Column address
         --   DQM    = NOT byte_en --> Byte selection
         --   DQ     = Write data
         --
         -- Command Timing:
-        --   Cycle 1 (seq_count=0):  Issue WRITE command with A10=0
+        --   Cycle 1 (seq_count=0):  Issue WRITE command with A10 as above
         --                           Drive data on sdram_dq
-        --                           Assert ack immediately
-        --   Cycle 2 (seq_count=1):  Tri-state sdram_dq
-        --   Cycles 3-tRP:           NOP (minimal delay)
-        --   Cycle tRP:              Complete, return to IDLE
-        --                           Row REMAINS OPEN
+        --                           Assert ack immediately (no CAS latency on write)
+        --   Cycle 2 (seq_count=1):  Issue BST, tri-state sdram_dq
+        --   Cycles 3-tRP:           NOP (data write settling)
+        --   Cycle tRP:              Complete, return to ST_IDLE
         --
-        -- Timing: 1 (write) + tRP (~2 cycles) = ~3 cycles total
+        -- Row Management after operation:
+        --   USE_AUTO_PRECHARGE = true:  Row closed internally by SDRAM (A10=1)
+        --                               row_active <= '0', back to ST_IDLE
+        --   USE_AUTO_PRECHARGE = false: Row stays open (A10=0)
+        --                               row_active STAYS '1', back to ST_IDLE
+        --                               active_row/active_bank unchanged
+        --                               Next access to same row skips ACTIVATE
         --
-        -- Performance Advantage:
-        --   - Next write to same row: just 3 cycles
-        --   - Compare to WRITEA: ~6 cycles
-        --   - Excellent for burst writes (DMA, memory fill, etc.)
-        --
-        -- Row Management:
-        --   - row_active STAYS '1'
-        --   - active_row/active_bank unchanged
-        --   - Next access to same row bypasses ACTIVATE
-        --
-        -- Exit Condition: Return to ST_IDLE with row still active            
+        -- Performance:
+        --   USE_AUTO_PRECHARGE = true:  ACT + tRCD + WRITE + tRP = ~6-8 cycles
+        --   USE_AUTO_PRECHARGE = false, same row: WRITE + tRP = ~3 cycles
+      
 
         when ST_WRITE =>
             if seq_count = 0 then
-                -- Issue WRITE command without auto-precharge
                 cmd_next                             <= CMD_WRITE;
                 sdram_ba_next                        <= addr_bank_latched;
                 sdram_addr_next                      <= (others => '0');
-                sdram_addr_next(10)                  <= '0';  -- A10=0, NO auto-precharge
+                if USE_AUTO_PRECHARGE = true  then
+                    sdram_addr_next(10)              <= '1';  -- A10=1, with auto-precharge
+                else        
+                    sdram_addr_next(10)              <= '0';  -- A10=0, NO auto-precharge
+                end if;
                 sdram_addr_next(COL_BITS-1 downto 0) <= addr_col_latched;
                 sdram_dqm_next                       <= not byte_en_latched;
                 sdram_dq_next                        <= din_latched;
                 ack_next                             <= '1';
                 seq_count_next                       <= seq_count + 1;
             elsif seq_count = 1 then
-                cmd_next       <= CMD_NOP;
+                cmd_next       <= CMD_BST;
                 sdram_dq_next  <= (others => 'Z');  -- Tri-state after write    
                 seq_count_next <= seq_count + 1;
             elsif seq_count = TRP_CYCLES then
                 -- Back to idle, row still active
                 cmd_next             <= CMD_NOP;
-                sdram_dqm_next       <= "11";
+                sdram_dqm_next       <= DQM_IDLE; --"11";
+                if USE_AUTO_PRECHARGE = true  then
+                    row_active_next  <= '0';  
+                end if;
                 state_next           <= ST_IDLE;
                 seq_count_next       <= 0;
             else

@@ -1,0 +1,20 @@
+Fitter Status : Successful - Sun Feb 22 13:37:56 2026
+Quartus Prime Version : 24.1std.0 Build 1077 03/04/2025 SC Lite Edition
+Revision Name : QMTECH_Replica1
+Top-level Entity Name : QMTECH_Replica1
+Family : Cyclone V
+Device : 5CEFA5F23I7
+Timing Models : Final
+Logic utilization (in ALMs) : 494 / 29,080 ( 2 % )
+Total registers : 355
+Total pins : 105 / 240 ( 44 % )
+Total virtual pins : 0
+Total block memory bits : 395,264 / 4,567,040 ( 9 % )
+Total RAM Blocks : 49 / 446 ( 11 % )
+Total DSP Blocks : 0 / 150 ( 0 % )
+Total HSSI RX PCSs : 0
+Total HSSI PMA RX Deserializers : 0
+Total HSSI TX PCSs : 0
+Total HSSI PMA TX Serializers : 0
+Total PLLs : 1 / 6 ( 17 % )
+Total DLLs : 0 / 4 ( 0 % )
